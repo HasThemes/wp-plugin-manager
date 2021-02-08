@@ -1,0 +1,124 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Plugin Manager\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-12-30 18:12+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.3.1; wp-5.2.5"
+
+#: includes/plugin-options-page.php:156
+msgid "Action"
+msgstr ""
+
+#: includes/plugin-options-page.php:221
+msgid "Add Another"
+msgstr ""
+
+#: includes/plugin-options-page.php:179 includes/plugin-options-page.php:201
+msgid "Clone"
+msgstr ""
+
+#: includes/plugin-options-page.php:109
+msgid "Custom"
+msgstr ""
+
+#. Description of the plugin
+msgid "Deactivate plugins per page"
+msgstr ""
+
+#: includes/plugin-options-page.php:175 includes/plugin-options-page.php:197
+msgid "E.g: http://example.com/contact-us/ you can use 'contact-us'"
+msgstr ""
+
+#: includes/plugin-options-page.php:99
+msgid "Enable Deactivation:"
+msgstr ""
+
+#. field name
+#: includes/plugin-options-page.php:66
+msgid "Enable/Disable Plugins"
+msgstr ""
+
+#. Author of the plugin
+msgid "HasThemes"
+msgstr ""
+
+#. URI of the plugin
+#. Author URI of the plugin
+msgid "https://hasthemes.com/"
+msgstr ""
+
+#: includes/plugin-options-page.php:29
+msgid "Options"
+msgstr ""
+
+#: includes/plugin-options-page.php:106
+msgid "Page"
+msgstr ""
+
+#. Name of the plugin
+#: includes/plugin-options-page.php:7
+msgid "Plugin Manager"
+msgstr ""
+
+#: includes/plugin-options-page.php:107
+msgid "Post"
+msgstr ""
+
+#: includes/plugin-options-page.php:108
+msgid "Post And Pages"
+msgstr ""
+
+#: includes/plugin-options-page.php:178 includes/plugin-options-page.php:200
+#: includes/plugin-options-page.php:220
+msgid "Remove"
+msgstr ""
+
+#: includes/plugin-options-page.php:114
+msgid "Select Pages:"
+msgstr ""
+
+#: includes/plugin-options-page.php:133
+msgid "Select Posts:"
+msgstr ""
+
+#: includes/plugin-options-page.php:21
+msgid "Settings Saved"
+msgstr ""
+
+#: includes/plugin-options-page.php:154
+msgid "URI Condition"
+msgstr ""
+
+#: includes/plugin-options-page.php:170 includes/plugin-options-page.php:192
+msgid "URI Contains"
+msgstr ""
+
+#: includes/plugin-options-page.php:168 includes/plugin-options-page.php:190
+msgid "URI Equals"
+msgstr ""
+
+#: includes/plugin-options-page.php:171 includes/plugin-options-page.php:193
+msgid "URI Not Contains"
+msgstr ""
+
+#: includes/plugin-options-page.php:169 includes/plugin-options-page.php:191
+msgid "URI Not Equals"
+msgstr ""
+
+#: includes/plugin-options-page.php:104
+msgid "URI Type:"
+msgstr ""
+
+#: includes/plugin-options-page.php:155
+msgid "Value"
+msgstr ""

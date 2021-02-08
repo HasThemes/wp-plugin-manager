@@ -1,0 +1,431 @@
+.nnfy_table_row{
+    
+}
+
+#nnfy_general_tabs .nnfysubmit, #nnfy_general_tabs h2{
+    display: none;
+}
+
+/* General Tab HTML */
+.htmp-column {
+  float: left;
+  padding: 0 15px;
+}
+.htmp-column-2 .htmp-singleplugin img{
+  margin-bottom: 8px;
+}
+.htmp-document-section {
+  margin-top: 25px;
+  overflow: hidden;
+}
+.htmp-section-title {
+  font-size: 20px;
+  padding-left: 15px;
+}
+.htmp-admin-row {
+  display: flex;
+  overflow: hidden;
+}
+.features-list-area {
+  border: 1px solid #ddd;
+  float: left;
+  margin: 0 15px;
+  padding: 0 15px;
+}
+.features-list-area li {
+  font-size: 16px;
+  padding: 4px 0 4px 5px;
+  position: relative;
+}
+.features-list-area li::before {
+  content: "";
+  font-family: dashicons;
+  left: -5px;
+  position: relative;
+  top: 2px;
+}
+.features-list-area li.nnfydel::before{
+  content: "\f335";
+}
+.features-list-area .button.button-primary,.htmp-price-plan .button.button-primary{
+  margin: 5px 0 20px;
+}
+
+/*
+* Recommendation
+*/
+.htmp-row{
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 1 auto;
+  flex: 0 1 auto;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+.htmp-row h2{
+  margin-bottom: 0;
+}
+.htmp-thumb img{
+  margin-right: 15px;
+}
+.htmp-content h3{
+  line-height: 1.4;
+}
+.htmp-column-1,.htmp-column-2{
+  box-sizing: border-box;
+  -webkit-box-flex: 0;
+  -ms-flex: 0 0 auto;
+  flex: 0 0 auto;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  margin-top: 30px;
+}
+.htmp-column-1 {
+  -ms-flex-preferred-size: 100%;
+  flex-basis: 100%;
+  max-width: 100%;
+}
+.htmp-column-2 {
+  -ms-flex-preferred-size: 50%;
+  flex-basis: 50%;
+  max-width: 50%;
+}
+.htmp-singleplugin {
+  border: 1px solid #ddd;
+  padding: 20px;
+  background: #fff;
+  display: flex;
+}
+.htmp-singleplugin h3{
+  margin-top: 0;
+}
+
+/* 
+* Template Laibrary Start
+*/
+.httemplate-row{}
+
+/* Top bar */
+.httemplate-top-banner-area {
+  background: #22b9ff none repeat scroll 0 0;
+  margin-right: 15px;
+  margin-top: 20px;
+  padding: 20px;
+}
+.htbanner-content {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  flex-flow: row wrap;
+}
+.htbanner-content h3{
+  margin: 0;
+  color: #fff;
+  line-height: 24px;
+}
+.htbanner-content a {
+  background: #d30c5c none repeat scroll 0 0;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #fff;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 15px;
+  text-decoration: none;
+  transition: all 0.4s ease 0s;
+}
+.htbanner-content a:hover{
+  background: #fff;
+  border-color: #333;
+  color: #333;
+}
+.htbanner-desc p {
+  color: #fff;
+  font-weight: 600;
+  margin: 5px 0 0;
+}
+
+#tp-grid {
+  margin-left: 0 !important;
+  margin-top: 35px !important;
+}
+.tp-grid{
+  overflow: hidden !important;
+}
+#tp-grid li {
+  width: 20% !important;
+}
+#htmega-tmp-name {
+  text-transform: uppercase;
+}
+.tp-grid .httemplate-action{
+  display: none;
+}
+
+.htpackage-tp-title {
+  background: #fff;
+  display: block;
+  width: 100%;
+  padding: 15px;
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+.htpackage-tp-title h3{
+  text-transform: capitalize;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+}
+.htpackage-tp-title p {
+  margin: 5px 0 0;
+}
+.htpackage-tp-title span {
+  margin-right: 5px;
+}
+
+.htmega-loader {
+  text-align: center;
+}
+#htmegaclose {
+  cursor: pointer;
+  font-size: 16px;
+  display: none;
+  transition: 0.4s;
+}
+#htmegaclose:hover{
+  color: #d30c5c;
+}
+.htmega-topbar {
+  display: none;
+  justify-content: space-between;
+  margin-right: 15px;
+  align-items: center;
+  background: #fff;
+  padding: 15px 16px;
+}
+.htmega-topbar h3{
+  margin: 0;
+}
+
+.httemplate-row .htsingle-templates-laibrary {
+  float: left;
+  margin-bottom: 30px;
+  padding: 0 15px;
+  width: 100%;
+}
+.httemplate-row .htsingle-templates-laibrary img{
+  width: 100%;
+}
+.httemplate-thumbnails {
+  overflow: hidden;
+  position: relative;
+}
+.httemplate-content {
+  background: #fff none repeat scroll 0 0;
+  padding: 15px;
+  text-align: center;
+}
+.httemplate-content h3 {
+  font-size: 16px;
+  margin: 0;
+}
+.httemplate-content span {
+  color: red;
+  display: none;
+}
+.httemplate-tags {
+  color: #888;
+  margin-top: 5px;
+}
+
+.httemplate-action {
+  background: #333 none repeat scroll 0 0;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  left: 0;
+  position: absolute;
+  right: 0;
+  z-index: 2;
+  transition: 0.4s;
+}
+.httemplate-row .htsingle-templates-laibrary *, .httemplate-row .htsingle-templates-laibrary *::after, .httemplate-row .htsingle-templates-laibrary *::before,.httemplate-row .htsingle-templates-laibrary {
+  box-sizing: border-box;
+}
+.httemplate-action a {
+  color: #fff;
+  flex: 0 0 50%;
+  font-size: 14px;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.4s ease 0s;
+  background: #22b9ff;
+}
+.httemplate-action a:first-child:not(:last-child) {
+  border-right: 1px solid rgba(255,255,255, 0.5);
+}
+.httemplate-action a:hover{
+  background: #0085ba none repeat scroll 0 0;
+}
+
+/*Pop Up*/
+.httemplate-popupcontent {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 200px;
+  position: relative;
+}
+.htspinner {
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  display: none;
+}
+.htspinner.loading{
+  display: block;
+}
+.htspinner::before {
+  background: rgba(0, 0, 0, 0) url("../images/ajax-loader.gif") no-repeat scroll center center / 100px 100px;
+  content: "";
+  height: 100%;
+  left: 0;
+  opacity: 1;
+  position: absolute;
+  top: 0;
+  visibility: visible;
+  width: 100%;
+}
+
+.htpopupcontent p,.htmessage p {
+  font-size: 18px;
+  margin: 0;
+}
+.nnfyimpbtn,.htmessage a {
+  background: #333 none repeat scroll 0 0;
+  color: #fff;
+  display: inline-block;
+  font-size: 14px;
+  margin: 15px 0;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  transition: all 0.4s ease 0s;
+}
+.nnfyimpbtn:focus{
+  background: #333 none repeat scroll 0 0;
+  outline: none;
+  color: #fff;
+  box-shadow: none;
+}
+.nnfyimpbtn:hover,.htmessage a:hover{
+  background: #0085ba none repeat scroll 0 0;
+  color: #fff;
+  outline:none;
+}
+
+.htpageimportarea .nnfyimpbtn{
+  margin: 0;
+}
+.htpageimportarea {
+  margin: 0 0 15px;
+}
+.htpageimportarea p{
+  margin-bottom: 15px;
+}
+.htpageimportarea input {
+    background: #fff none repeat scroll 0 0;
+    border: 1px solid #c7c7c7;
+    color: #888888;
+    font-size: 14px;
+    font-weight: normal;
+    padding: 5px 10px;
+    width: 250px;
+    border-radius: 0;
+}
+.nnfyimpbtn.htdisabled {
+  cursor: default;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.htmessage {
+  text-align: center;
+}
+
+/*
+* Responsive CSS Here 
+*/
+
+/* Large Device :1200px. */
+@media (min-width: 1200px) and (max-width: 1400px) {
+  
+  #tp-grid li {
+    width: 25% !important;
+  }
+}
+
+/* Normal desktop :992px. */
+@media (min-width: 992px) and (max-width: 1199px) {
+  
+  #tp-grid li {
+    width: 40% !important;
+  }
+
+}
+
+ 
+/* Tablet desktop :768px. */
+@media (min-width: 768px) and (max-width: 991px) {
+  
+  #tp-grid li {
+    width: 40% !important;
+  }
+
+}
+
+/* small mobile :320px. */
+@media (max-width: 767px) {
+  
+  #tp-grid li {
+    width: 90% !important;
+  }
+  .htmp-column-2 {
+    -ms-flex-preferred-size: 100%;
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+
+}
+@media (max-width: 480px) {
+  
+  .htmp-singleplugin{
+    display: block;
+    text-align: center;
+  }
+
+}
+
+/* Large Mobile :480px. */
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+   
+   #tp-grid li {
+    width: 40% !important;
+  }
+
+}
