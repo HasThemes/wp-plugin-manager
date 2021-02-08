@@ -212,6 +212,7 @@ function htpm_list_plugins_cb( $args ) {
 				  		<option value="page" <?php selected( $idividual_options['uri_type'], 'page' ) ?>><?php echo esc_html__( 'Page', 'htpm' ) ?></option>
 				  		<option value="post" <?php selected( $idividual_options['uri_type'], 'post' ) ?>><?php echo esc_html__( 'Post', 'htpm' ) ?></option>
 				  		<option value="page_post" <?php selected( $idividual_options['uri_type'], 'page_post' ) ?>><?php echo esc_html__( 'Post And Pages', 'htpm' ) ?></option>
+				  		<option value="page_post_cpt" <?php selected( $idividual_options['uri_type'], 'page_post_cpt' ) ?>><?php echo esc_html__( 'Post , Pages & Custom Post Type ', 'htpm' ) ?></option>
 				  		<option value="custom" <?php selected( $idividual_options['uri_type'], 'custom' ) ?>><?php echo esc_html__('Custom', 'htpm') ?></option>
 				  	</select>
 				</div>
@@ -221,10 +222,11 @@ function htpm_list_plugins_cb( $args ) {
 				  	<div>
 					  	<select class="htpm_select2_active" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>][<?php echo esc_attr($plugin) ?>][pages][]" multiple="multiple">
 			  	  		  	<?php
+			  	  		  		$selected_pages = isset($idividual_options['pages']) && $idividual_options['pages'] ? $idividual_options['pages'] : array();
 			  	  		  		$pages = get_pages();
 			  	  		  		foreach ( $pages as $key => $page ) {
 			  	  		  			$option_value = esc_attr($page->ID) .','. esc_url(get_page_link( $page->ID ));
-			  	  		  			$is_selected = in_array($option_value,  $idividual_options['pages']);
+			  	  		  			$is_selected = in_array($option_value,  $selected_pages);
 			  	  		  			?>
 			  	  		  			<option value="<?php echo esc_attr($option_value); ?>" <?php selected($is_selected , true ) ?>><?php echo esc_html($page->post_title);  ?></option>
 			  	  		  			<?php
@@ -240,12 +242,13 @@ function htpm_list_plugins_cb( $args ) {
 				  	<div>
 	  				  	<select class="htpm_select2_active" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>][<?php echo esc_attr($plugin) ?>][posts][]" multiple="multiple">
 	  		  	  		  	<?php
+	  		  	  		  		$selected_posts = isset($idividual_options['posts']) && $idividual_options['posts'] ? $idividual_options['posts'] : array();
 	  		  	  		  		$posts = get_posts(array(
 	  		  	  		  			'numberposts' => '-1'
 	  		  	  		  		));
 	  		  	  		  		foreach ( $posts as $key => $post ) {
 	  		  	  		  			$option_value = esc_attr($post->ID) .','. esc_url(get_permalink( $post->ID ));
-	  		  	  		  			$is_selected = in_array($option_value,  $idividual_options['posts']);
+	  		  	  		  			$is_selected = in_array($option_value,  $selected_posts);
 	  		  	  		  			?>
 	  		  	  		  			<option value="<?php echo esc_attr($option_value); ?>" <?php selected($is_selected, true ) ?>><?php echo esc_html($post->post_title);  ?></option>
 	  		  	  		  			<?php
@@ -342,7 +345,7 @@ function htpm_list_plugins_cb( $args ) {
 
 
 function htpm_admin_footer(){
-	$notice_text = '<p>This feature is available in the pro version. <a target="_blank" href="'.  esc_url('//hasthemes.com/') .'">More details</a></p>';
+	$notice_text = '<p>This feature is available in the pro version. <a target="_blank" href="'.  esc_url('//hasthemes.com/plugins/wp-plugin-manager-pro/') .'">More details</a></p>';
 	?>
 	<div id="htpm_pro_notice" style="display:none">
 		<?php echo wp_kses_post($notice_text); ?>

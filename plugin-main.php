@@ -3,7 +3,7 @@
 Plugin Name: WP Plugin Manager
 Plugin URI: https://hasthemes.com/plugins/
 Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-Version: 1.0.5
+Version: 1.0.6
 Author: HasThemes
 Author URI: https://hasthemes.com/
 Text Domain: htpm
@@ -46,6 +46,23 @@ function htpm_plugin_activation(){
     }
     else {
       	add_option('htpm_status', 'active');
+    }
+
+    // replace the old file
+    $mu_plugin_file_source_path = HTPM_ROOT_DIR . '/mu-plugin/htpm-mu-plugin.php';
+
+    $mu_plugin_file = 'htpm-mu-plugin.php';
+    if ( defined( 'WPMU_PLUGIN_DIR' ) ) {
+        $mu_plugins_path = WPMU_PLUGIN_DIR;
+    } else {
+        $mu_plugins_path = WP_CONTENT_DIR . '/' . 'mu-plugins';
+    }
+
+    $mu_plugin_file_path = $mu_plugins_path . '/htpm-mu-plugin.php';
+
+    // add mu file 
+    if ( file_exists( $mu_plugins_path ) ){
+        copy( $mu_plugin_file_source_path, $mu_plugin_file_path );
     }
 }
 

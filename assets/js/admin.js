@@ -47,9 +47,20 @@
     $('.htpm_accordion .htpm_repeater').on('click', function(e){
     	$( "#htpm_pro_notice" ).dialog({
     		'dialogClass': 'wp-dialog',
-    		title: 'Pro Required!',
+    		title: 'Pro Version is Required!',
     		modal: true,
     	}); return;
+    });
+
+    $('.htpm_accordion .htpm_uri_type').on('change', function(e){
+        var value = $(this).val();
+        if(value == 'page_post_cpt'){
+            $( "#htpm_pro_notice" ).dialog({
+                'dialogClass': 'wp-dialog',
+                title: 'Pro Version is Required!',
+                modal: true,
+            }); return;
+        }
     });
 
     $( document ).on('click','.htmp-nav.nav-tab', function() {
