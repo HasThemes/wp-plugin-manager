@@ -3,7 +3,7 @@
 Plugin Name: WP Plugin Manager
 Plugin URI: https://hasthemes.com/plugins/
 Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-Version: 1.0.6
+Version: 1.0.7
 Author: HasThemes
 Author URI: https://hasthemes.com/
 Text Domain: htpm
@@ -25,6 +25,8 @@ define( 'HTPM_PLUGIN_BASE', plugin_basename( HTPM_ROOT_PL ) );
  */
 require_once HTPM_ROOT_DIR . '/includes/helper_functions.php';
 require_once HTPM_ROOT_DIR . '/includes/plugin-options-page.php';
+require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/class.recommended-plugins.php';
+require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
 
 /**
  * Load text domain
@@ -93,7 +95,7 @@ function htpm_deactivate_pro_version(){
  * Enqueue admin scripts and styles.
  */
 function htpm_admin_scripts( $hook_suffix ) {
-	if( $hook_suffix ==  'plugins_page_htpm-options' ){
+	if( $hook_suffix ==  'toplevel_page_htpm-options' ){
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
 		wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css' );
 		wp_enqueue_style( 'htpm-admin', HTPM_ROOT_URL . '/assets/css/admin-style.css' );
@@ -141,7 +143,7 @@ add_action( 'admin_enqueue_scripts', 'htpm_admin_scripts' );
 // Plugins Setting Page
 add_filter('plugin_action_links_'.HTPM_PLUGIN_BASE, 'htpm_plugins_setting_links' );
 function htpm_plugins_setting_links( $links ) {
-    $settings_link = '<a href="'.admin_url('plugins.php?page=htpm-options').'">'.esc_html__( 'Settings', 'htpm' ).'</a>'; 
+    $settings_link = '<a href="'.admin_url('admin.php?page=htpm-options').'">'.esc_html__( 'Settings', 'htpm' ).'</a>'; 
     array_unshift( $links, $settings_link );
     if( !is_plugin_active('wp-plugin-manager-pro/plugin-main.php') ){
         $links['htpmgo_pro'] = sprintf('<a href="'.esc_url('https://hasthemes.com/plugins/wp-plugin-manager-pro/').'" target="_blank" style="color: #39b54a; font-weight: bold;">' . esc_html__('Go Pro','htpm') . '</a>');

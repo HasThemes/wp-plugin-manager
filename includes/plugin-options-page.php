@@ -5,7 +5,7 @@
 if ( ! function_exists('is_plugin_active') ){ include_once( ABSPATH . 'wp-admin/includes/plugin.php' ); }
 add_action( 'admin_menu', 'htpm_submenu' );
 function htpm_submenu() {
-	add_submenu_page( 'plugins.php', esc_html__('Plugin Manager', 'htpm'), esc_html__('Plugin Manager', 'htpm'), 'manage_options', 'htpm-options', 'htpm_options_page_html' );
+	add_menu_page( esc_html__('Plugin Manager', 'htpm'), esc_html__('Plugin Manager', 'htpm'), 'manage_options', 'htpm-options', 'htpm_options_page_html', 'dashicons-admin-plugins', 65 );
 }
 
 /**
@@ -27,10 +27,9 @@ function htpm_options_page_html() {
 	 ?>
 
 	 <div class="wrap">
-		 <h1><?php echo esc_html( get_admin_page_title() ); ?> <?php echo esc_html__( 'Options', 'htpm' ) ?></h1>
+		 <h1></h1>
 		<h2 class="nav-tab-wrapper">
-		 	<a href="#htpm-tab-1" class="htmp-nav nav-tab nav-tab-active"><?php esc_html_e('Plugin Manager Option', 'htpm')?></a>
-		 	<a href="#htmp-tab-2" class="htmp-nav nav-tab"><?php esc_html_e('Our Plugins', 'htpm')?></a>
+		 	<a href="#htpm-tab-1" class="htmp-nav nav-tab nav-tab-active"><?php esc_html_e('Plugin Manager Options', 'htpm')?></a>
 		</h2>
 		<div id="htpm-tab-1" class="htpm-tab-group htmp-active-tab" style="display: none;">
 			<form action="options.php" method="post">
@@ -45,104 +44,6 @@ function htpm_options_page_html() {
 					 submit_button( 'Save Settings' );
 				 ?>
 			</form>
-		</div>
-		<div id="htmp-tab-2" class="htpm-tab-group" style="display: none;">
-	        <div class="htmp-row">
-	        	<div class="htmp-column-2">
-	                <div class="htmp-singleplugin">
-	                	<div class="htmp-thumb">
-	                		<img src="<?php echo HTPM_ROOT_URL . '/assets/images/plugins-image/woolentor.png' ?>">
-	                	</div>
-	                	<div class="htmp-content">
-		                    <h3><?php esc_html_e( 'Woolentor Pro','htpm' );?></h3>
-		                    <p><?php esc_html_e( 'WooLentor is a most popular WooCommerce Elementor Addon on WordPress.org. Downloaded more than 100,000 times and 15,000 stores are using WooLentor plugin.', 'htpm' )?></p>
-		                    <div class="htmp-button-area">
-		                        <a class="button primary" href="https://hasthemes.com/plugins/woolentor-pro-woocommerce-page-builder/" target="_blank"><?php esc_html_e( 'More Details', 'htpm' )?></a>
-		                       
-		                        <?php htpm_plugin_install_button( 'woolentor-addons/woolentor_addons_elementor.php','woolentor-addons' ); ?>
-		                    </div>
-		                </div>
-	                </div>
-	            </div>
-	            <div class="htmp-column-2">
-	                <div class="htmp-singleplugin">
-	                	<div class="htmp-thumb">
-	                		<img src="<?php echo HTPM_ROOT_URL . '/assets/images/plugins-image/ht-mega.png' ?>">
-	                	</div>
-	                	<div class="htmp-content">
-		                    <h3><?php esc_html_e( 'HT Mega','htpm' );?></h3>
-		                    <p><?php esc_html_e( 'HTMega is a absolute addons for elementor includes 80+ elements & 360 Blocks with unlimited variations.', 'htpm' )?></p>
-		                    <div class="htmp-button-area">
-		                        <a class="button primary" href="https://hasthemes.com/plugins/ht-mega-pro/" target="_blank"><?php esc_html_e( 'More Details', 'htpm' )?></a>
-		                       
-		                        <?php htpm_plugin_install_button( 'ht-mega-for-elementor/htmega_addons_elementor.php','ht-mega-for-elementor' ); ?>
-		                    </div>
-		                </div>
-	                </div>
-	            </div>
-	            <div class="htmp-column-2">
-	                <div class="htmp-singleplugin">
-	                	<div class="htmp-thumb">
-	                		<img src="<?php echo HTPM_ROOT_URL . '/assets/images/plugins-image/multy-currency.png' ?>">
-	                	</div>
-	                	<div class="htmp-content">
-		                    <h3><?php esc_html_e( 'Multi Currency Pro for WooCommerce','htpm' );?></h3>
-		                    <p><?php esc_html_e( 'Multi-Currency Pro for WooCommerce is a prominent currency switcher plugin for WooCommerce.', 'htpm' )?></p>
-		                    <div class="htmp-button-area">
-		                        <a class="button primary" href="https://hasthemes.com/plugins/multi-currency-pro-for-woocommerce/" target="_blank"><?php esc_html_e( 'More Details', 'htpm' )?></a>
-		                        <?php htpm_plugin_install_button( 'wc-multi-currency/wcmilticurrency.php','wc-multi-currency' ); ?>
-		                    </div>
-	                    </div>
-	                </div>
-	            </div>
-	            <div class="htmp-column-2">
-	                <div class="htmp-singleplugin">
-	                	<div class="htmp-thumb">
-	                		<img src="<?php echo HTPM_ROOT_URL . '/assets/images/plugins-image/ht-script.png' ?>">
-	                	</div>
-
-	                	<div class="htmp-content">
-		                    <h3><?php esc_html_e( 'HT Script - Insert Headers and Footers Code','htpm' );?></h3>
-		                    <p><?php esc_html_e( 'Insert Headers and Footers Code allows you to insert Google Analytics, Facebook Pixel, custom CSS, custom HTML, JavaScript code to your website header and footer without modifying your theme code.', 'htpm' )?></p>
-		                    <div class="htmp-button-area">
-		                        <a class="button primary" href="https://hasthemes.com/plugins/insert-headers-and-footers-code-ht-script/" target="_blank"><?php esc_html_e( 'More Details', 'htpm' )?></a>
-		                        <?php htpm_plugin_install_button( 'insert-headers-and-footers-script/init.php','insert-headers-and-footers-script' ); ?>
-		                    </div>
-	                	</div>
-	                </div>
-	            </div>
-	            <div class="htmp-column-2">
-	                <div class="htmp-singleplugin">
-	                	<div class="htmp-thumb">
-	                		<img src="<?php echo HTPM_ROOT_URL . '/assets/images/plugins-image/hashbar.png' ?>">
-	                	</div>
-	                	<div class="htmp-content">
-		                    <h3><?php esc_html_e( 'HashBar Pro','htpm' );?></h3>
-		                    <p><?php esc_html_e( 'HashBar is a WordPress Notification / Alert / Offer Bar plugin which allows you to create unlimited notification bars.This plugin has option to show email subscription form, Offer text and buttons about your promotions', 'htpm' )?></p>
-		                    <div class="htmp-button-area">
-		                        <a class="button primary" href="https://hasthemes.com/wordpress-notification-bar-plugin/" target="_blank"><?php esc_html_e( 'More Details', 'htpm' )?></a>
-		                        <?php htpm_plugin_install_button( 'hashbar-wp-notification-bar/init.php','hashbar-wp-notification-bar' ); ?>
-		                    </div>
-		                </div>
-	                </div>
-	            </div>
-	            <div class="htmp-column-2">
-	                <div class="htmp-singleplugin">
-	                	<div class="htmp-thumb">
-	                		<img src="<?php echo HTPM_ROOT_URL . '/assets/images/plugins-image/wcbuilder.png' ?>">
-	                	</div>
-	                	<div class="htmp-content">
-		                    <h3><?php esc_html_e( 'WC Builder','htpm' );?></h3>
-		                    <p><?php esc_html_e( 'WC Builder Pro is a WooCommerce Page Builder which allows you to build Shop, Product Details, Cart, Checkout, My Account and Thank You page without even touching a single line of code!', 'htpm' )?></p>
-		                    <div class="htmp-button-area">
-		                        <a class="button primary" href="https://hasthemes.com/plugins/wc-builder-woocoomerce-page-builder-for-wpbakery/#pricing" target="_blank"><?php esc_html_e( 'More Details', 'htpm' )?></a>
-		                       
-		                        <?php htpm_plugin_install_button( 'wc-builder/wc-builder.php','wc-builder' ); ?>
-		                    </div>
-		                </div>
-	                </div>
-	            </div>
-	        </div>
 		</div>
 	 </div>
 

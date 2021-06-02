@@ -1,8 +1,8 @@
 === WP Plugin Manager - Deactivate plugins per page  ===
-Contributors: hasthemes, htplugins, devitemsllc
+Contributors: hasthemes, htplugins, devitemsllc, tarekht
 Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, performance
 Requires at least: 4.0
-Tested up to: 5.6
+Tested up to: 5.7
 Requires PHP: 5.4
 Stable tag: trunk
 License: GPLv2 or later
@@ -55,6 +55,9 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.0.7 Date: 02 Jun 2021 =
+* Moved the submenu to menu page
+* Added recommended plugins
 
 = Version: 1.0.5 Date: 06-01-2021 =
 * Capability With Latest WordPress Version
