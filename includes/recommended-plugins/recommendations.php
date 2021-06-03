@@ -10,7 +10,17 @@
  * @param string    $hook_suffix use it to load this library assets only to the recommedded plugins page. Not into the whol admin area.
  *
  */
-$recommendations = new HTRP_Recommended_Plugins( $text_domain = 'htpm', $parent_menu_slug = 'htpm-options', $submenu_label = '', $submenu_page_name = '', $priority = '', $hook_suffix = '' );
+$recommendations = HTRP_Recommended_Plugins::instance(
+    array( 
+        'text_domain'       => 'htpm', 
+        'parent_menu_slug'  => 'htpm-options', 
+        'menu_capability'   => 'manage_options', 
+        'menu_page_slug'    => 'htpm_recommendations',
+        'priority'          => '',
+        'assets_url'        => '',
+        'hook_suffix'       => ''
+    )
+);
 
 $recommendations->add_new_tab(array(
     'title' => esc_html__( 'Pro Version', 'htpm' ),

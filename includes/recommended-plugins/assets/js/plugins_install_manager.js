@@ -1,5 +1,5 @@
 /**
- * Recommended Plugins JS
+ * Plugins Install manager JS
  */
 ;( function ( $ ) {
     'use strict';
@@ -20,8 +20,8 @@
     var PluginInstallManager = {
 
         init: function(){
-            $( document ).on('click','.htrp-install-now', PluginInstallManager.installNow );
-            $( document ).on('click','.htrp-activate-now', PluginInstallManager.activatePlugin);
+            $( document ).on('click','.install-now', PluginInstallManager.installNow );
+            $( document ).on('click','.activate-now', PluginInstallManager.activatePlugin);
             $( document ).on('wp-plugin-install-success', PluginInstallManager.installingSuccess);
             $( document ).on('wp-plugin-install-error', PluginInstallManager.installingError);
             $( document ).on('wp-plugin-installing', PluginInstallManager.installingProcess);
@@ -62,7 +62,7 @@
             if ( wp.updates.shouldRequestFilesystemCredentials && ! wp.updates.ajaxLocked ) {
                 wp.updates.requestFilesystemCredentials( e );
                 $( document ).on( 'credential-modal-cancel', function() {
-                    var $message = $( '.htrp-install-now.updating-message' );
+                    var $message = $( '.install-now.updating-message' );
                     $message.removeClass( 'updating-message' ).text( wp.updates.l10n.installNow );
                     wp.a11y.speak( wp.updates.l10n.updateCancel, 'polite' );
                 });
@@ -81,7 +81,7 @@
 
             var $plugindata = $message.data('pluginopt');
 
-            $message.removeClass( 'htrp-install-now installed button-disabled updated-message' )
+            $message.removeClass( 'install-now installed button-disabled updated-message' )
                 .addClass( 'updating-message' )
                 .html( htrp_params.buttontxt.activating );
 
@@ -90,12 +90,12 @@
                     url: htrp_params.ajaxurl,
                     type: 'POST',
                     data: {
-                        action   : 'htrp_ajax_plugin_activation',
+                        action   : htrp_params.text_domain+'_ajax_plugin_activation',
                         location : $plugindata['location'],
                     },
                 } ).done( function( result ) {
                     if ( result.success ) {
-                        $message.removeClass( 'button-primary htrp-install-now htrp-activate-now updating-message' )
+                        $message.removeClass( 'button-primary install-now activate-now updating-message' )
                             .attr( 'disabled', 'disabled' )
                             .addClass( 'disabled' )
                             .text( htrp_params.buttontxt.active );
@@ -129,12 +129,12 @@
                 url: htrp_params.ajaxurl,
                 type: 'POST',
                 data: {
-                    action   : 'htrp_ajax_plugin_activation',
+                    action   : htrp_params.text_domain+'_ajax_plugin_activation',
                     location : $plugindata['location'],
                 },
             }).done( function( response ) {
                 if ( response.success ) {
-                    $button.removeClass( 'button-primary htrp-install-now htrp-activate-now updating-message' )
+                    $button.removeClass( 'button-primary install-now activate-now updating-message' )
                         .attr( 'disabled', 'disabled' )
                         .addClass( 'disabled' )
                         .text( htrp_params.buttontxt.active );

@@ -55,6 +55,9 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.0.8 Date: 03 Jun 2021 =
+* Fixed recommended plugins class
+
 = Version: 1.0.7 Date: 02 Jun 2021 =
 * Moved the submenu to menu page
 * Added recommended plugins
