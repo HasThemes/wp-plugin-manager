@@ -87,11 +87,17 @@ function htpm_settings_init() {
  */
 function htpm_list_plugins_cb( $args ) {
 	$options = get_option( 'htpm_options' );
-	$htpm_list_plugins = $options['htpm_list_plugins'];
+	$htpm_list_plugins = isset($options['htpm_list_plugins']) ? $options['htpm_list_plugins'] : array();
  ?>
 	<div id="htpm_accordion" class="htpm_accordion">
 		<?php
 		$active_plugins = get_option('active_plugins');
+		
+		// remove free plugin from the list
+		if (($key = array_search('wp-plugin-manager/plugin-main.php', $active_plugins)) !== false) {
+		    unset($active_plugins[$key]);
+		}
+
 		$plugin_dir = HTPM_PLUGIN_DIR;
 		if($active_plugins):
 			foreach($active_plugins as $plugin):
@@ -238,6 +244,8 @@ function htpm_list_plugins_cb( $args ) {
 			  </div>
 			<?php
 			endforeach;
+		else:
+			echo esc_html__('You don\'t have any active plugins!!', 'htpm');
 		endif;
 		?>
 	</div>
