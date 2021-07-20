@@ -55,6 +55,10 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.0.9 Date: 26 Jun 2021 =
+* Fixed Warning on plugin activation
+* Added message when no plugin is active
+
 = Version: 1.0.8 Date: 03 Jun 2021 =
 * Fixed recommended plugins class
 
