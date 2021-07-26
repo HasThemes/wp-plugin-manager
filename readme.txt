@@ -55,16 +55,20 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.1.0 Date: 26 Jul 2021 =
+* Added: Posts limit support
+* Fixed: Notice button CSS
+
 = Version: 1.0.9 Date: 26 Jun 2021 =
-* Fixed Warning on plugin activation
-* Added message when no plugin is active
+* Fixed: Warning on plugin activation
+* Added: message when no plugin is active
 
 = Version: 1.0.8 Date: 03 Jun 2021 =
-* Fixed recommended plugins class
+* Fixed: Recommended plugins class
 
 = Version: 1.0.7 Date: 02 Jun 2021 =
 * Moved the submenu to menu page
-* Added recommended plugins
+* Added: recommended plugins
 
 = Version: 1.0.5 Date: 06-01-2021 =
 * Capability With Latest WordPress Version
