@@ -68,6 +68,18 @@ function htpm_settings_init() {
 	);
 
 	add_settings_field(
+		'htpm_load_posts', // field name
+		esc_html__( 'Number Of Posts to Load', 'htpm' ),
+		'htpm_load_posts_cb',
+		'options_group_general',
+		'section_1',
+		[
+			'label_for' => 'htpm_load_posts',
+			'class' => 'htpm_row',
+		]
+	);
+
+	add_settings_field(
 		'htpm_list_plugins', // field name
 		esc_html__( 'Enable/Disable Plugins', 'htpm' ),
 		'htpm_list_plugins_cb',
@@ -78,16 +90,31 @@ function htpm_settings_init() {
 			'class' => 'htpm_row',
 		]
 	);
+}
 
+function htpm_load_posts_cb( $args ){
+	$options = get_option( 'htpm_options' );
+	if($options){
+		$htpm_load_posts = isset($options['htpm_load_posts']) ? $options['htpm_load_posts'] : '-1';	
+	} else {
+		$htpm_load_posts = '150';
+	}
 	
+	?>
+  	<div>
+	  	<input type="number" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>]" value="<?php echo esc_attr($htpm_load_posts); ?>" >
+	  	<div class="htpm_field_desc"><?php echo __('"-1" represnts unlimited. <br> Default: 150. Due to the performence reason we set the limit of 150 page, post or custom posts to load. Change the amount as your need if you have more than that amount of post, page or custom posts. <br> After changes, click on the "Save Settings" button to you get the options for each plugins below.', 'htpm') ?></div>
+  	</div>
+	<?php
 }
 
 /**
  * htpm_list_plugins_cb callback
  */
 function htpm_list_plugins_cb( $args ) {
-	$options = get_option( 'htpm_options' );
+	$options           = get_option( 'htpm_options' );
 	$htpm_list_plugins = isset($options['htpm_list_plugins']) ? $options['htpm_list_plugins'] : array();
+	$load_posts_limit  = isset($options['htpm_load_posts']) && $options['htpm_load_posts'] ? $options['htpm_load_posts'] : '150';
  ?>
 	<div id="htpm_accordion" class="htpm_accordion">
 		<?php
@@ -130,7 +157,10 @@ function htpm_list_plugins_cb( $args ) {
 					  	<select class="htpm_select2_active" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>][<?php echo esc_attr($plugin) ?>][pages][]" multiple="multiple">
 			  	  		  	<?php
 			  	  		  		$selected_pages = isset($idividual_options['pages']) && $idividual_options['pages'] ? $idividual_options['pages'] : array();
-			  	  		  		$pages = get_pages();
+			  	  		  		$$load_posts_limit_page = $load_posts_limit == '-1' ? 0 : $load_posts_limit;
+			  	  		  		$pages = get_pages( array(
+			  	  		  			'number' => $load_posts_limit_page
+			  	  		  		) );
 			  	  		  		foreach ( $pages as $key => $page ) {
 			  	  		  			$option_value = esc_attr($page->ID) .','. esc_url(get_page_link( $page->ID ));
 			  	  		  			$is_selected = in_array($option_value,  $selected_pages);
@@ -151,7 +181,7 @@ function htpm_list_plugins_cb( $args ) {
 	  		  	  		  	<?php
 	  		  	  		  		$selected_posts = isset($idividual_options['posts']) && $idividual_options['posts'] ? $idividual_options['posts'] : array();
 	  		  	  		  		$posts = get_posts(array(
-	  		  	  		  			'numberposts' => '-1'
+	  		  	  		  			'numberposts' => $load_posts_limit
 	  		  	  		  		));
 	  		  	  		  		foreach ( $posts as $key => $post ) {
 	  		  	  		  			$option_value = esc_attr($post->ID) .','. esc_url(get_permalink( $post->ID ));
@@ -254,7 +284,7 @@ function htpm_list_plugins_cb( $args ) {
 
 
 function htpm_admin_footer(){
-	$notice_text = '<p>This feature is available in the pro version. <a target="_blank" href="'.  esc_url('//hasthemes.com/plugins/wp-plugin-manager-pro/') .'">More details</a></p>';
+	$notice_text = '<p><span>This feature is available in the pro version.</span> <a target="_blank" href="'.  esc_url('//hasthemes.com/plugins/wp-plugin-manager-pro/') .'">More details</a></p>';
 	?>
 	<div id="htpm_pro_notice" style="display:none">
 		<?php echo wp_kses_post($notice_text); ?>

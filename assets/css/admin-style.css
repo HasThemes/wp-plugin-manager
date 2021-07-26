@@ -77,6 +77,17 @@
 [aria-describedby='htpm_pro_notice']{
 	text-align: center;
 }
+#htpm_pro_notice span{
+  font-size: 15px;
+  display: block;
+}
+#htpm_pro_notice a{
+  background: #000;
+  color: #fff;
+  padding: 5px 15px;
+  margin-top: 10px;
+  display: inline-block;
+}
 
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
@@ -160,4 +171,7 @@ a {
 a.nav-tab:focus{
   outline: none;
   box-shadow: none;
+}
+.htpm_field_desc {
+    margin-top: 5px;
 }
