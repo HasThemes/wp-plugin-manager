@@ -20,7 +20,7 @@ if( class_exists('Hasthemes\HTPM\HTRP_Recommended_Plugins') ){
             'menu_page_slug'    => 'htpm_recommendations',
             'priority'          => '',
             'assets_url'        => '',
-            'hook_suffix'       => '',
+            'hook_suffix'       => 'plugin-manager_page_htpm_recommendations',
         )
     );
 
@@ -42,7 +42,7 @@ if( class_exists('Hasthemes\HTPM\HTRP_Recommended_Plugins') ){
     ));
 
     $recommendations->add_new_tab(array(
-        'title' => esc_html__( 'Recommended Plugins', 'htpm' ),
+        'title' => esc_html__( 'Recommended Extensions', 'htpm' ),
         'plugins_type' => 'free',
         'plugins' => array(
             array(

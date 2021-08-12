@@ -157,7 +157,7 @@ function htpm_list_plugins_cb( $args ) {
 					  	<select class="htpm_select2_active" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>][<?php echo esc_attr($plugin) ?>][pages][]" multiple="multiple">
 			  	  		  	<?php
 			  	  		  		$selected_pages = isset($idividual_options['pages']) && $idividual_options['pages'] ? $idividual_options['pages'] : array();
-			  	  		  		$$load_posts_limit_page = $load_posts_limit == '-1' ? 0 : $load_posts_limit;
+			  	  		  		$load_posts_limit_page = $load_posts_limit == '-1' ? 0 : $load_posts_limit;
 			  	  		  		$pages = get_pages( array(
 			  	  		  			'number' => $load_posts_limit_page
 			  	  		  		) );
