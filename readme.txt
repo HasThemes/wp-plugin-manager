@@ -56,8 +56,7 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 = Version: 1.1.1 Date: 12 Aug 2021 =
-* Added: Posts limit support
-* Fixed: Notice button CSS
+* Fixed: Plugin does not activate issue
 
 = Version: 1.1.0 Date: 26 Jul 2021 =
 * Added: Posts limit support
