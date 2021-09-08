@@ -55,6 +55,9 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.1.2 Date: 08 Sep 2021 =
+* Updated: Translation Pot file
+
 = Version: 1.1.1 Date: 12 Aug 2021 =
 * Fixed: Plugin does not activate issue
 

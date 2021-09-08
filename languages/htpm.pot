@@ -1,9 +1,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Plugin Manager\n"
+"Project-Id-Version: WP Plugin Manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-30 18:12+0000\n"
+"POT-Creation-Date: 2021-09-08 04:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -13,112 +13,296 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.3.1; wp-5.2.5"
+"X-Loco-Version: 2.5.3; wp-5.8\n"
+"X-Domain: htpm"
 
-#: includes/plugin-options-page.php:156
+#: includes/plugin-options-page.php:106
+msgid ""
+"\"-1\" represnts unlimited. <br> Default: 150. Due to the performence reason "
+"we set the limit of 150 page, post or custom posts to load. Change the "
+"amount as your need if you have more than that amount of post, page or "
+"custom posts. <br> After changes, click on the \"Save Settings\" button to "
+"you get the options for each plugins below."
+msgstr ""
+
+#: includes/plugin-options-page.php:202
 msgid "Action"
 msgstr ""
 
-#: includes/plugin-options-page.php:221
+#: includes/helper_functions.php:26
+msgid "Activate"
+msgstr ""
+
+#: includes/helper_functions.php:37
+msgid "Activated"
+msgstr ""
+
+#: plugin-main.php:131
+msgid "Activating.."
+msgstr ""
+
+#: plugin-main.php:132
+msgid "Active"
+msgstr ""
+
+#: includes/plugin-options-page.php:270
 msgid "Add Another"
 msgstr ""
 
-#: includes/plugin-options-page.php:179 includes/plugin-options-page.php:201
+#: plugin-main.php:121
+msgid "All Items have been Loaded"
+msgstr ""
+
+#: plugin-main.php:128
+msgid "Buy Now"
+msgstr ""
+
+#: includes/plugin-options-page.php:225 includes/plugin-options-page.php:249
 msgid "Clone"
 msgstr ""
 
-#: includes/plugin-options-page.php:109
+#: includes/recommended-plugins/recommendations.php:56
+msgid "Contact form 7 Extensions"
+msgstr ""
+
+#: includes/plugin-options-page.php:150
 msgid "Custom"
 msgstr ""
 
-#. Description of the plugin
-msgid "Deactivate plugins per page"
-msgstr ""
-
-#: includes/plugin-options-page.php:175 includes/plugin-options-page.php:197
+#: includes/plugin-options-page.php:221 includes/plugin-options-page.php:245
 msgid "E.g: http://example.com/contact-us/ you can use 'contact-us'"
 msgstr ""
 
-#: includes/plugin-options-page.php:99
+#: includes/recommended-plugins/recommendations.php:111
+msgid ""
+"Email Candy is an outstanding WordPress plugin that allows you to customize "
+"the default WooCommerce email templates and give a professional look to your "
+"WooCommerce emails. If you are tired of using the boring design of "
+"WooCommerce emails and want to create customized emails, then this plugin "
+"will come in handy."
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:108
+msgid "Email Candy Pro - Email customizer for WooCommerce"
+msgstr ""
+
+#: includes/plugin-options-page.php:139
 msgid "Enable Deactivation:"
 msgstr ""
 
 #. field name
-#: includes/plugin-options-page.php:66
+#: includes/plugin-options-page.php:84
 msgid "Enable/Disable Plugins"
+msgstr ""
+
+#: plugin-main.php:149
+msgid "Go Pro"
 msgstr ""
 
 #. Author of the plugin
 msgid "HasThemes"
 msgstr ""
 
-#. URI of the plugin
 #. Author URI of the plugin
 msgid "https://hasthemes.com/"
 msgstr ""
 
-#: includes/plugin-options-page.php:29
-msgid "Options"
+#. URI of the plugin
+msgid "https://hasthemes.com/plugins/"
 msgstr ""
 
-#: includes/plugin-options-page.php:106
+#: plugin-main.php:127
+msgid "Import"
+msgstr ""
+
+#: plugin-main.php:125
+msgid "Import to Library"
+msgstr ""
+
+#: plugin-main.php:126
+msgid "Import to Page"
+msgstr ""
+
+#: plugin-main.php:120
+msgid "in this package"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:66
+msgid "Insert Headers and Footers Code"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:61
+msgid "Instagram Feed for WordPress"
+msgstr ""
+
+#: includes/helper_functions.php:31
+msgid "Install Now"
+msgstr ""
+
+#: plugin-main.php:130
+msgid "Installing.."
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:81
+msgid ""
+"JustTables is an incredible WordPress plugin that lets you showcase all your "
+"WooCommerce products in a sortable and filterable table view. It allows your "
+"customers to easily navigate through different attributes of the products "
+"and compare them on a single page. This plugin will be of great help if you "
+"are looking for an easy solution that increases the chances of landing a "
+"sale on your online store."
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:78
+msgid "JustTables Pro"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:98
+msgid "Multi Currency Pro for WooCommerce"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:101
+msgid ""
+"Multi-Currency Pro for WooCommerce is a prominent currency switcher plugin "
+"for WooCommerce. This plugin allows your website or online store visitors to "
+"switch to their preferred currency or their country’s currency."
+msgstr ""
+
+#: plugin-main.php:122
+msgid "Nothing Found"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:51
+msgid "Notification Bar for WordPress"
+msgstr ""
+
+#. field name
+#: includes/plugin-options-page.php:72
+msgid "Number Of Posts to Load"
+msgstr ""
+
+#: includes/plugin-options-page.php:146
 msgid "Page"
 msgstr ""
 
-#. Name of the plugin
-#: includes/plugin-options-page.php:7
+#: includes/plugin-options-page.php:8
 msgid "Plugin Manager"
 msgstr ""
 
-#: includes/plugin-options-page.php:107
+#: includes/plugin-options-page.php:32
+msgid "Plugin Manager Options"
+msgstr ""
+
+#: plugin-main.php:167
+msgid "Plugin Not Found"
+msgstr ""
+
+#: plugin-main.php:187
+msgid "Plugin Successfully Activated"
+msgstr ""
+
+#: includes/plugin-options-page.php:147
 msgid "Post"
 msgstr ""
 
-#: includes/plugin-options-page.php:108
+#: includes/plugin-options-page.php:149
+msgid "Post , Pages & Custom Post Type "
+msgstr ""
+
+#: includes/plugin-options-page.php:148
 msgid "Post And Pages"
 msgstr ""
 
-#: includes/plugin-options-page.php:178 includes/plugin-options-page.php:200
-#: includes/plugin-options-page.php:220
+#: plugin-main.php:129
+msgid "Preview"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:28
+msgid "Pro Version"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:45
+msgid "Recommended Extensions"
+msgstr ""
+
+#: includes/plugin-options-page.php:224 includes/plugin-options-page.php:248
+#: includes/plugin-options-page.php:269
 msgid "Remove"
 msgstr ""
 
-#: includes/plugin-options-page.php:114
-msgid "Select Pages:"
-msgstr ""
-
-#: includes/plugin-options-page.php:133
-msgid "Select Posts:"
-msgstr ""
-
-#: includes/plugin-options-page.php:21
-msgid "Settings Saved"
-msgstr ""
-
-#: includes/plugin-options-page.php:154
-msgid "URI Condition"
-msgstr ""
-
-#: includes/plugin-options-page.php:170 includes/plugin-options-page.php:192
-msgid "URI Contains"
-msgstr ""
-
-#: includes/plugin-options-page.php:168 includes/plugin-options-page.php:190
-msgid "URI Equals"
-msgstr ""
-
-#: includes/plugin-options-page.php:171 includes/plugin-options-page.php:193
-msgid "URI Not Contains"
-msgstr ""
-
-#: includes/plugin-options-page.php:169 includes/plugin-options-page.php:191
-msgid "URI Not Equals"
-msgstr ""
-
-#: includes/plugin-options-page.php:104
-msgid "URI Type:"
+#: includes/helper_functions.php:119
+msgid "Select"
 msgstr ""
 
 #: includes/plugin-options-page.php:155
+msgid "Select Pages:"
+msgstr ""
+
+#: includes/plugin-options-page.php:178
+msgid "Select Posts:"
+msgstr ""
+
+#: plugin-main.php:146
+msgid "Settings"
+msgstr ""
+
+#: includes/plugin-options-page.php:22
+msgid "Settings Saved"
+msgstr ""
+
+#: includes/plugin-options-page.php:200
+msgid "URI Condition"
+msgstr ""
+
+#: includes/plugin-options-page.php:216 includes/plugin-options-page.php:240
+msgid "URI Contains"
+msgstr ""
+
+#: includes/plugin-options-page.php:214 includes/plugin-options-page.php:238
+msgid "URI Equals"
+msgstr ""
+
+#: includes/plugin-options-page.php:217 includes/plugin-options-page.php:241
+msgid "URI Not Contains"
+msgstr ""
+
+#: includes/plugin-options-page.php:215 includes/plugin-options-page.php:239
+msgid "URI Not Equals"
+msgstr ""
+
+#: includes/plugin-options-page.php:144
+msgid "URI Type:"
+msgstr ""
+
+#: includes/plugin-options-page.php:201
 msgid "Value"
+msgstr ""
+
+#. Name of the plugin
+msgid "WP Plugin Manager"
+msgstr ""
+
+#. Description of the plugin
+msgid ""
+"WP Plugin Manager is a WordPress plugin that allows you to disable plugins "
+"for certain pages, posts or URI conditions."
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:35
+msgid "WP Plugin Manager Pro"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:38
+msgid ""
+"WP Plugin Manager Pro is a specialized WordPress Plugin that helps you to "
+"deactivate unnecessary WordPress Plugins page wise and boosts the speed of "
+"your WordPress site to improve the overall site performance."
+msgstr ""
+
+#: includes/plugin-options-page.php:278
+msgid "You don't have any active plugins!!"
+msgstr ""
+
+#: includes/recommended-plugins/recommendations.php:72
+msgid "You May Also Like"
 msgstr ""
