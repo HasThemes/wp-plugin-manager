@@ -3,7 +3,7 @@
 Plugin Name: WP Plugin Manager
 Plugin URI: https://hasthemes.com/plugins/
 Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-Version: 1.1.2
+Version: 1.1.3
 Author: HasThemes
 Author URI: https://hasthemes.com/
 Text Domain: htpm
@@ -14,6 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
+define( 'HTPM_PLUGIN_VERSION', '1.1.3' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );
@@ -97,17 +98,17 @@ function htpm_deactivate_pro_version(){
 function htpm_admin_scripts( $hook_suffix ) {
 	if( $hook_suffix ==  'toplevel_page_htpm-options' ){
 		wp_enqueue_style( 'wp-jquery-ui-dialog' );
-		wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css' );
-		wp_enqueue_style( 'htpm-admin', HTPM_ROOT_URL . '/assets/css/admin-style.css' );
-        wp_enqueue_style( 'jquery-ui', HTPM_ROOT_URL . '/assets/css/jquery-ui.css' );
-		wp_enqueue_style( 'admin-options', HTPM_ROOT_URL . '/assets/css/admin-options.css' );
+		wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css', null, HTPM_PLUGIN_VERSION );
+		wp_enqueue_style( 'htpm-admin', HTPM_ROOT_URL . '/assets/css/admin-style.css', null, HTPM_PLUGIN_VERSION );
+        wp_enqueue_style( 'jquery-ui', HTPM_ROOT_URL . '/assets/css/jquery-ui.css', null, HTPM_PLUGIN_VERSION );
+		wp_enqueue_style( 'admin-options', HTPM_ROOT_URL . '/assets/css/admin-options.css', null, HTPM_PLUGIN_VERSION );
 
 		// wp core scripts
 		wp_enqueue_script( 'jquery-ui-dialog' );
 		wp_enqueue_script( 'jquery-ui-accordion');
-		wp_enqueue_script( 'select2', HTPM_ROOT_URL . '/assets/js/select2.min.js', array('jquery'), '', true );
-        wp_enqueue_script( 'htpm-admin', HTPM_ROOT_URL . '/assets/js/admin.js', array('jquery'), '', true );
-		wp_enqueue_script( 'install-manager', HTPM_ROOT_URL . '/assets/js/install_manager.js', array('jquery', 'wp-util', 'updates'), '', true );
+		wp_enqueue_script( 'select2', HTPM_ROOT_URL . '/assets/js/select2.min.js', array('jquery'), HTPM_PLUGIN_VERSION, true );
+        wp_enqueue_script( 'htpm-admin', HTPM_ROOT_URL . '/assets/js/admin.js', array('jquery'), HTPM_PLUGIN_VERSION, true );
+		wp_enqueue_script( 'install-manager', HTPM_ROOT_URL . '/assets/js/install_manager.js', array('jquery', 'wp-util', 'updates'), HTPM_PLUGIN_VERSION, true );
 
         if( is_admin() ){
 

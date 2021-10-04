@@ -55,6 +55,9 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.1.3 Date: 04 Oct 2021 =
+* Improved: Enqueueing JS/CSS file by adding version number considering caching problem
+
 = Version: 1.1.2 Date: 08 Sep 2021 =
 * Updated: Translation Pot file
 
