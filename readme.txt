@@ -4,7 +4,7 @@ Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, perf
 Requires at least: 4.0
 Tested up to: 5.8
 Requires PHP: 5.4
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -55,6 +55,9 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.1.4 Date: 04 Oct 2021 =
+* Improved: improved mu file function
+
 = Version: 1.1.3 Date: 04 Oct 2021 =
 * Improved: Enqueueing JS/CSS file by adding version number considering caching problem
 
