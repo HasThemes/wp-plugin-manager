@@ -4,7 +4,7 @@ Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, perf
 Requires at least: 4.0
 Tested up to: 5.8
 Requires PHP: 5.4
-Stable tag: trunk
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

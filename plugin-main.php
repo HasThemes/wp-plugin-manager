@@ -199,9 +199,7 @@ function ajax_plugin_activation() {
 function htpm_create_mu_file(){
     // create mu file
     $mu_plugin_file_source_path = HTPM_ROOT_DIR . '/mu-plugin/htpm-mu-plugin.php';
-    $mu_plugins = get_mu_plugins();
 
-    $mu_plugin_file = 'htpm-mu-plugin.php';
     if ( defined( 'WPMU_PLUGIN_DIR' ) ) {
         $mu_plugins_path = WPMU_PLUGIN_DIR;
     } else {
@@ -210,18 +208,16 @@ function htpm_create_mu_file(){
 
     $mu_plugin_file_path = $mu_plugins_path . '/htpm-mu-plugin.php';
 
-    // add mu file 
-    if ( file_exists( $mu_plugins_path ) && !array_key_exists( $mu_plugin_file, $mu_plugins ) ){
-        copy( $mu_plugin_file_source_path, $mu_plugin_file_path );
-    } else {
-        // create mu-plugins folder
-        if ( !file_exists($mu_plugins_path) ) {
-            $create_mu_folder = mkdir( $mu_plugins_path, 0755, true );
-            if( $create_mu_folder ){
-                copy( $mu_plugin_file_source_path, $mu_plugin_file_path );
-            }
-        }
+    $plugin_data = get_file_data( HTPM_ROOT_PL, array('Version'=>'Version'), 'plugin' );
+    $vesion      = $plugin_data['Version'];
 
+    if(!is_dir( $mu_plugins_path )){
+       mkdir( $mu_plugins_path, 0755, true );
+       copy( $mu_plugin_file_source_path, $mu_plugin_file_path );
+    }else{
+        if(!file_exists($mu_plugin_file_path) || version_compare($vesion, '1.0.8', '>') ){
+            copy( $mu_plugin_file_source_path, $mu_plugin_file_path );
+        }
     }
 
 }
