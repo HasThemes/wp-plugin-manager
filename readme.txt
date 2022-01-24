@@ -2,7 +2,7 @@
 Contributors: hasthemes, htplugins, devitemsllc, tarekht
 Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, performance
 Requires at least: 4.0
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 5.4
 Stable tag: 1.1.4
 License: GPLv2 or later
@@ -55,7 +55,7 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
-= Version: 1.1.4 Date: 23 Dec 2021 =
+= Version: 1.1.4 Date: 24 Jan 2021 =
 * Improved: improved mu file function
 
 = Version: 1.1.3 Date: 04 Oct 2021 =
