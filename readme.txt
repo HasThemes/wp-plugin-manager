@@ -55,7 +55,11 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
-= Version: 1.1.4 Date: 24 Jan 2021 =
+
+= Version: 1.1.5 Date: 03 March 2022 =
+* Improved: Highlight the "Save Settings" word into Number of post load description  
+
+= Version: 1.1.4 Date: 23 Dec 2021 =
 * Improved: improved mu file function
 
 = Version: 1.1.3 Date: 04 Oct 2021 =
