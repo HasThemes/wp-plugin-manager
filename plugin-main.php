@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
-define( 'HTPM_PLUGIN_VERSION', '1.1.4' );
+define( 'HTPM_PLUGIN_VERSION', '1.1.5' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );

@@ -103,7 +103,7 @@ function htpm_load_posts_cb( $args ){
 	?>
   	<div>
 	  	<input type="number" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>]" value="<?php echo esc_attr($htpm_load_posts); ?>" >
-	  	<div class="htpm_field_desc"><?php echo __('"-1" represnts unlimited. <br> Default: 150. Due to the performence reason we set the limit of 150 page, post or custom posts to load. Change the amount as your need if you have more than that amount of post, page or custom posts. <br> After changes, click on the <b>"Save Settings"</b> button to you get the options for each plugins below.', 'htpm') ?></div>
+	  	<div class="htpm_field_desc"><?php echo __('"-1" represnts unlimited. <br> Default: 150. Due to the performence reason we set the limit of 150 page, post or custom posts to load. Change the amount as your need if you have more than that amount of post or pages. <br> After changes, click on the <b>"Save Settings"</b> button to you get the options for each plugins below.', 'htpm') ?></div>
   	</div>
 	<?php
 }

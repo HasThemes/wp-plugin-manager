@@ -56,11 +56,11 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 
-= Version: 1.1.5 Date: 03 March 2022 =
-* Improved: Highlight the "Save Settings" word into Number of post load description  
+= Version: 1.1.5 Date: 07 March 2022 =
+* Improved: Typo and button
 
 = Version: 1.1.4 Date: 23 Dec 2021 =
-* Improved: improved mu file function
+* Improved: MU file function
 
 = Version: 1.1.3 Date: 04 Oct 2021 =
 * Improved: Enqueueing JS/CSS file by adding version number considering caching problem
