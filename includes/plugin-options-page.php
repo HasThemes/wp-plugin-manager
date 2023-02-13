@@ -231,7 +231,6 @@ function htpm_list_plugins_cb( $args ) {
 	            	if($condition_list):
 	            	for($i = 0; $i < count($condition_list['name']); $i++ ):
 	            		if($condition_list['name'][$i]):
-	            		$value = !empty($condition_list['value'][$i]) ? $condition_list['value'][$i] : '';
 	            	?>
 	            	<tr>
 	                    <td>
@@ -243,7 +242,7 @@ function htpm_list_plugins_cb( $args ) {
 	                    	</select>
 	                    </td>
 	                    <td>
-	                        <input class="widefat" type="text" placeholder="<?php echo esc_html__('E.g: http://example.com/contact-us/ you can use \'contact-us\'', 'htpm'); ?>'" name="htpm_options[htpm_list_plugins][<?php echo esc_attr($plugin) ?>][condition_list][value][]" value="<?php echo esc_attr($value); ?>">
+	                        <input class="widefat" type="text" placeholder="<?php echo esc_html__('E.g: http://example.com/contact-us/ you can use \'contact-us\'', 'htpm'); ?>'" name="htpm_options[htpm_list_plugins][<?php echo esc_attr($plugin) ?>][condition_list][value][]" value="<?php echo esc_attr($condition_list['value'][$i]); ?>">
 	                    </td>
 	                    <td>
 	                        <a class="button htpm-remove-row" href="#"><?php echo esc_html__('Remove', 'htpm') ?></a>

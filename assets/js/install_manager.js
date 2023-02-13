@@ -79,6 +79,7 @@
                     data: {
                         action   : 'htpm_ajax_plugin_activation',
                         location : $plugindata['location'],
+                        nonce    : HTPMM.nonce
                     },
                 } ).done( function( result ) {
                     if ( result.success ) {
@@ -118,6 +119,7 @@
                 data: {
                     action   : 'htpm_ajax_plugin_activation',
                     location : $plugindata['location'],
+                    nonce    : HTPMM.nonce
                 },
             }).done( function( response ) {
                 if ( response.success ) {

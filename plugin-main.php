@@ -1,12 +1,12 @@
 <?php
 /**
-Plugin Name: WP Plugin Manager
-Plugin URI: https://hasthemes.com/plugins/
-Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-Version: 1.1.5
-Author: HasThemes
-Author URI: https://hasthemes.com/
-Text Domain: htpm
+* Plugin Name: WP Plugin Manager
+* Plugin URI: https://hasthemes.com/plugins/
+* Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
+* Version: 1.1.8
+* Author: HasThemes
+* Author URI: https://hasthemes.com/
+* Text Domain: htpm
 */
 
 defined( 'ABSPATH' ) or die();
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
-define( 'HTPM_PLUGIN_VERSION', '1.1.5' );
+define( 'HTPM_PLUGIN_VERSION', '1.1.8' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );
@@ -117,6 +117,7 @@ function htpm_admin_scripts( $hook_suffix ) {
                 'ajaxurl'          => admin_url( 'admin-ajax.php' ),
                 'adminURL'         => admin_url(),
                 'pluginURL'        => plugin_dir_url( __FILE__ ),
+                'nonce'            => wp_create_nonce('htpm_nonce'),
                 'message'          =>[
                     'packagedesc'=> esc_html__( 'in this package', 'htpm' ),
                     'allload'    => esc_html__( 'All Items have been Loaded', 'htpm' ),
@@ -161,33 +162,37 @@ add_action( 'wp_ajax_htpm_ajax_plugin_activation', 'ajax_plugin_activation');
 
 function ajax_plugin_activation() {
 
-    if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! $_POST['location'] ) {
-        wp_send_json_error(
+    $nonce = sanitize_text_field($_POST['nonce']);
+
+    if(wp_verify_nonce($nonce, 'htpm_nonce')) {
+        if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! sanitize_text_field( $_POST['location'] ) ) {
+            wp_send_json_error(
+                array(
+                    'success' => false,
+                    'message' => esc_html__( 'Plugin Not Found', 'htpm' ),
+                )
+            );
+        }
+
+        $plugin_location = ( isset( $_POST['location'] ) ) ? sanitize_text_field( $_POST['location'] ) : '';
+        $activate    = activate_plugin( $plugin_location, '', false, true );
+
+        if ( is_wp_error( $activate ) ) {
+            wp_send_json_error(
+                array(
+                    'success' => false,
+                    'message' => $activate->get_error_message(),
+                )
+            );
+        }
+
+        wp_send_json_success(
             array(
-                'success' => false,
-                'message' => esc_html__( 'Plugin Not Found', 'htpm' ),
+                'success' => true,
+                'message' => esc_html__( 'Plugin Successfully Activated', 'htpm' ),
             )
         );
     }
-
-    $plugin_location = ( isset( $_POST['location'] ) ) ? esc_attr( $_POST['location'] ) : '';
-    $activate    = activate_plugin( $plugin_location, '', false, true );
-
-    if ( is_wp_error( $activate ) ) {
-        wp_send_json_error(
-            array(
-                'success' => false,
-                'message' => $activate->get_error_message(),
-            )
-        );
-    }
-
-    wp_send_json_success(
-        array(
-            'success' => true,
-            'message' => esc_html__( 'Plugin Successfully Activated', 'htpm' ),
-        )
-    );
 
 }
 

@@ -92,6 +92,7 @@
                     data: {
                         action   : htrp_params.text_domain+'_ajax_plugin_activation',
                         location : $plugindata['location'],
+                        nonce    : htrp_params.nonce
                     },
                 } ).done( function( result ) {
                     if ( result.success ) {
@@ -131,6 +132,7 @@
                 data: {
                     action   : htrp_params.text_domain+'_ajax_plugin_activation',
                     location : $plugindata['location'],
+                    nonce    : htrp_params.nonce
                 },
             }).done( function( response ) {
                 if ( response.success ) {

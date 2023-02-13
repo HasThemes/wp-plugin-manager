@@ -117,6 +117,7 @@ class HTRP_Recommended_Plugins {
         }
 
         $localize_vars['ajaxurl'] = admin_url('admin-ajax.php');
+        $localize_vars['nonce'] = wp_create_nonce('htrp_recommended_nonce');
         $localize_vars['text_domain'] = sanitize_title_with_dashes( $this->text_domain );
         $localize_vars['buttontxt'] = array(
             'buynow'     => esc_html__( 'Buy Now', $this->text_domain ),
@@ -386,33 +387,38 @@ class HTRP_Recommended_Plugins {
      */
     public function plugin_activation() {
 
-        if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! $_POST['location'] ) {
-            wp_send_json_error(
+        $nonce = sanitize_text_field($_POST['nonce']);
+
+        if(wp_verify_nonce($nonce, 'htrp_recommended_nonce')) {
+
+            if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! sanitize_text_field( $_POST['location'] ) ) {
+                wp_send_json_error(
+                    array(
+                        'success' => false,
+                        'message' => esc_html__( 'Plugin Not Found', $this->text_domain ),
+                    )
+                );
+            }
+
+            $plugin_location = ( isset( $_POST['location'] ) ) ? sanitize_text_field( $_POST['location'] ) : '';
+            $activate    = activate_plugin( $plugin_location, '', false, true );
+
+            if ( is_wp_error( $activate ) ) {
+                wp_send_json_error(
+                    array(
+                        'success' => false,
+                        'message' => $activate->get_error_message(),
+                    )
+                );
+            }
+
+            wp_send_json_success(
                 array(
-                    'success' => false,
-                    'message' => esc_html__( 'Plugin Not Found', $this->text_domain ),
+                    'success' => true,
+                    'message' => esc_html__( 'Plugin Successfully Activated', $this->text_domain ),
                 )
-            );
+            );  
         }
-
-        $plugin_location = ( isset( $_POST['location'] ) ) ? esc_attr( $_POST['location'] ) : '';
-        $activate    = activate_plugin( $plugin_location, '', false, true );
-
-        if ( is_wp_error( $activate ) ) {
-            wp_send_json_error(
-                array(
-                    'success' => false,
-                    'message' => $activate->get_error_message(),
-                )
-            );
-        }
-
-        wp_send_json_success(
-            array(
-                'success' => true,
-                'message' => esc_html__( 'Plugin Successfully Activated', $this->text_domain ),
-            )
-        );
 
     }
 }
