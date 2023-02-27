@@ -118,6 +118,7 @@ class HTRP_Recommended_Plugins {
 
         $localize_vars['ajaxurl'] = admin_url('admin-ajax.php');
         $localize_vars['text_domain'] = sanitize_title_with_dashes( $this->text_domain );
+        $localize_vars['nonce'] = wp_create_nonce('htrp_nonce');
         $localize_vars['buttontxt'] = array(
             'buynow'     => esc_html__( 'Buy Now', $this->text_domain ),
             'preview'    => esc_html__( 'Preview', $this->text_domain ),
@@ -385,6 +386,8 @@ class HTRP_Recommended_Plugins {
      * @return [JSON]
      */
     public function plugin_activation() {
+
+        check_ajax_referer('htrp_nonce', 'nonce');
 
         if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! $_POST['location'] ) {
             wp_send_json_error(
