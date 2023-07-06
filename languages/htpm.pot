@@ -18,9 +18,9 @@ msgstr ""
 
 #: includes/plugin-options-page.php:106
 msgid ""
-"\"-1\" represnts unlimited. <br> Default: 150. Due to the performence reason "
-"we set the limit of 150 page, post or custom posts to load. Change the "
-"amount as your need if you have more than that amount of post, page or "
+"\"-1\" represents unlimited. <br> Default: 150. Due to the performance reason "
+"we set the limit of 150 pages, posts or custom posts to load. Change the "
+"amount as your need if you have more than that amount of posts, pages or "
 "custom posts. <br> After changes, click on the \"Save Settings\" button to "
 "you get the options for each plugins below."
 msgstr ""
