@@ -4,7 +4,7 @@ Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, perf
 Requires at least: 5.0
 Tested up to: 6.2
 Requires PHP: 5.4
-Stable tag: 1.1.8
+Stable tag: 1.1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,9 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.1.9 Date: 06 July 2023 =
+* Updated: Translation Pot file
+
 = Version: 1.1.8 Date: 27 Feb 2023 =
 * Fixed: Nonce issue while activating plugin
 
