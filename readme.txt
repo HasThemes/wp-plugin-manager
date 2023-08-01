@@ -2,7 +2,7 @@
 Contributors: hasthemes, htplugins, devitemsllc, tarekht, zenaulislam, aslamhasib, alberuni-azad
 Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, performance
 Requires at least: 5.0
-Tested up to: 6.2
+Tested up to: 6.3
 Requires PHP: 5.4
 Stable tag: 1.1.9
 License: GPLv2 or later
