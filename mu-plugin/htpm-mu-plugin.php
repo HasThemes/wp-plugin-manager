@@ -1,4 +1,7 @@
 <?php
+/**
+Version: 1.0.6
+*/
 
 if(get_option('htpm_status') != 'active'){
 	return;
@@ -16,6 +19,19 @@ if( !is_admin() && false === $htpm_is_admin ){
 	add_filter( 'option_active_plugins', 'htpm_filter_plugins' );
 }
 
+/**
+ * Check if the current request is an AJAX request.
+ * 
+ * @return bool
+ */
+function htpmpro_doing_ajax(){
+    if( isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ){
+        return true;
+    }
+
+    return false;
+}
+
 function htpm_filter_plugins( $plugins ){
 	global $htpm_request_uri;
 	$htpm_options = get_option( 'htpm_options' );
@@ -23,6 +39,11 @@ function htpm_filter_plugins( $plugins ){
 
 	// first plugin use, htpm_options has no data fix
 	if( !$htpm_options ){
+		return $plugins;
+	}
+
+	// Don't disable any while on ajax request
+	if( htpmpro_doing_ajax() ){
 		return $plugins;
 	}
 	
