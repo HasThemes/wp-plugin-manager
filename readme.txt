@@ -87,7 +87,7 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 = Version: 1.2.0 Date: 26 Oct 2023 =
-* Updated: Translation Pot file
+* Fixed: Ajax Request issue
 
 = Version: 1.1.9 Date: 06 July 2023 =
 * Updated: Translation Pot file
