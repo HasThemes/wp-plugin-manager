@@ -1,9 +1,14 @@
 <?php
 /**
-Version: 1.0.6
+Version: 1.0.7
 */
 
 if(get_option('htpm_status') != 'active'){
+	return;
+}
+
+// If the request is from cron job
+if( !isset($_SERVER['HTTP_HOST']) ){
 	return;
 }
 
@@ -54,7 +59,10 @@ function htpm_filter_plugins( $plugins ){
 	$main_domain = str_replace(array('http://','https://'), '', $main_domain);
 
 	// current page url
-	$current_page_url = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+	$server_host = !empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+	$req_uri = !empty($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+
+	$current_page_url = $server_host . $req_uri;
 	$current_page_url = trim( $current_page_url, "/" );
 	$current_page_slug = trim(str_replace($main_domain, '', $current_page_url), '/');
 

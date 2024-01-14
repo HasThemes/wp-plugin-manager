@@ -4,7 +4,7 @@ Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, perf
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 5.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,9 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.2.1 Date: 14 Jan 2024 =
+* Fixed: Undefined index HTTP_HOST issue when run on chrone job
+
 = Version: 1.2.0 Date: 26 Oct 2023 =
 * Fixed: Ajax Request issue
 
