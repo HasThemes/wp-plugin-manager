@@ -87,7 +87,7 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 = Version: 1.2.1 Date: 14 Jan 2024 =
-* Fixed: Undefined index HTTP_HOST issue when run on chrone job
+* Fixed: Undefined index HTTP_HOST issue when run on cron job
 
 = Version: 1.2.0 Date: 26 Oct 2023 =
 * Fixed: Ajax Request issue
