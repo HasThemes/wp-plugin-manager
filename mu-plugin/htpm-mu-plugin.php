@@ -1,6 +1,6 @@
 <?php
 /**
-Version: 1.0.7
+Version: 1.2.2
 */
 
 if(get_option('htpm_status') != 'active'){
