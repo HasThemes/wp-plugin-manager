@@ -4,7 +4,7 @@ Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, perf
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 5.4
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,11 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+= Version: 1.2.2 Date: 15 Feb 2024 =
+* Updated: Language translation file.
+* Fixed: Undefined array key "condition_type" & "device_type" in mu plugin file.
+* Tweak: A few enhancements on the settings page.
+
 = Version: 1.2.1 Date: 14 Jan 2024 =
 * Fixed: Undefined index HTTP_HOST issue when run on cron job
 
