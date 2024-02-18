@@ -86,7 +86,7 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
-= Version: 1.2.2 Date: 15 Feb 2024 =
+= Version: 1.2.2 Date: 18 Feb 2024 =
 * Updated: Language translation file.
 * Fixed: Undefined array key "condition_type" & "device_type" in mu plugin file.
 * Tweak: A few enhancements on the settings page.
