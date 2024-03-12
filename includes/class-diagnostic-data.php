@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class.
  */
-if( ! class_exists( 'Diagnostic_Data' ) ) {
-    class Diagnostic_Data {
+if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
+    class HTPM_Diagnostic_Data {
 
         /**
          * Project name.
@@ -79,18 +79,18 @@ if( ! class_exists( 'Diagnostic_Data' ) ) {
          * Constructor.
          */
         private function __construct() {
-            $this->project_name = 'JustTables';
+            $this->project_name = 'WP Plugin Manager';
             $this->project_type = 'wordpress-plugin';
-            $this->project_version = JUST_TABLES_VERSION;
+            $this->project_version = HTPM_PLUGIN_VERSION;
             $this->data_center = 'https://connect.pabbly.com/workflow/sendwebhookdata/IjU3NjAwNTY1MDYzZTA0MzM1MjY1NTUzNyI_3D_pc';
             $this->privacy_policy = 'https://hasthemes.com/privacy-policy/';
 
-            $this->project_pro_slug = 'just-tables-pro/just-tables-pro.php';
+            $this->project_pro_slug = 'wp-plugin-manager-pro/plugin-main.php';
             $this->project_pro_active = $this->is_pro_plugin_active();
             $this->project_pro_installed = $this->is_pro_plugin_installed();
             $this->project_pro_version = $this->get_pro_version();
 
-            if( get_option('justtables_diagnostic_data_agreed') === 'yes' || get_option('justtables_diagnostic_data_notice') === 'no' ){
+            if( get_option('htpm_diagnostic_data_agreed') === 'yes' || get_option('htpm_diagnostic_data_notice') === 'no' ){
                 return;
             }
 
@@ -99,14 +99,14 @@ if( ! class_exists( 'Diagnostic_Data' ) ) {
             }, 0 );
 
             add_action('plugins_loaded', function(){
-                $agreed  = ( isset( $_GET['justtables_diagnostic_data_agreed'] ) ? sanitize_key( $_GET['justtables_diagnostic_data_agreed'] ) : '' );
+                $agreed  = ( isset( $_GET['htpm_diagnostic_data_agreed'] ) ? sanitize_key( $_GET['htpm_diagnostic_data_agreed'] ) : '' );
 
                 if( $agreed === 'yes' ){
                     $this->process_data( $agreed );
                 } elseif( $agreed === 'no' ) {
                     $this->process_data( $agreed );
                 }
-            });
+            }, 11);
         }
 
         /**
@@ -126,7 +126,7 @@ if( ! class_exists( 'Diagnostic_Data' ) ) {
          * Is show core notice.
          */
         private function is_show_core_notice() {
-            $result = get_option( 'justtables_diagnostic_data_notice', 'yes' );
+            $result = get_option( 'htpm_diagnostic_data_notice', 'yes' );
             $result = ( ( 'yes' === $result ) ? 'yes' : 'no' );
 
             return $result;
@@ -185,8 +185,8 @@ if( ! class_exists( 'Diagnostic_Data' ) ) {
                 }
             }
 
-            update_option( 'justtables_diagnostic_data_agreed', $agreed );
-            update_option( 'justtables_diagnostic_data_notice', $notice );
+            update_option( 'htpm_diagnostic_data_agreed', $agreed );
+            update_option( 'htpm_diagnostic_data_notice', $notice );
         }
 
         /**
@@ -470,24 +470,24 @@ if( ! class_exists( 'Diagnostic_Data' ) ) {
          */
         private function show_core_notice() {
 
-            $message_l1 = sprintf( esc_html__( 'At %2$s%1$s%3$s, we prioritize continuous improvement and compatibility. To achieve this, we gather non-sensitive diagnostic information and details about plugin usage. This includes your site\'s URL, the versions of WordPress and PHP you\'re using, and a list of your installed plugins and themes. We also require your email address to provide you with exclusive discount coupons and updates. This data collection is crucial for ensuring that %2$s%1$s%3$s remains up-to-date and compatible with the most widely-used plugins and themes. Rest assured, your privacy is our priority – no spam, guaranteed. %4$sPrivacy Policy%5$s', 'just-tables' ), esc_html( $this->project_name ), '<strong>', '</strong>', '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>', '<h4 class="justtables-diagnostic-data-title">', '</h4>' );
+            $message_l1 = sprintf( esc_html__( 'At %2$s%1$s%3$s, we prioritize continuous improvement and compatibility. To achieve this, we gather non-sensitive diagnostic information and details about plugin usage. This includes your site\'s URL, the versions of WordPress and PHP you\'re using, and a list of your installed plugins and themes. We also require your email address to provide you with exclusive discount coupons and updates. This data collection is crucial for ensuring that %2$s%1$s%3$s remains up-to-date and compatible with the most widely-used plugins and themes. Rest assured, your privacy is our priority – no spam, guaranteed. %4$sPrivacy Policy%5$s', 'just-tables' ), esc_html( $this->project_name ), '<strong>', '</strong>', '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>', '<h4 class="htpm-diagnostic-data-title">', '</h4>' );
 
             $message_l2 = sprintf( esc_html__( 'Server information (Web server, PHP version, MySQL version), WordPress information, site name, site URL, number of plugins, number of users, your name, and email address. You can rest assured that no sensitive data will be collected or tracked. %1$sLearn more%2$s.', 'just-tables' ), '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>' );
 
             $button_text_1 = esc_html__( 'Count Me In', 'just-tables' );
-            $button_link_1 = add_query_arg( array( 'justtables_diagnostic_data_agreed' => 'yes' ) );
+            $button_link_1 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => 'yes' ) );
 
             $button_text_2 = esc_html__( 'No, Thanks', 'just-tables' );
-            $button_link_2 = add_query_arg( array( 'justtables_diagnostic_data_agreed' => 'no' ) );
+            $button_link_2 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => 'no' ) );
             ?>
-            <div class="justtables-diagnostic-data-style"><style>.justtables-diagnostic-data-notice,.woocommerce-embed-page .justtables-diagnostic-data-notice{padding-top:.75em;padding-bottom:.75em;}.justtables-diagnostic-data-notice .justtables-diagnostic-data-buttons,.justtables-diagnostic-data-notice .justtables-diagnostic-data-list,.justtables-diagnostic-data-notice .justtables-diagnostic-data-message{padding:.25em 2px;margin:0;}.justtables-diagnostic-data-notice .justtables-diagnostic-data-list{display:none;color:#646970;}.justtables-diagnostic-data-notice .justtables-diagnostic-data-buttons{padding-top:.75em;}.justtables-diagnostic-data-notice .justtables-diagnostic-data-buttons .button{margin-right:5px;box-shadow:none;}.justtables-diagnostic-data-loading{position:relative;}.justtables-diagnostic-data-loading::before{position:absolute;content:"";width:100%;height:100%;top:0;left:0;background-color:rgba(255,255,255,.5);z-index:999;}.justtables-diagnostic-data-disagree{border-width:0px !important;background-color: transparent!important; padding: 0!important;}h4.justtables-diagnostic-data-title {margin: 0 0 10px 0;font-size: 1.04em;font-weight: 600;}</style></div>
-            <div class="justtables-diagnostic-data-notice notice notice-success">
-                <h4 class="justtables-diagnostic-data-title"><?php echo sprintf( esc_html__('🌟 Enhance Your %1$s Experience as a Valued Contributor!','just-tables'), esc_html( $this->project_name )); ?></h4>
-                <p class="justtables-diagnostic-data-message"><?php echo wp_kses_post( $message_l1 ); ?></p>
-                <p class="justtables-diagnostic-data-list"><?php echo wp_kses_post( $message_l2 ); ?></p>
-                <p class="justtables-diagnostic-data-buttons">
-                    <a href="<?php echo esc_url( $button_link_1 ); ?>" class="justtables-diagnostic-data-button justtables-diagnostic-data-agree button button-primary"><?php echo esc_html( $button_text_1 ); ?></a>
-                    <a href="<?php echo esc_url( $button_link_2 ); ?>" class="justtables-diagnostic-data-button justtables-diagnostic-data-disagree button button-secondary"><?php echo esc_html( $button_text_2 ); ?></a>
+            <div class="htpm-diagnostic-data-style"><style>.htpm-diagnostic-data-notice,.woocommerce-embed-page .htpm-diagnostic-data-notice{padding-top:.75em;padding-bottom:.75em;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons,.htpm-diagnostic-data-notice .htpm-diagnostic-data-list,.htpm-diagnostic-data-notice .htpm-diagnostic-data-message{padding:.25em 2px;margin:0;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-list{display:none;color:#646970;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons{padding-top:.75em;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons .button{margin-right:5px;box-shadow:none;}.htpm-diagnostic-data-loading{position:relative;}.htpm-diagnostic-data-loading::before{position:absolute;content:"";width:100%;height:100%;top:0;left:0;background-color:rgba(255,255,255,.5);z-index:999;}.htpm-diagnostic-data-disagree{border-width:0px !important;background-color: transparent!important; padding: 0!important;}h4.htpm-diagnostic-data-title {margin: 0 0 10px 0;font-size: 1.04em;font-weight: 600;}</style></div>
+            <div class="htpm-diagnostic-data-notice notice notice-success">
+                <h4 class="htpm-diagnostic-data-title"><?php echo sprintf( esc_html__('🌟 Enhance Your %1$s Experience as a Valued Contributor!','just-tables'), esc_html( $this->project_name )); ?></h4>
+                <p class="htpm-diagnostic-data-message"><?php echo wp_kses_post( $message_l1 ); ?></p>
+                <p class="htpm-diagnostic-data-list"><?php echo wp_kses_post( $message_l2 ); ?></p>
+                <p class="htpm-diagnostic-data-buttons">
+                    <a href="<?php echo esc_url( $button_link_1 ); ?>" class="htpm-diagnostic-data-button htpm-diagnostic-data-agree button button-primary"><?php echo esc_html( $button_text_1 ); ?></a>
+                    <a href="<?php echo esc_url( $button_link_2 ); ?>" class="htpm-diagnostic-data-button htpm-diagnostic-data-disagree button button-secondary"><?php echo esc_html( $button_text_2 ); ?></a>
                 </p>
             </div>
             <?php
@@ -496,5 +496,5 @@ if( ! class_exists( 'Diagnostic_Data' ) ) {
     }
 
     // Returns the instance.
-    Diagnostic_Data::get_instance();
+    HTPM_Diagnostic_Data::get_instance();
 }

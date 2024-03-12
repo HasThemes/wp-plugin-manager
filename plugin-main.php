@@ -28,6 +28,9 @@ require_once HTPM_ROOT_DIR . '/includes/helper_functions.php';
 require_once HTPM_ROOT_DIR . '/includes/plugin-options-page.php';
 require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/class.recommended-plugins.php';
 require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
+if(is_admin()){
+    include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
+}
 add_action('init', function() {
     if(is_admin()){
         include_once( HTPM_ROOT_DIR . '/includes/class-rating-notice.php');
