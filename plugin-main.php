@@ -3,7 +3,7 @@
 * Plugin Name: WP Plugin Manager
 * Plugin URI: https://hasthemes.com/plugins/
 * Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-* Version: 1.2.2
+* Version: 1.2.3
 * Author: HasThemes
 * Author URI: https://hasthemes.com/
 * Text Domain: htpm
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
-define( 'HTPM_PLUGIN_VERSION', '1.2.2' );
+define( 'HTPM_PLUGIN_VERSION', '1.2.3' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );
@@ -28,7 +28,14 @@ require_once HTPM_ROOT_DIR . '/includes/helper_functions.php';
 require_once HTPM_ROOT_DIR . '/includes/plugin-options-page.php';
 require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/class.recommended-plugins.php';
 require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
-
+if(is_admin()){
+    include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
+}
+add_action('init', function() {
+    if(is_admin()){
+        include_once( HTPM_ROOT_DIR . '/includes/class-rating-notice.php');
+    }
+});
 /**
  * Load text domain
  */
@@ -44,6 +51,9 @@ add_action( 'init', 'htpm_load_textdomain' );
 */
 register_activation_hook( __FILE__, 'htpm_plugin_activation' );
 function htpm_plugin_activation(){
+    if ( ! get_option( 'htpm_installed' ) ) {
+        update_option( 'htpm_installed', time() );
+    }
 	if(empty(get_option('htpm_status')) || get_option('htpm_status')){
 		update_option('htpm_status', 'active');
     }
