@@ -8,8 +8,8 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'HasTech_Notices' ) ){
-    class HasTech_Notices{
+if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
+    class HTPM_Rating_Notice{
 
         /**
          * [$instance]
@@ -33,7 +33,7 @@ if ( ! class_exists( 'HasTech_Notices' ) ){
 
         /**
          * [instance]
-         * @return [HasTech_Notices]
+         * @return [HTPM_Rating_Notice]
          */
         public static function instance(){
             if( is_null( self::$instance ) ){
@@ -48,7 +48,7 @@ if ( ! class_exists( 'HasTech_Notices' ) ){
         public function __construct(){
             add_action( 'admin_notices', [ $this, 'show_admin_notices' ] );
             add_action(	'admin_footer', [ $this, 'enqueue_scripts' ], 999 );
-            add_action( 'wp_ajax_hastech_notices', [ $this, 'ajax_dismiss' ] );
+            add_action( 'wp_ajax_htpm_notices', [ $this, 'ajax_dismiss' ] );
         }
 
         /**
@@ -69,15 +69,15 @@ if ( ! class_exists( 'HasTech_Notices' ) ){
             // User Capability check
 			if ( ! apply_filters( 'hastech_notice_user_cap_check', current_user_can( $capability ) ) ) {
                 $error_message = [
-                    'message'  => __('You are not authorized.', self::$plugin_domain)
+                    'message'  => __('You are not authorized.', 'htpm')
                 ];
                 wp_send_json_error( $error_message );
 			}
 
             // Nonce verification check
-            if( !wp_verify_nonce( $nonce, 'hastech_notices_nonce') ) {
+            if( !wp_verify_nonce( $nonce, 'htpm_notices_nonce') ) {
                 $error_message = [
-                    'message'  => __('Are you cheating?', self::$plugin_domain)
+                    'message'  => __('Are you cheating?', 'htpm')
                 ];
                 wp_send_json_error( $error_message );
             }
@@ -150,7 +150,7 @@ if ( ! class_exists( 'HasTech_Notices' ) ){
                         expireTime = noticeWrap.attr( 'expire-time' ) || '',
                         closeBy = noticeWrap.attr( 'close-by' ) || '',
                         alreadyDid = $( this ).attr('data-already-did') || '',
-                        noticeNonce = '".esc_html( wp_create_nonce( 'hastech_notices_nonce' ) )."';
+                        noticeNonce = '".esc_html( wp_create_nonce( 'htpm_notices_nonce' ) )."';
 
                     noticeWrap.css('opacity','0.5');
             
@@ -158,7 +158,7 @@ if ( ! class_exists( 'HasTech_Notices' ) ){
                         url: ajaxurl,
                         type: 'POST',
                         data: {
-                            action 	: 'hastech_notices',
+                            action 	: 'htpm_notices',
                             noticeid: noticeId,
                             closeby : closeBy,
                             expiretime : expireTime,
@@ -266,7 +266,7 @@ if ( ! class_exists( 'HasTech_Notices' ) ){
                 if( $notice['type'] !== 'custom'){
                     $classes[] = 'notice';
                 }else{
-                    $notice['dismissible_btn'] = '<button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__('Dismiss this notice.',self::$plugin_domain).'</span></button>';
+                    $notice['dismissible_btn'] = '<button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__('Dismiss this notice.','htpm').'</span></button>';
                 }
             }
 
@@ -444,6 +444,6 @@ if ( ! class_exists( 'HasTech_Notices' ) ){
     }
 
     // Call instance
-    HasTech_Notices::instance();
+    HTPM_Rating_Notice::instance();
 
 }
