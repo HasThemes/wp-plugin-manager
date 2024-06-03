@@ -33,7 +33,7 @@ if(is_admin()){
 }
 add_action('init', function() {
     if(is_admin()){
-        include_once( HTPM_ROOT_DIR . '/includes/class-rating-notice.php');
+        include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
     }
 });
 /**
@@ -44,6 +44,41 @@ function htpm_load_textdomain() {
     load_plugin_textdomain( 'htpm', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 }
 add_action( 'init', 'htpm_load_textdomain' );
+
+function htpm_admin_notice() {
+    $logo_url = HTPM_ROOT_URL . "/assets/images/logo.jpg";
+
+    $message = '<div class="hastech-review-notice-wrap">
+                <div class="hastech-rating-notice-logo">
+                    <img src="' . esc_url($logo_url) . '" alt="WP Plugin Manager" style="max-width:85px"/>
+                </div>
+                <div class="hastech-review-notice-content">
+                    <h3>'.esc_html__('Thank you for choosing WP Plugin Manager to manage you plugins!','htpm').'</h3>
+                    <p>'.esc_html__('Would you mind doing us a huge favor by providing your feedback on WordPress? Your support helps us spread the word and greatly boosts our motivation.','htpm').'</p>
+                    <div class="hastech-review-notice-action">
+                        <a href="https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post" class="hastech-review-notice button-primary" target="_blank">'.esc_html__('Ok, you deserve it!','htpm').'</a>
+                        <span class="dashicons dashicons-calendar"></span>
+                        <a href="#" class="hastech-notice-close htpm-review-notice">'.esc_html__('Maybe Later','htpm').'</a>
+                        <span class="dashicons dashicons-smiley"></span>
+                        <a href="#" data-already-did="yes" class="hastech-notice-close htpm-review-notice">'.esc_html__('I already did','htpm').'</a>
+                    </div>
+                </div>
+            </div>';
+
+    \HTPM_Rating_Notice::set_notice(
+        [
+            'id'          => 'htpm-rating-notice',
+            'type'        => 'info',
+            'dismissible' => true,
+            'message_type' => 'html',
+            'message'     => $message,
+            'display_after'  => ( 14 * DAY_IN_SECONDS ),
+            'expire_time' => ( 20 * DAY_IN_SECONDS ),
+            'close_by'    => 'transient'
+        ]
+    );
+}
+add_action('admin_notices', 'htpm_admin_notice' );
 
 
 /**
