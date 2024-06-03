@@ -3,7 +3,7 @@
 * Plugin Name: WP Plugin Manager
 * Plugin URI: https://hasthemes.com/plugins/
 * Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-* Version: 1.2.2
+* Version: 1.2.3
 * Author: HasThemes
 * Author URI: https://hasthemes.com/
 * Text Domain: htpm
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
-define( 'HTPM_PLUGIN_VERSION', '1.2.2' );
+define( 'HTPM_PLUGIN_VERSION', '1.2.3' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );
@@ -28,7 +28,14 @@ require_once HTPM_ROOT_DIR . '/includes/helper_functions.php';
 require_once HTPM_ROOT_DIR . '/includes/plugin-options-page.php';
 require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/class.recommended-plugins.php';
 require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
-
+if(is_admin()){
+    include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
+}
+add_action('init', function() {
+    if(is_admin()){
+        include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
+    }
+});
 /**
  * Load text domain
  */
@@ -38,12 +45,50 @@ function htpm_load_textdomain() {
 }
 add_action( 'init', 'htpm_load_textdomain' );
 
+function htpm_admin_notice() {
+    $logo_url = HTPM_ROOT_URL . "/assets/images/logo.jpg";
+
+    $message = '<div class="hastech-review-notice-wrap">
+                <div class="hastech-rating-notice-logo">
+                    <img src="' . esc_url($logo_url) . '" alt="WP Plugin Manager" style="max-width:85px"/>
+                </div>
+                <div class="hastech-review-notice-content">
+                    <h3>'.esc_html__('Thank you for choosing WP Plugin Manager to manage you plugins!','htpm').'</h3>
+                    <p>'.esc_html__('Would you mind doing us a huge favor by providing your feedback on WordPress? Your support helps us spread the word and greatly boosts our motivation.','htpm').'</p>
+                    <div class="hastech-review-notice-action">
+                        <a href="https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post" class="hastech-review-notice button-primary" target="_blank">'.esc_html__('Ok, you deserve it!','htpm').'</a>
+                        <span class="dashicons dashicons-calendar"></span>
+                        <a href="#" class="hastech-notice-close htpm-review-notice">'.esc_html__('Maybe Later','htpm').'</a>
+                        <span class="dashicons dashicons-smiley"></span>
+                        <a href="#" data-already-did="yes" class="hastech-notice-close htpm-review-notice">'.esc_html__('I already did','htpm').'</a>
+                    </div>
+                </div>
+            </div>';
+
+    \HTPM_Rating_Notice::set_notice(
+        [
+            'id'          => 'htpm-rating-notice',
+            'type'        => 'info',
+            'dismissible' => true,
+            'message_type' => 'html',
+            'message'     => $message,
+            'display_after'  => ( 14 * DAY_IN_SECONDS ),
+            'expire_time' => ( 20 * DAY_IN_SECONDS ),
+            'close_by'    => 'transient'
+        ]
+    );
+}
+add_action('admin_notices', 'htpm_admin_notice' );
+
 
 /**
  * Plugin activation hook
 */
 register_activation_hook( __FILE__, 'htpm_plugin_activation' );
 function htpm_plugin_activation(){
+    if ( ! get_option( 'htpm_installed' ) ) {
+        update_option( 'htpm_installed', time() );
+    }
 	if(empty(get_option('htpm_status')) || get_option('htpm_status')){
 		update_option('htpm_status', 'active');
     }
