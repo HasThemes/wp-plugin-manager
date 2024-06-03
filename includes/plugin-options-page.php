@@ -6,6 +6,9 @@ if ( ! function_exists('is_plugin_active') ){ include_once( ABSPATH . 'wp-admin/
 add_action( 'admin_menu', 'htpm_submenu' );
 function htpm_submenu() {
 	add_menu_page( esc_html__('Plugin Manager', 'htpm'), esc_html__('Plugin Manager', 'htpm'), 'manage_options', 'htpm-options', 'htpm_options_page_html', 'dashicons-admin-plugins', 65 );
+}
+add_action( 'admin_menu', 'htpm_upgrade_menu_tweaks', 1000 );
+function htpm_upgrade_menu_tweaks() {
 	add_submenu_page( 'htpm-options', esc_html__('Upgrade to Pro', 'htpm'), esc_html__('Upgrade to Pro', 'htpm'), 'manage_options', 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing' );
 }
 add_action( 'admin_footer', 'htpm_enqueue_admin_head_scripts', 11 );
