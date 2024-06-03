@@ -87,7 +87,7 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 
-= Version: 1.2.3 Date: 21 Mar 2024 =
+= Version: 1.2.3 Date: 03 June 2024 =
 * Tweak: Opt-in message to provide non-sensitive diagnostic data.
 
 = Version: 1.2.2 Date: 18 Feb 2024 =
