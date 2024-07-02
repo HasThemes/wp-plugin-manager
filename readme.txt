@@ -87,7 +87,7 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 
-= Version: 1.2.4 Date: 03 June 2024 =
+= Version: 1.2.4 Date: 02 July 2024 =
 * Fixed: Translation issue in multiple areas.
 * Updated: Language translation .pot file
 
