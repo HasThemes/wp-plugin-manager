@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Plugin Manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-15 09:38+0000\n"
+"POT-Creation-Date: 2024-07-02 05:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -16,32 +16,40 @@ msgstr ""
 "X-Loco-Version: 2.6.6; wp-6.4.3\n"
 "X-Domain: htpm"
 
-#: includes/plugin-options-page.php:204
+#: includes/plugin-options-page.php:220
 msgid "Action"
 msgstr ""
 
 #: includes/helper_functions.php:26
+#: includes/recommended-plugins/class.recommended-plugins.php:243
 msgid "Activate"
 msgstr ""
 
 #: includes/helper_functions.php:37
+#: includes/recommended-plugins/class.recommended-plugins.php:127
+#: includes/recommended-plugins/class.recommended-plugins.php:254
 msgid "Activated"
 msgstr ""
 
-#: plugin-main.php:132
+#: plugin-main.php:177
+#: includes/recommended-plugins/class.recommended-plugins.php:126
 msgid "Activating.."
 msgstr ""
 
-#: plugin-main.php:133
+#: plugin-main.php:178
 msgid "Active"
 msgstr ""
 
-#: includes/plugin-options-page.php:272
+#: includes/plugin-options-page.php:288
 msgid "Add Another"
 msgstr ""
 
-#: plugin-main.php:122
+#: plugin-main.php:167
 msgid "All Items have been Loaded"
+msgstr ""
+
+#: includes/class.notices.php:80
+msgid "Are you cheating?"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:142
@@ -51,11 +59,18 @@ msgid ""
 "the product variations in a whole new light with Swatchly."
 msgstr ""
 
-#: plugin-main.php:129
+#: plugin-main.php:174
+#: includes/recommended-plugins/class.recommended-plugins.php:123
+#: includes/recommended-plugins/class.recommended-plugins.php:231
+#: includes/recommended-plugins/class.recommended-plugins.php:285
 msgid "Buy Now"
 msgstr ""
 
-#: includes/plugin-options-page.php:227 includes/plugin-options-page.php:251
+#: includes/recommended-plugins/class.recommended-plugins.php:271
+msgid "By "
+msgstr ""
+
+#: includes/plugin-options-page.php:243 includes/plugin-options-page.php:267
 msgid "Clone"
 msgstr ""
 
@@ -75,7 +90,7 @@ msgstr ""
 msgid "Coupon Zen"
 msgstr ""
 
-#: includes/plugin-options-page.php:152
+#: includes/plugin-options-page.php:168
 msgid "Custom"
 msgstr ""
 
@@ -83,8 +98,12 @@ msgstr ""
 msgid "DataCaptia"
 msgstr ""
 
-#: includes/plugin-options-page.php:139
+#: includes/plugin-options-page.php:155
 msgid "Disable This Plugin:"
+msgstr ""
+
+#: includes/class.notices.php:270
+msgid "Dismiss this notice."
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:256
@@ -95,7 +114,7 @@ msgstr ""
 msgid "Docus – YouTube Video Playlist"
 msgstr ""
 
-#: includes/plugin-options-page.php:223 includes/plugin-options-page.php:247
+#: includes/plugin-options-page.php:239 includes/plugin-options-page.php:263
 msgid "E.g: http://example.com/contact-us/ you can use 'contact-us'"
 msgstr ""
 
@@ -107,7 +126,7 @@ msgid ""
 msgstr ""
 
 #. field name
-#: includes/plugin-options-page.php:84
+#: includes/plugin-options-page.php:100
 msgid "Enable/Disable Plugins"
 msgstr ""
 
@@ -123,7 +142,7 @@ msgstr ""
 msgid "Faster YouTube Embed"
 msgstr ""
 
-#: includes/plugin-options-page.php:106
+#: includes/plugin-options-page.php:122
 msgid ""
 "For better performance, the number of pages, posts, or custom posts has been "
 "set to 150. <br/> Please adjust the number if you have more than 150 pages, "
@@ -131,7 +150,7 @@ msgid ""
 "dropdown list."
 msgstr ""
 
-#: plugin-main.php:150
+#: plugin-main.php:195
 msgid "Go Pro"
 msgstr ""
 
@@ -155,6 +174,10 @@ msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:193
 msgid "HashBar Pro"
+msgstr ""
+
+#: includes/recommended-plugins/class.recommended-plugins.php:228
+msgid "HasTheme"
 msgstr ""
 
 #. Author of the plugin
@@ -246,6 +269,10 @@ msgstr ""
 msgid "https://hasthemes.com/plugins/"
 msgstr ""
 
+#: plugin-main.php:63
+msgid "I already did"
+msgstr ""
+
 #: includes/recommended-plugins/recommendations.php:232
 msgid ""
 "If you are searching for a modern and excellent google places review "
@@ -254,19 +281,19 @@ msgid ""
 "Review"
 msgstr ""
 
-#: plugin-main.php:128
+#: plugin-main.php:173
 msgid "Import"
 msgstr ""
 
-#: plugin-main.php:126
+#: plugin-main.php:171
 msgid "Import to Library"
 msgstr ""
 
-#: plugin-main.php:127
+#: plugin-main.php:172
 msgid "Import to Page"
 msgstr ""
 
-#: plugin-main.php:121
+#: plugin-main.php:166
 msgid "in this package"
 msgstr ""
 
@@ -281,10 +308,12 @@ msgid ""
 msgstr ""
 
 #: includes/helper_functions.php:31
+#: includes/recommended-plugins/class.recommended-plugins.php:249
 msgid "Install Now"
 msgstr ""
 
-#: plugin-main.php:131
+#: plugin-main.php:176
+#: includes/recommended-plugins/class.recommended-plugins.php:125
 msgid "Installing.."
 msgstr ""
 
@@ -306,6 +335,14 @@ msgstr ""
 msgid "JustTables Pro"
 msgstr ""
 
+#: plugin-main.php:61
+msgid "Maybe Later"
+msgstr ""
+
+#: includes/recommended-plugins/class.recommended-plugins.php:293
+msgid "More Details"
+msgstr ""
+
 #: includes/recommended-plugins/recommendations.php:108
 msgid "Multi Currency"
 msgstr ""
@@ -321,20 +358,24 @@ msgid ""
 "switch to their preferred currency or their country’s currency."
 msgstr ""
 
-#: plugin-main.php:123
+#: plugin-main.php:168
 msgid "Nothing Found"
 msgstr ""
 
 #. field name
-#: includes/plugin-options-page.php:72
+#: includes/plugin-options-page.php:88
 msgid "Number Of Posts to Load"
+msgstr ""
+
+#: plugin-main.php:59
+msgid "Ok, you deserve it!"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:266
 msgid "Others"
 msgstr ""
 
-#: includes/plugin-options-page.php:148
+#: includes/plugin-options-page.php:164
 msgid "Page"
 msgstr ""
 
@@ -342,31 +383,34 @@ msgstr ""
 msgid "Plugin Manager"
 msgstr ""
 
-#: includes/plugin-options-page.php:32
+#: includes/plugin-options-page.php:48
 msgid "Plugin Manager Options"
 msgstr ""
 
-#: plugin-main.php:168
+#: plugin-main.php:213
+#: includes/recommended-plugins/class.recommended-plugins.php:396
 msgid "Plugin Not Found"
 msgstr ""
 
-#: plugin-main.php:188
+#: plugin-main.php:233
+#: includes/recommended-plugins/class.recommended-plugins.php:416
 msgid "Plugin Successfully Activated"
 msgstr ""
 
-#: includes/plugin-options-page.php:149
+#: includes/plugin-options-page.php:165
 msgid "Post"
 msgstr ""
 
-#: includes/plugin-options-page.php:151
+#: includes/plugin-options-page.php:167
 msgid "Post , Pages & Custom Post Type "
 msgstr ""
 
-#: includes/plugin-options-page.php:150
+#: includes/plugin-options-page.php:166
 msgid "Post And Pages"
 msgstr ""
 
-#: plugin-main.php:130
+#: plugin-main.php:175
+#: includes/recommended-plugins/class.recommended-plugins.php:124
 msgid "Preview"
 msgstr ""
 
@@ -386,12 +430,16 @@ msgstr ""
 msgid "Really Simple Google Tag Manager"
 msgstr ""
 
+#: includes/recommended-plugins/class.recommended-plugins.php:71
+msgid "Recommendations"
+msgstr ""
+
 #: includes/recommended-plugins/recommendations.php:29
 msgid "Recommended"
 msgstr ""
 
-#: includes/plugin-options-page.php:226 includes/plugin-options-page.php:250
-#: includes/plugin-options-page.php:271
+#: includes/plugin-options-page.php:242 includes/plugin-options-page.php:266
+#: includes/plugin-options-page.php:287
 msgid "Remove"
 msgstr ""
 
@@ -399,19 +447,19 @@ msgstr ""
 msgid "Select"
 msgstr ""
 
-#: includes/plugin-options-page.php:157
+#: includes/plugin-options-page.php:173
 msgid "Select Pages:"
 msgstr ""
 
-#: includes/plugin-options-page.php:180
+#: includes/plugin-options-page.php:196
 msgid "Select Posts:"
 msgstr ""
 
-#: plugin-main.php:147
+#: plugin-main.php:192
 msgid "Settings"
 msgstr ""
 
-#: includes/plugin-options-page.php:22
+#: includes/plugin-options-page.php:38
 msgid "Settings Saved"
 msgstr ""
 
@@ -419,31 +467,39 @@ msgstr ""
 msgid "Sirve – Simple Directory Listing"
 msgstr ""
 
-#: includes/plugin-options-page.php:202
+#: plugin-main.php:56
+msgid "Thank you for choosing WP Plugin Manager to manage you plugins!"
+msgstr ""
+
+#: includes/plugin-options-page.php:12
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: includes/plugin-options-page.php:218
 msgid "URI Condition"
 msgstr ""
 
-#: includes/plugin-options-page.php:218 includes/plugin-options-page.php:242
+#: includes/plugin-options-page.php:234 includes/plugin-options-page.php:258
 msgid "URI Contains"
 msgstr ""
 
-#: includes/plugin-options-page.php:216 includes/plugin-options-page.php:240
+#: includes/plugin-options-page.php:232 includes/plugin-options-page.php:256
 msgid "URI Equals"
 msgstr ""
 
-#: includes/plugin-options-page.php:219 includes/plugin-options-page.php:243
+#: includes/plugin-options-page.php:235 includes/plugin-options-page.php:259
 msgid "URI Not Contains"
 msgstr ""
 
-#: includes/plugin-options-page.php:217 includes/plugin-options-page.php:241
+#: includes/plugin-options-page.php:233 includes/plugin-options-page.php:257
 msgid "URI Not Equals"
 msgstr ""
 
-#: includes/plugin-options-page.php:146
+#: includes/plugin-options-page.php:162
 msgid "URI Type:"
 msgstr ""
 
-#: includes/plugin-options-page.php:203
+#: includes/plugin-options-page.php:219
 msgid "Value"
 msgstr ""
 
@@ -504,6 +560,12 @@ msgstr ""
 msgid "WordPress Mega Menu Builder for Elementor"
 msgstr ""
 
+#: plugin-main.php:57
+msgid ""
+"Would you mind doing us a huge favor by providing your feedback on WordPress?"
+" Your support helps us spread the word and greatly boosts our motivation."
+msgstr ""
+
 #. Name of the plugin
 msgid "WP Plugin Manager"
 msgstr ""
@@ -525,7 +587,11 @@ msgid ""
 "your WordPress site to improve the overall site performance."
 msgstr ""
 
-#: includes/plugin-options-page.php:281
+#: includes/class.notices.php:72
+msgid "You are not authorized."
+msgstr ""
+
+#: includes/plugin-options-page.php:297
 msgid "You don't have any active plugins!!"
 msgstr ""
 
