@@ -178,6 +178,7 @@ if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
             
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             printf( '<style>%s</style>', $styles );
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             printf( '<script>%s</script>', $scripts );
         }
 
@@ -352,19 +353,19 @@ if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
                     <?php
                         // Notice Image
                         if( !empty( $notice_arg['banner'] ) ){
-                            printf( '<a href="%1$s" target="_blank">%2$s</a>', esc_url( $notice_arg['banner']['url'] ), $notice_arg['banner']['image'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            printf( '<a href="%1$s" target="_blank">%2$s</a>', esc_url( $notice_arg['banner']['url'] ), wp_kses_post($notice_arg['banner']['image']) );
                         }
 
                         // Notice Message
                         if( $notice_arg['message_type'] === 'text'){
-                            printf('<p>%1$s</p>', __( $notice_arg['message'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            printf('<p>%1$s</p>', wp_kses_post( $notice_arg['message'] ) );
                         }else{
-                            echo wp_kses_post( $notice_arg['message'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            echo wp_kses_post( $notice_arg['message'] );
                         }
 
                         // If notice type custom and dismissible true
                         if ( true === $notice_arg['dismissible'] ) {
-                            printf('%1$s', __( $notice_arg['dismissible_btn'] ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+                            printf('%1$s', wp_kses_post( $notice_arg['dismissible_btn'] ) );
                         }
 
                         // Notice Action Button
