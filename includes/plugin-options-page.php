@@ -14,14 +14,13 @@ function htpm_upgrade_menu_tweaks() {
 add_action( 'admin_footer', 'htpm_enqueue_admin_head_scripts', 11 );
 function htpm_enqueue_admin_head_scripts() {
 	printf( '<style>%s</style>', '#adminmenu #toplevel_page_htpm-options a.htpm-upgrade-pro { font-weight: 600; background-color: #ff6e30; color: #ffffff; text-align: center; margin-top: 5px; margin-bottom: 5px; }' );
-	$script = '(function ($) {
+	printf( '<script>%s</script>', '(function ($) {
 		$("#toplevel_page_htpm-options .wp-submenu a").each(function() {
 			if($(this)[0].href === "https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing") {
 				$(this).addClass("htpm-upgrade-pro").attr("target", "_blank");
 			}
 		})
-	})(jQuery);';
-	printf( '<script>%s</script>', $script );
+	})(jQuery);' );
 }
 
 /**
@@ -119,7 +118,7 @@ function htpm_load_posts_cb( $args ){
 	?>
   	<div>
 	  	<input type="number" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>]" value="<?php echo esc_attr($htpm_load_posts); ?>" >
-	  	<div class="htpm_field_desc"><?php echo __('For better performance, the number of pages, posts, or custom posts has been set to 150. <br/> Please adjust the number if you have more than 150 pages, posts, or custom posts, then click "Save Settings" to see them in the dropdown list.', 'htpm') ?></div>
+	  	<div class="htpm_field_desc"><?php echo esc_html__('For better performance, the number of pages, posts, or custom posts has been set to 150. <br/> Please adjust the number if you have more than 150 pages, posts, or custom posts, then click "Save Settings" to see them in the dropdown list.', 'htpm') ?></div>
   	</div>
 	<?php
 }
