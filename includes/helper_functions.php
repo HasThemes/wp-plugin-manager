@@ -38,8 +38,8 @@ function htpm_plugin_install_button( $pl_location, $pl_slug ){
         }
 
         ?>
-        <span class="htwptemplata-plugin-<?php echo $pl_slug; ?>">
-            <button class="<?php echo $button_classes; ?>" data-pluginopt='<?php echo wp_json_encode( $data ); ?>'><?php echo $button_text; ?></button>
+        <span class="htwptemplata-plugin-<?php echo esc_attr($pl_slug); ?>">
+            <button class="<?php echo esc_attr($button_classes); ?>" data-pluginopt='<?php echo wp_json_encode( $data ); ?>'><?php echo esc_html($button_text); ?></button>
         </span>
         <?php
     }
@@ -135,7 +135,7 @@ if( !function_exists('htpm_generate_list') ){
         $texts = explode( "\n", $texts );
         if( count( $texts ) && !empty( $texts ) ){
             echo '<ul>';
-                foreach( $texts as $text ) { echo '<li>'. $text .' </li>'; }
+                foreach( $texts as $text ) { echo '<li>'. wp_kses_post($text) .' </li>'; }
             echo '</ul>';
         }
     }
