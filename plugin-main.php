@@ -34,6 +34,7 @@ if(is_admin()){
 add_action('init', function() {
     if(is_admin()){
         include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
+        include_once( HTPM_ROOT_DIR . '/includes/HTPM_Trial.php');
     }
 });
 /**
