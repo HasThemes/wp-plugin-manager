@@ -61,11 +61,11 @@ if ( ! class_exists( 'HTPM_Trial' ) ) {
         public function __construct() {
             $this->includes();
 
-            $this->prefix = 'extension-for-cf7';
-            $this->pro_file = 'extension-for-cf7-pro/cf7-extensions-pro.php';
+            $this->prefix = 'htpm';
+            $this->pro_file = 'wp-plugin-manager-pro/plugin-main.php';
             $this->data_center = 'https://feed.hasthemes.com/cf7-extensions/tw/';
-            $this->initial_page = admin_url( 'admin.php?page=contat-form-list' );
-            $this->screen_ids =  array('toplevel_page_contat-form-list');
+            $this->initial_page = admin_url( 'admin.php?page=htpm-options' );
+            $this->screen_ids =  array('toplevel_page_htpm-options');
 
             add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
             add_action( 'admin_init', [ $this, 'run_offer' ], 999999 );
