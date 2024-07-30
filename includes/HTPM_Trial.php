@@ -61,9 +61,9 @@ if ( ! class_exists( 'HTPM_Trial' ) ) {
         public function __construct() {
             $this->includes();
 
-            $this->prefix = 'htpm';
+            $this->prefix = 'wp-plugin-manager';
             $this->pro_file = 'wp-plugin-manager-pro/plugin-main.php';
-            $this->data_center = 'https://feed.hasthemes.com/htpm/tw/';
+            $this->data_center = 'https://feed.hasthemes.com/wp-plugin-manager/tw/';
             $this->initial_page = admin_url( 'admin.php?page=htpm-options' );
             $this->screen_ids =  array('toplevel_page_htpm-options');
 
