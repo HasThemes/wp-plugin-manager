@@ -12,7 +12,7 @@ if( !isset($_SERVER['HTTP_HOST']) ){
 	return;
 }
 
-$htpm_request_uri = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
+$htpm_request_uri = !empty( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])), PHP_URL_PATH ) : '';
 $htpm_is_admin = strpos( $htpm_request_uri, '/wp-admin/' );
 
 /**
@@ -59,8 +59,8 @@ function htpm_filter_plugins( $plugins ){
 	$main_domain = str_replace(array('http://','https://'), '', $main_domain);
 
 	// current page url
-	$server_host = !empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
-	$req_uri = !empty($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+	$server_host = !empty($_SERVER['HTTP_HOST']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'])) : '';
+	$req_uri = !empty($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
 
 	$current_page_url = $server_host . $req_uri;
 	$current_page_url = trim( $current_page_url, "/" );
