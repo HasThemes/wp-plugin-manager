@@ -14,6 +14,6 @@ $htpm_mu_plugin_file_path = $htpm_mu_plugins_path . '/htpm-mu-plugin.php';
  * Remove mu file
  */
 if( file_exists( $htpm_mu_plugin_file_path ) ){
-	unlink( $htpm_mu_plugin_file_path );
-    rmdir( $htpm_mu_plugins_path );
+	unlink( $htpm_mu_plugin_file_path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.unlink_unlink
+    rmdir( $htpm_mu_plugins_path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_rmdir
 }
