@@ -215,7 +215,7 @@ class HTRP_Recommended_Plugins {
                                 if( array_key_exists( $plugin['slug'], $prepare_plugin ) ){
                                     $plugins_type = 'free';
                                     $image_url    = $this->plugin_icon( $plugins_type, $prepare_plugin[$data['slug']]['icons'] );
-                                    $description  = strip_tags( $prepare_plugin[$data['slug']]['description'] );
+                                    $description  = wp_strip_all_tags( $prepare_plugin[$data['slug']]['description'] );
                                     $author_name  = wp_kses( $prepare_plugin[$data['slug']]['author'], $this->plugins_allowedtags );
                                     $details_link = self_admin_url('plugin-install.php?tab=plugin-information&amp;plugin=' . $plugin['slug'] .'&amp;TB_iframe=true&amp;width=772&amp;height=577');
                                     $target       = '_self';
@@ -389,7 +389,7 @@ class HTRP_Recommended_Plugins {
 
         check_ajax_referer('htrp_nonce', 'nonce');
 
-        if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! $_POST['location'] ) {
+        if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! sanitize_text_field(wp_unslash($_POST['location'])) ) {
             wp_send_json_error(
                 array(
                     'success' => false,
@@ -398,7 +398,7 @@ class HTRP_Recommended_Plugins {
             );
         }
 
-        $plugin_location = ( isset( $_POST['location'] ) ) ? esc_attr( $_POST['location'] ) : '';
+        $plugin_location = ( isset( $_POST['location'] ) ) ? esc_attr( sanitize_text_field(wp_unslash($_POST['location'])) ) : '';
         $activate    = activate_plugin( $plugin_location, '', false, true );
 
         if ( is_wp_error( $activate ) ) {
