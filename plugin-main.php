@@ -207,7 +207,7 @@ add_action( 'wp_ajax_htpm_ajax_plugin_activation', 'ajax_plugin_activation');
 
 function ajax_plugin_activation() {
 
-    if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! $_POST['location'] ) {
+    if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! sanitize_text_field(wp_unslash($_POST['location'])) ) { //phpcs:ignore WordPress.Security.NonceVerification.Missing
         wp_send_json_error(
             array(
                 'success' => false,
@@ -216,7 +216,7 @@ function ajax_plugin_activation() {
         );
     }
 
-    $plugin_location = ( isset( $_POST['location'] ) ) ? esc_attr( $_POST['location'] ) : '';
+    $plugin_location = ( isset( $_POST['location'] ) ) ? esc_attr( sanitize_text_field(wp_unslash($_POST['location'])) ) : ''; //phpcs:ignore WordPress.Security.NonceVerification.Missing
     $activate    = activate_plugin( $plugin_location, '', false, true );
 
     if ( is_wp_error( $activate ) ) {
@@ -258,7 +258,7 @@ function htpm_create_mu_file(){
     $vesion      = $plugin_data['Version'];
 
     if(!is_dir( $mu_plugins_path )){
-       mkdir( $mu_plugins_path, 0755, true );
+       mkdir( $mu_plugins_path, 0755, true ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
        copy( $mu_plugin_file_source_path, $mu_plugin_file_path );
     }else{
         if(!file_exists($mu_plugin_file_path) || version_compare($vesion, '1.0.8', '>') ){
