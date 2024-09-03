@@ -1,3 +1,14 @@
+.ui-accordion .htpm_single_accordion.ui-accordion-content {
+  padding-block: 1.25em;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+.htpm_group_hidden_fields {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 .htpm_single_field{
 	display: flex;
 	align-items: center;
@@ -20,10 +31,11 @@
 	display: table;
 }
 .htpm_single_field label {
-	display: inline-flex;
+  display: inline-flex;
+  align-self: flex-start;
     vertical-align: top;
     text-align: left;
-    padding: 20px 10px 20px 0;
+    padding-right: 10px;
     min-width: 200px;
     line-height: 1.3;
     font-weight: 600;
