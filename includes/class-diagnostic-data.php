@@ -99,7 +99,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
             }, 0 );
 
             add_action('plugins_loaded', function(){
-                $agreed  = ( isset( $_GET['htpm_diagnostic_data_agreed'] ) ? sanitize_key( $_GET['htpm_diagnostic_data_agreed'] ) : '' );
+                $agreed  = ( isset( $_GET['htpm_diagnostic_data_agreed'] ) ? sanitize_key( $_GET['htpm_diagnostic_data_agreed'] ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
                 if( $agreed === 'yes' ){
                     $this->process_data( $agreed );
@@ -259,7 +259,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
         private function get_server_info() {
             global $wpdb;
 
-            $software = ( ( isset( $_SERVER['SERVER_SOFTWARE'] ) && ! empty( $_SERVER['SERVER_SOFTWARE'] ) ) ? $_SERVER['SERVER_SOFTWARE'] : '' );
+            $software = ( ( isset( $_SERVER['SERVER_SOFTWARE'] ) && ! empty( $_SERVER['SERVER_SOFTWARE'] ) ) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) : '' );
             $php_version = ( function_exists( 'phpversion' ) ? phpversion() : '' );
             $mysql_version = ( method_exists( $wpdb, 'db_version' ) ? $wpdb->db_version() : '' );
             $php_max_upload_size = size_format( wp_max_upload_size() );

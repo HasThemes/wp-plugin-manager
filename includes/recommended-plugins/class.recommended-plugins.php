@@ -157,7 +157,7 @@ class HTRP_Recommended_Plugins {
 
         ?>
             <div class="wrap">
-                <h2><?php echo get_admin_page_title(); ?></h2>
+                <h2><?php echo esc_html(get_admin_page_title()); ?></h2>
                 <style>
                     .htrp-admin-tab-pane{
                       display: none;
@@ -215,11 +215,11 @@ class HTRP_Recommended_Plugins {
                                 if( array_key_exists( $plugin['slug'], $prepare_plugin ) ){
                                     $plugins_type = 'free';
                                     $image_url    = $this->plugin_icon( $plugins_type, $prepare_plugin[$data['slug']]['icons'] );
-                                    $description  = strip_tags( $prepare_plugin[$data['slug']]['description'] );
+                                    $description  = wp_strip_all_tags( $prepare_plugin[$data['slug']]['description'] );
                                     $author_name  = wp_kses( $prepare_plugin[$data['slug']]['author'], $this->plugins_allowedtags );
                                     $details_link = self_admin_url('plugin-install.php?tab=plugin-information&amp;plugin=' . $plugin['slug'] .'&amp;TB_iframe=true&amp;width=772&amp;height=577');
                                     $target       = '_self';
-                                    $modal_class  = 'class="thickbox open-plugin-details-modal"';
+                                    $modal_class  = 'thickbox open-plugin-details-modal';
 
                                 }else{
                                     $plugins_type = 'pro';
@@ -259,20 +259,20 @@ class HTRP_Recommended_Plugins {
                                         <div class="plugin-card-top">
                                             <div class="name column-name" style="margin-right: 0;">
                                                 <h3>
-                                                    <a href="<?php echo esc_url( $details_link ) ?>" target="<?php echo esc_attr( $target ) ?>" <?php echo $modal_class; ?>>
+                                                    <a href="<?php echo esc_url( $details_link ) ?>" target="<?php echo esc_attr( $target ) ?>" class="<?php echo esc_attr($modal_class); ?>">
                                                         <?php echo esc_html( $title ) ?>
                                                         <img src="<?php echo esc_url( $image_url ) ?>" class="plugin-icon" alt="<?php echo esc_attr( $title ) ?>">
                                                     </a>
                                                 </h3>
                                             </div>
                                             <div class="desc column-description" style="margin-right: 0;">
-                                                <p><?php echo wp_trim_words( $description, 23, '....'); ?></p>
+                                                <p><?php echo wp_kses_post(wp_trim_words( $description, 23, '....')); ?></p>
                                                 <p class="authors">
                                                     <cite><?php echo esc_html__( 'By ', 'htpm' ); ?>
                                                         <?php if( $plugins_type == 'free' ): ?>
-                                                            <?php echo $author_name; ?>
+                                                            <?php echo wp_kses_post($author_name); ?>
                                                         <?php else: ?>
-                                                            <a href="<?php echo esc_url( $author_link ); ?>"  target="_blank" ><?php echo $author_name; ?></a>
+                                                            <a href="<?php echo esc_url( $author_link ); ?>"  target="_blank" ><?php echo wp_kses_post($author_name); ?></a>
                                                         <?php endif; ?>
                                                     </cite>
                                                 </p>
@@ -285,17 +285,17 @@ class HTRP_Recommended_Plugins {
                                                         echo '<a class="button button-primary" href="'.esc_url( $details_link ).'" target="'.esc_attr( $target ).'">'.esc_html__( 'Buy Now', 'htpm' ).'</a>';
                                                     }else{
                                                 ?>
-                                                    <button class="<?php echo $button_classes; ?>" data-pluginopt='<?php echo wp_json_encode( $data ); ?>'><?php echo $button_text; ?></button>
+                                                    <button class="<?php echo esc_attr($button_classes); ?>" data-pluginopt='<?php echo wp_json_encode( $data ); ?>'><?php echo esc_html($button_text); ?></button>
                                                     
                                                 <?php } ?>
                                             </div>
                                             <div class="column-downloaded">
-                                                <a href="<?php echo esc_url( $details_link ) ?>" target="<?php echo esc_attr( $target ) ?>" <?php echo $modal_class; ?>><?php echo esc_html__('More Details', 'htpm') ?></a>
+                                                <a href="<?php echo esc_url( $details_link ) ?>" target="<?php echo esc_attr( $target ) ?>" class="<?php echo esc_attr($modal_class); ?>"><?php echo esc_html__('More Details', 'htpm') ?></a>
                                                 <span class="downloaded-count">
                                                     <?php
                                                         if( $plugins_type == 'free' ){
                                                             /* translators: %s: Number of installations. */
-                                                            printf( __( '%s Active Installations' ), $this->active_install_count( $prepare_plugin[$data['slug']]['active_installs'] ) );
+                                                            printf( esc_html__( '%s Active Installations' ), esc_html($this->active_install_count( $prepare_plugin[$data['slug']]['active_installs'] )) );
                                                         }
                                                     ?>
                                                 </span>
@@ -389,7 +389,7 @@ class HTRP_Recommended_Plugins {
 
         check_ajax_referer('htrp_nonce', 'nonce');
 
-        if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! $_POST['location'] ) {
+        if ( ! current_user_can( 'install_plugins' ) || ! isset( $_POST['location'] ) || ! sanitize_text_field(wp_unslash($_POST['location'])) ) {
             wp_send_json_error(
                 array(
                     'success' => false,
@@ -398,7 +398,7 @@ class HTRP_Recommended_Plugins {
             );
         }
 
-        $plugin_location = ( isset( $_POST['location'] ) ) ? esc_attr( $_POST['location'] ) : '';
+        $plugin_location = ( isset( $_POST['location'] ) ) ? esc_attr( sanitize_text_field(wp_unslash($_POST['location'])) ) : '';
         $activate    = activate_plugin( $plugin_location, '', false, true );
 
         if ( is_wp_error( $activate ) ) {
