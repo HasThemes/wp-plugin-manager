@@ -153,19 +153,23 @@ function htpm_list_plugins_cb( $args ) {
 				<div class="htpm_single_field">
 					<label><?php echo esc_html__('Disable This Plugin:', 'htpm') ?></label>
 					<input type="checkbox" class="htpm_plugin_disable_checkbox" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>][<?php echo esc_attr($plugin) ?>][enable_deactivation]" value="yes" <?php checked( isset($idividual_options['enable_deactivation']), 1 ); ?>>
+					<span><?php esc_html_e('Yes', 'htpm') ?></span>
 				</div>
 
 				<div class="htpm_group_hidden_fields" style="display: <?php echo esc_attr( isset($idividual_options['enable_deactivation']) && $idividual_options['enable_deactivation'] === 'yes' ? 'block' : 'none'); ?>;">
 
 					<div class="htpm_single_field">
-						<label><?php echo esc_html__( 'URI Type:', 'htpm' ); ?></label>
-						<select class="htpm_uri_type" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>][<?php echo esc_attr($plugin) ?>][uri_type]">
-							<option value="page" <?php selected( $idividual_options['uri_type'], 'page' ) ?>><?php echo esc_html__( 'Page', 'htpm' ) ?></option>
-							<option value="post" <?php selected( $idividual_options['uri_type'], 'post' ) ?>><?php echo esc_html__( 'Post', 'htpm' ) ?></option>
-							<option value="page_post" <?php selected( $idividual_options['uri_type'], 'page_post' ) ?>><?php echo esc_html__( 'Post And Pages', 'htpm' ) ?></option>
-							<option value="page_post_cpt" <?php selected( $idividual_options['uri_type'], 'page_post_cpt' ) ?>><?php echo esc_html__( 'Post , Pages & Custom Post Type ', 'htpm' ) ?></option>
-							<option value="custom" <?php selected( $idividual_options['uri_type'], 'custom' ) ?>><?php echo esc_html__('Custom', 'htpm') ?></option>
-						</select>
+						<label><?php echo esc_html__( 'Page Type:', 'htpm' ); ?></label>
+						<div>
+							<select class="htpm_uri_type" name="htpm_options[<?php echo esc_attr( $args['label_for'] ); ?>][<?php echo esc_attr($plugin) ?>][uri_type]">
+								<option value="page" <?php selected( $idividual_options['uri_type'], 'page' ) ?>><?php echo esc_html__( 'Page', 'htpm' ) ?></option>
+								<option value="post" <?php selected( $idividual_options['uri_type'], 'post' ) ?>><?php echo esc_html__( 'Post', 'htpm' ) ?></option>
+								<option value="page_post" <?php selected( $idividual_options['uri_type'], 'page_post' ) ?>><?php echo esc_html__( 'Post And Pages', 'htpm' ) ?></option>
+								<option value="page_post_cpt" <?php selected( $idividual_options['uri_type'], 'page_post_cpt' ) ?>><?php echo esc_html__( 'Post, Pages & Custom Post Type', 'htpm' ) ?></option>
+								<option value="custom" <?php selected( $idividual_options['uri_type'], 'custom' ) ?>><?php echo esc_html__('Custom', 'htpm') ?></option>
+							</select>
+							<p><?php esc_html_e('Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.', 'htpmpro');?></p>
+						</div>
 					</div>
 
 					<div class="htpm_single_field htpm_selected_page_checkboxes">
