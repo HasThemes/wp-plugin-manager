@@ -94,7 +94,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
                 return;
             }
 
-            add_action( 'admin_notices', function () {
+            add_action( 'htpm_admin_notices', function () {
                 $this->show_notices();
             }, 0 );
 

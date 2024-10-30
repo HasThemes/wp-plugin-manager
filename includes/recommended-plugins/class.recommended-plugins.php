@@ -157,6 +157,7 @@ class HTRP_Recommended_Plugins {
 
         ?>
             <div class="wrap">
+                <?php do_action('htpm_admin_notices') ?>
                 <h2><?php echo esc_html(get_admin_page_title()); ?></h2>
                 <style>
                     .htrp-admin-tab-pane{

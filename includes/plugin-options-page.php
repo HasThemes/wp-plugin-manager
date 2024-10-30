@@ -104,6 +104,8 @@ class HTPM_Option_Page {
 		?>
 			<div class="wrap">
 
+				<?php do_action('htpm_admin_notices') ?>
+
 				<!-- Navigation -->
 				<div class="htpm-tab-nav">
 					<a href="#htpm-tab-1" class="htpm-nav htpm-nav-active"><?php esc_html_e('Settings', 'htpm')?></a>

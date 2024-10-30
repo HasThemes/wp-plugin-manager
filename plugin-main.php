@@ -53,7 +53,7 @@ class HTPM_Main {
         add_filter('admin_menu', [$this, 'pro_submenu'], 101 );
         add_action( 'wp_ajax_htpm_ajax_plugin_activation', [$this, 'ajax_plugin_activation']);
         add_action('init', [$this, 'create_mu_file']);
-        add_action('admin_notices', [$this, 'admin_notice'] );
+        add_action('htpm_admin_notices', [$this, 'show_admin_notice'] );
 
     }
         
@@ -259,7 +259,8 @@ class HTPM_Main {
         }
     }
 
-    function admin_notice() {
+    function show_admin_notice() {
+        
         $logo_url = HTPM_ROOT_URL . "/assets/images/logo.jpg";
     
         $message = '<div class="hastech-review-notice-wrap">
