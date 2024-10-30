@@ -47,13 +47,10 @@ class HTPM_Option_Page {
 		if( is_multisite() ){
 			unset($submenu['htpm-options'][0]);
 		}
-		add_submenu_page( 
-			'htpm-options', 
-			esc_html__('Upgrade to Pro', 'htpm'), 
-			esc_html__('Upgrade to Pro', 'htpm'), 
-			'manage_options', 
-			'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing'
-		);
+		
+        if ( isset( $submenu['htpm-options'] ) ) {
+            $submenu['htpm-options'][0][0] = esc_html__('Settings', 'htpm');
+        }
 	}
 
 	public function pro_menu_scripts() {
