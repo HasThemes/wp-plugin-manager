@@ -8,17 +8,12 @@ class Notice_Manager{
 
     // Transient Key
     const TRANSIENT_KEYES = [
-        'template'  => 'wp_plugin_manager_template_info',
-        'gutenberg' => 'wp_plugin_manager_gutenberg_template_info',
-        'pattern'   => 'wp_plugin_manager_gutenberg_patterns_info'
+        'notice'  => 'wp_plugin_manager_notice_info',
     ];
 
     // API Endpoint
     const API_ENDPOINT = [
-        'template'      => 'v1/templates',
-        'singletemplate'=> 'v1/templates/%s',
-        'gutenberg'     => 'v1/gutenbergtemplates',
-        'pattern'       => 'v1/gutenbergpatterns'
+        'notice'      => 'v1/notice',
     ];
 
     private static $_instance = null;
