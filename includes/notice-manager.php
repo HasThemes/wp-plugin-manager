@@ -1,16 +1,16 @@
 <?php  
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Woolentor_Template_Library_Manager{
+class Notice_Manager{
 
     // Remote URL
-    const REST_ROUTE_URL = 'https://library.shoplentor.com/wp-json/woolentor';
+    const REST_ROUTE_URL = 'https://library.shoplentor.com/wp-json/wp-plugin-manager';
 
     // Transient Key
     const TRANSIENT_KEYES = [
-        'template'  => 'woolentor_template_info',
-        'gutenberg' => 'woolentor_gutenberg_template_info',
-        'pattern'   => 'woolentor_gutenberg_patterns_info'
+        'template'  => 'wp_plugin_manager_template_info',
+        'gutenberg' => 'wp_plugin_manager_gutenberg_template_info',
+        'pattern'   => 'wp_plugin_manager_gutenberg_patterns_info'
     ];
 
     // API Endpoint
@@ -36,8 +36,8 @@ class Woolentor_Template_Library_Manager{
      * Get Template Endpoint
      */
     public static function get_api_endpoint(){
-        if( is_plugin_active('woolentor-addons-pro/woolentor_addons_pro.php') && function_exists('woolentor_pro_template_endpoint') ){
-            return woolentor_pro_template_endpoint();
+        if( is_plugin_active('wp-plugin-manager-pro/plugin-main.php') && function_exists('wp_plugin_manager_pro_template_endpoint') ){
+            return wp_plugin_manager_pro_template_endpoint();
         }
         return self::get_remote_url('template');
     }
@@ -47,8 +47,8 @@ class Woolentor_Template_Library_Manager{
      * @todo We will remove in Future
      */
     public static function get_api_templateapi(){
-        if( is_plugin_active('woolentor-addons-pro/woolentor_addons_pro.php') && function_exists('woolentor_pro_template_url') ){
-            return woolentor_pro_template_url();
+        if( is_plugin_active('wp-plugin-manager-pro/plugin-main.php') && function_exists('wp_plugin_manager_pro_template_url') ){
+            return wp_plugin_manager_pro_template_url();
         }
         return self::get_remote_url('singletemplate');
     }
@@ -58,11 +58,11 @@ class Woolentor_Template_Library_Manager{
      * @return void
      */
     public static function delete_transient_cache_data(){
-        if ( get_option( 'woolentor_delete_data_fetch_cache', FALSE ) ) {
+        if ( get_option( 'wp_plugin_manager_delete_data_fetch_cache', FALSE ) ) {
             foreach( self::TRANSIENT_KEYES as $transient_key ){
                 delete_transient( $transient_key );
             }
-            delete_option('woolentor_delete_data_fetch_cache');
+            delete_option('wp_plugin_manager_delete_data_fetch_cache');
         }
     }
 
