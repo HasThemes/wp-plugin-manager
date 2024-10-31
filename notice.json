@@ -1,0 +1,21 @@
+[
+    {
+        "id": "htpm_diagnostic_data_notice_id",
+        "type": "success",
+        "dismissible": false,
+        "message": "<div class=\"htpm-diagnostic-data-notice\"><h4 class=\"htpm-diagnostic-data-title\">🌟 Enhance Your WP Plugin Manager Experience as a Valued Contributor!</h4><p class=\"htpm-diagnostic-data-message\">At <strong>WP Plugin Manager</strong>, we prioritize continuous improvement and compatibility. To achieve this, we gather non-sensitive diagnostic information and details about plugin usage. This includes your site's URL, the versions of WordPress and PHP you're using, and a list of your installed plugins and themes. We also require your email address to provide you with exclusive discount coupons and updates. This data collection is crucial for ensuring that <strong>WP Plugin Manager</strong> remains up-to-date and compatible with the most widely-used plugins and themes. Rest assured, your privacy is our priority – no spam, guaranteed. <a target=\"_blank\" href=\"https://hasthemes.com/privacy-policy/\">Privacy Policy</a></p><p class=\"htpm-diagnostic-data-list\">Server information (Web server, PHP version, MySQL version), WordPress information, site name, site URL, number of plugins, number of users, your name, and email address. You can rest assured that no sensitive data will be collected or tracked. <a target=\"_blank\" href=\"https://hasthemes.com/privacy-policy/\">Learn More</a>.</p><p class=\"htpm-diagnostic-data-buttons\"><a href=\"#\" class=\"htpm-diagnostic-data-button htpm-diagnostic-data-agree button button-primary\">Count Me In</a><a href=\"#\" class=\"htpm-diagnostic-data-button htpm-diagnostic-data-disagree button button-secondary\">No, Thanks</a></p></div>",
+        "message_type": "html",
+        "display_after": 14,
+        "expire_time": 20,
+        "close_by": "transient"
+    },
+    {
+        "id": "htpm-rating-notice-2",
+        "dismissible": true,
+        "message": "<div class='hastech-review-notice-wrap'><div class='hastech-rating-notice-logo'><img src='https://ps.w.org/wp-plugin-manager/assets/icon-128x128.jpg?rev=2871652' alt='WP Plugin Manager' style='max-width: 110px'/></div><div class='hastech-review-notice-content'><h3>Thank you for choosing WP Plugin Manager to manage your plugins!</h3><p>Would you mind doing us a huge favor by providing your feedback on WordPress? Your support helps us spread the word and greatly boosts our motivation.</p><div class='hastech-review-notice-action'><a href='https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post' class='hastech-review-notice button-primary' target='_blank'>Ok, you deserve it!</a><a href='#' class='hastech-notice-close htpm-review-notice'><span class='dashicons dashicons-calendar'></span> Maybe Later</a><a href='#' data-already-did='yes' class='hastech-notice-close htpm-review-notice'><span class='dashicons dashicons-smiley'></span> I already did</a></div></div></div>",
+        "message_type": "html",
+        "display_after": 14,
+        "expire_time": 20,
+        "close_by": "transient"
+    }
+]
