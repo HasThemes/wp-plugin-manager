@@ -261,6 +261,7 @@ class HTPM_Main {
 
     function show_admin_notice() {
         require HTPM_ROOT_DIR . '/includes/notice-manager.php';
+        require HTPM_ROOT_DIR . '/includes/class.notices.php';
         $noticeManager = HTPM_Notice_Manager::instance();
         $notices = $noticeManager->get_notices_info();
         if(!empty($notices)) {
@@ -270,7 +271,7 @@ class HTPM_Main {
                 return $notice;
             }, $notices);
             foreach ($notices as $notice) {
-                \HTPM_Rating_Notice::set_notice($notice);
+                \HTPM_Notice::set_notice($notice);
             }
         }
     }

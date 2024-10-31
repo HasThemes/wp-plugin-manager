@@ -8,8 +8,8 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
-    class HTPM_Rating_Notice{
+if ( ! class_exists( 'HTPM_Notice' ) ){
+    class HTPM_Notice{
 
         /**
          * [$instance]
@@ -33,7 +33,7 @@ if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
 
         /**
          * [instance]
-         * @return [HTPM_Rating_Notice]
+         * @return [HTPM_Notice]
          */
         public static function instance(){
             if( is_null( self::$instance ) ){
@@ -446,6 +446,6 @@ if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
     }
 
     // Call instance
-    HTPM_Rating_Notice::instance();
+    HTPM_Notice::instance();
 
 }
