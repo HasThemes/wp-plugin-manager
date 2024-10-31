@@ -4,16 +4,18 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class Notice_Manager{
 
     // Remote URL
-    const REST_ROUTE_URL = 'https://library.shoplentor.com/wp-json/wp-plugin-manager';
+    // const REST_ROUTE_URL = 'https://library.shoplentor.com/wp-json/wp-plugin-manager';
+    const REST_ROUTE_URL = HTPM_ROOT_URL;
 
     // Transient Key
-    const TRANSIENT_KEYES = [
+    const TRANSIENT_KEYS = [
         'notice'  => 'wp_plugin_manager_notice_info',
     ];
 
     // API Endpoint
     const API_ENDPOINT = [
-        'notice'      => 'v1/notice',
+        // 'notice'      => 'v1/notice',
+        'notice'      => 'notice.json',
     ];
 
     private static $_instance = null;
@@ -28,24 +30,13 @@ class Notice_Manager{
     }
 
     /**
-     * Get Template Endpoint
+     * Get Notice Endpoint
      */
     public static function get_api_endpoint(){
-        if( is_plugin_active('wp-plugin-manager-pro/plugin-main.php') && function_exists('wp_plugin_manager_pro_template_endpoint') ){
-            return wp_plugin_manager_pro_template_endpoint();
+        if( is_plugin_active('wp-plugin-manager-pro/plugin-main.php') && function_exists('wp_plugin_manager_pro_notice_endpoint') ){
+            return wp_plugin_manager_pro_notice_endpoint();
         }
-        return self::get_remote_url('template');
-    }
-
-    /**
-     * Get Template API
-     * @todo We will remove in Future
-     */
-    public static function get_api_templateapi(){
-        if( is_plugin_active('wp-plugin-manager-pro/plugin-main.php') && function_exists('wp_plugin_manager_pro_template_url') ){
-            return wp_plugin_manager_pro_template_url();
-        }
-        return self::get_remote_url('singletemplate');
+        return self::get_remote_url('notice');
     }
 
     /**
@@ -54,7 +45,7 @@ class Notice_Manager{
      */
     public static function delete_transient_cache_data(){
         if ( get_option( 'wp_plugin_manager_delete_data_fetch_cache', FALSE ) ) {
-            foreach( self::TRANSIENT_KEYES as $transient_key ){
+            foreach( self::TRANSIENT_KEYS as $transient_key ){
                 delete_transient( $transient_key );
             }
             delete_option('wp_plugin_manager_delete_data_fetch_cache');
@@ -77,7 +68,7 @@ class Notice_Manager{
      * @param string $transient_key
      * @param boolean $force_update
      */
-    public static function set_templates_info( $url = '', $transient_key = '', $force_update = false ) {
+    public static function set_notice_info( $url = '', $transient_key = '', $force_update = false ) {
         $transient = get_transient( $transient_key );
         if ( ! $transient || $force_update ) {
             $info = self::get_content_remote_request( $url );
@@ -86,59 +77,41 @@ class Notice_Manager{
     }
 
     /**
-     * Get Remote Template List
+     * Get Remote Notice List
      *
      * @param [type] $type
      * @param [type] $endpoint
      * @param boolean $force_update
      */
-    public static function get_template_remote_data( $type, $endpoint = null, $force_update = false ){
+    public static function get_notice_remote_data( $type, $endpoint = null, $force_update = false ){
         self::delete_transient_cache_data();
 
-        $transient_key  = self::TRANSIENT_KEYES[$type];
+        $transient_key  = self::TRANSIENT_KEYS[$type];
         $endpoint       = $endpoint !== null ? $endpoint : self::get_remote_url($type);
         if ( !get_transient( $transient_key ) || $force_update ) {
-            self::set_templates_info( $endpoint, $transient_key, true );
+            self::set_notice_info( $endpoint, $transient_key, true );
         }
         return is_array( get_transient( $transient_key ) ) ? get_transient( $transient_key ) : json_decode( get_transient( $transient_key ), JSON_OBJECT_AS_ARRAY );
     }
 
     /**
-     * Get Template List
+     * Get Notice List
      *
      * @param boolean $force_update
      */
-    public static function get_templates_info($force_update = false) {
-        return self::get_template_remote_data('template', self::get_api_endpoint(), $force_update);
+    public static function get_notices_info($force_update = false) {
+        return self::get_notice_remote_data('notice', self::get_api_endpoint(), $force_update);
     }
 
     /**
-     * Get Gutenberg Template List
+     * Get Notice content by Notice ID
      *
-     * @param boolean $force_update
+     * @param [type] $type notice | gutenberg | pattern
+     * @param [type] $notice_id
      */
-    public static function get_gutenberg_templates_info($force_update = false) {
-        return self::get_template_remote_data('gutenberg', self::get_remote_url('gutenberg'), $force_update);
-    }
-
-    /**
-     * Get Gutenberg Patterns list
-     *
-     * @param boolean $force_update
-     */
-    public static function get_gutenberg_patterns_info($force_update = false) {
-        return self::get_template_remote_data('pattern', self::get_remote_url('pattern'), $force_update);
-    }
-
-    /**
-     * Get Template content by Template ID
-     *
-     * @param [type] $type template | gutenberg | pattern
-     * @param [type] $template_id
-     */
-    public static function get_template_data( $type, $template_id ){
-        $templateurl    = sprintf( '%s/%s', self::get_remote_url($type), $template_id);
-        $response_data  = self::get_content_remote_request( $templateurl );
+    public static function get_notice_data( $type, $notice_id ){
+        $notice_url    = sprintf( '%s/%s', self::get_remote_url($type), $notice_id);
+        $response_data  = self::get_content_remote_request( $notice_url );
         return $response_data;
     }
 
