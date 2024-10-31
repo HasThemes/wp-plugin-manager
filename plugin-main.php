@@ -53,7 +53,7 @@ class HTPM_Main {
         add_filter('admin_menu', [$this, 'pro_submenu'], 101 );
         add_action( 'wp_ajax_htpm_ajax_plugin_activation', [$this, 'ajax_plugin_activation']);
         add_action('init', [$this, 'create_mu_file']);
-        add_action('htpm_admin_notices', [$this, 'show_admin_notice'] );
+        add_action('init', [$this, 'show_admin_notice'] );
 
     }
         
@@ -260,38 +260,19 @@ class HTPM_Main {
     }
 
     function show_admin_notice() {
-        
-        $logo_url = HTPM_ROOT_URL . "/assets/images/logo.jpg";
-    
-        $message = '<div class="hastech-review-notice-wrap">
-                    <div class="hastech-rating-notice-logo">
-                        <img src="' . esc_url($logo_url) . '" alt="WP Plugin Manager" style="max-width:85px"/>
-                    </div>
-                    <div class="hastech-review-notice-content">
-                        <h3>'.esc_html__('Thank you for choosing WP Plugin Manager to manage you plugins!','htpm').'</h3>
-                        <p>'.esc_html__('Would you mind doing us a huge favor by providing your feedback on WordPress? Your support helps us spread the word and greatly boosts our motivation.','htpm').'</p>
-                        <div class="hastech-review-notice-action">
-                            <a href="https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post" class="hastech-review-notice button-primary" target="_blank">'.esc_html__('Ok, you deserve it!','htpm').'</a>
-                            <span class="dashicons dashicons-calendar"></span>
-                            <a href="#" class="hastech-notice-close htpm-review-notice">'.esc_html__('Maybe Later','htpm').'</a>
-                            <span class="dashicons dashicons-smiley"></span>
-                            <a href="#" data-already-did="yes" class="hastech-notice-close htpm-review-notice">'.esc_html__('I already did','htpm').'</a>
-                        </div>
-                    </div>
-                </div>';
-    
-        \HTPM_Rating_Notice::set_notice(
-            [
-                'id'          => 'htpm-rating-notice',
-                'type'        => 'info',
-                'dismissible' => true,
-                'message_type' => 'html',
-                'message'     => $message,
-                'display_after'  => ( 14 * DAY_IN_SECONDS ),
-                'expire_time' => ( 20 * DAY_IN_SECONDS ),
-                'close_by'    => 'transient'
-            ]
-        );
+        require HTPM_ROOT_DIR . '/includes/notice-manager.php';
+        $noticeManager = Notice_Manager::instance();
+        $notices = $noticeManager->get_notices_info();
+        if(!empty($notices)) {
+            $notices = array_map(function($notice) {
+                $notice["display_after"] *= DAY_IN_SECONDS;
+                $notice["expire_time"] *= DAY_IN_SECONDS;
+                return $notice;
+            }, $notices);
+            foreach ($notices as $notice) {
+                \HTPM_Rating_Notice::set_notice($notice);
+            }
+        }
     }
 
 }
