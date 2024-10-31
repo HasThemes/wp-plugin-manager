@@ -261,7 +261,7 @@ class HTPM_Main {
 
     function show_admin_notice() {
         require HTPM_ROOT_DIR . '/includes/notice-manager.php';
-        $noticeManager = Notice_Manager::instance();
+        $noticeManager = HTPM_Notice_Manager::instance();
         $notices = $noticeManager->get_notices_info();
         if(!empty($notices)) {
             $notices = array_map(function($notice) {

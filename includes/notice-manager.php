@@ -1,7 +1,7 @@
 <?php  
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-class Notice_Manager{
+class HTPM_Notice_Manager{
 
     // Remote URL
     // const REST_ROUTE_URL = 'https://library.shoplentor.com/wp-json/wp-plugin-manager';
