@@ -61,7 +61,7 @@ class HTPM_Main {
         add_action('init', [$this, 'create_mu_file']);
         add_action('init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('init', [$this, 'show_admin_rating_notice'] );
-        // add_action('init', [$this, 'show_admin_promo_notice'] );
+        add_action('init', [$this, 'show_admin_promo_notice'] );
 
 
     }
@@ -282,7 +282,7 @@ class HTPM_Main {
                     'dismissible' => false,
                     'message_type' => 'html',
                     'message'     => $message,
-                    'display_after'  => ( 14 * DAY_IN_SECONDS ),
+                    'display_after'  => ( 7 * DAY_IN_SECONDS ),
                     'expire_time' => ( 20 * DAY_IN_SECONDS ),
                     'close_by'    => 'transient'
                 ]
