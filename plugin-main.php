@@ -38,6 +38,12 @@ class HTPM_Main {
     }
 
     private function __construct() {
+
+        /** Load the is_plugin_active function if it doesn't exist */
+        if (!function_exists('is_plugin_active')) {
+            include_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+
         register_activation_hook( HTPM_ROOT_PL, [$this, 'activation'] );
         register_deactivation_hook( __FILE__, [$this, 'deactivation'] );
 
