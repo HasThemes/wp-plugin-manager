@@ -61,7 +61,7 @@ class HTPM_Main {
         add_action('init', [$this, 'create_mu_file']);
         add_action('init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('init', [$this, 'show_admin_rating_notice'] );
-        add_action('init', [$this, 'show_admin_promo_notice'] );
+        // add_action('init', [$this, 'show_admin_promo_notice'] );
 
 
     }
@@ -279,7 +279,7 @@ class HTPM_Main {
                 [
                     'id'          => 'htpm-diagnostic-notice',
                     'type'        => 'success',
-                    'dismissible' => true,
+                    'dismissible' => false,
                     'message_type' => 'html',
                     'message'     => $message,
                     'display_after'  => ( 14 * DAY_IN_SECONDS ),

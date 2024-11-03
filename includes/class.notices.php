@@ -83,7 +83,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
                 wp_send_json_error( $error_message );
             }
 
-            if ( ! empty( $notice_id ) && (strpos( $notice_id, 'htpm-notice' ) !== false) ) {
+            if ( ! empty( $notice_id ) && (strpos( $notice_id, 'hastech-notice' ) !== false) ) {
 
                 if( !empty( $alreadydid ) ) {
                     update_option( $notice_id , true );
@@ -157,6 +157,8 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
                         noticeNonce = '".esc_html( wp_create_nonce( 'htpm_notices_nonce' ) )."';
 
                     noticeWrap.css('opacity','0.5');
+
+                    console.log(alreadyDid);
             
                     $.ajax({
                         url: ajaxurl,
@@ -271,7 +273,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
                 if( $notice['type'] !== 'custom'){
                     $classes[] = 'notice';
                 }else{
-                    $notice['dismissible_btn'] = '<button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__('Dismiss this notice.','htpm').'</span></button>';
+                    $notice['dismissible_btn'] = '<button type="button" class="htpm-notice-dismiss"><span class="screen-reader-text">'.esc_html__('Dismiss this notice.','htpm').'</span></button>';
                 }
             }
 
