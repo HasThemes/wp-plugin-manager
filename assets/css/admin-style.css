@@ -24,7 +24,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-	border-bottom: 1.5px solid var(--htpm-primary);
+	border-bottom: 1px solid var(--htpm-primary);
     margin-top: 20px;
     padding-left: 10px;
 }
@@ -35,7 +35,7 @@
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
     margin-left: 0;
-    border: 1.5px solid var(--htpm-border2);
+    border: 1px solid var(--htpm-border2);
     border-bottom: none;
     transition: all 0.3s ease 0s;
     box-shadow: none;
