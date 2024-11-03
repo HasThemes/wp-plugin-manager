@@ -4,8 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 class HTPM_Notice_Manager{
 
     // Remote URL
-    // const REST_ROUTE_URL = 'https://library.shoplentor.com/wp-json/wp-plugin-manager';
-    const REST_ROUTE_URL = HTPM_ROOT_URL;
+    const REST_ROUTE_URL = 'https://feed.hasthemes.com/notices/';
 
     // Transient Key
     const TRANSIENT_KEYS = [
@@ -14,8 +13,7 @@ class HTPM_Notice_Manager{
 
     // API Endpoint
     const API_ENDPOINT = [
-        // 'notice'      => 'v1/notice',
-        'notice'      => 'notice.json',
+        'notice'      => 'wp-plugin-manager.json',
     ];
 
     private static $_instance = null;
