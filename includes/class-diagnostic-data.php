@@ -94,10 +94,6 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
                 return;
             }
 
-            // add_action( 'htpm_admin_notices', function () {
-            //     $this->show_notices();
-            // }, 0 );
-
             add_action( 'wp_ajax_htpm_diagnostic_data', function () {
                 check_ajax_referer( 'htpm-diagnostic-data-ajax-request' );
                 $agreed = isset( $_POST['agreed'] ) ? sanitize_key( $_POST['agreed'] ) : '' ;
@@ -105,6 +101,18 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
                     $this->process_data( $agreed, true );
                 } elseif( $agreed === 'no' ) {
                     $this->process_data( $agreed, true );
+                }
+            } );
+
+            add_action('init', function () {
+                if (isset($_GET['action']) && $_GET['action'] === 'htpm_diagnostic_data' && isset($_GET['_wpnonce'])) {
+                    check_ajax_referer( 'htpm-diagnostic-data-ajax-request' );
+                    $agreed = isset( $_GET['htpm_diagnostic_data_agreed'] ) ? sanitize_key( $_GET['htpm_diagnostic_data_agreed'] ) : '';
+                    if( $agreed === '1' ){
+                        $this->process_data( 'yes' );
+                    } elseif( $agreed === '0' ) {
+                        $this->process_data( 'no' );
+                    }
                 }
             } );
 
@@ -139,7 +147,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
                 $(".htpm-diagnostic-data-button").on("click", function(e) {
                     e.preventDefault();
                     let thisButton = $(this),
-                        noticeWrap = thisButton.closest(".hastech-admin-notice"),
+                        noticeWrap = thisButton.closest(".htpm-admin-notice"),
                         agreed = thisButton.hasClass("htpm-diagnostic-data-agree") ? "yes" : "no";
                     $.ajax({
                         type: "POST",
@@ -251,7 +259,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
 
             update_option( 'htpm_diagnostic_data_agreed', $agreed );
             update_option( 'htpm_diagnostic_data_notice', $notice );
-            set_transient( 'hastech-notice-id-htpm_diagnostic_data_notice_id', true );
+            set_transient( 'hastech-notice-id-htpm-diagnostic-notice', true );
 
             if($ajax) {
                 $response = array(
@@ -535,7 +543,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
         /**
          * Show notices.
          */
-        private function show_notices() {
+        public function show_notices() {
             if ( 'no' === $this->is_capable_user() ) {
                 return;
             }
@@ -565,13 +573,12 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
             $message_l2 = sprintf( esc_html__( 'Server information (Web server, PHP version, MySQL version), WordPress information, site name, site URL, number of plugins, number of users, your name, and email address. You can rest assured that no sensitive data will be collected or tracked. %1$sLearn more%2$s.', 'just-tables' ), '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>' );
 
             $button_text_1 = esc_html__( 'Count Me In', 'just-tables' );
-            $button_link_1 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => 'yes' ) );
+            $button_link_1 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => '1' ) );
 
             $button_text_2 = esc_html__( 'No, Thanks', 'just-tables' );
-            $button_link_2 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => 'no' ) );
+            $button_link_2 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => '0' ) );
             ?>
-            <div class="htpm-diagnostic-data-style"><style>.htpm-diagnostic-data-notice,.woocommerce-embed-page .htpm-diagnostic-data-notice{padding-top:.75em;padding-bottom:.75em;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons,.htpm-diagnostic-data-notice .htpm-diagnostic-data-list,.htpm-diagnostic-data-notice .htpm-diagnostic-data-message{padding:.25em 2px;margin:0;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-list{display:none;color:#646970;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons{padding-top:.75em;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons .button{margin-right:5px;box-shadow:none;}.htpm-diagnostic-data-loading{position:relative;}.htpm-diagnostic-data-loading::before{position:absolute;content:"";width:100%;height:100%;top:0;left:0;background-color:rgba(255,255,255,.5);z-index:999;}.htpm-diagnostic-data-disagree{border-width:0px !important;background-color: transparent!important; padding: 0!important;}h4.htpm-diagnostic-data-title {margin: 0 0 10px 0;font-size: 1.04em;font-weight: 600;}</style></div>
-            <div class="htpm-diagnostic-data-notice notice notice-success">
+            <div class="htpm-diagnostic-data-notice">
                 <h4 class="htpm-diagnostic-data-title"><?php
                     /*
                     * translators: %1$s: project name

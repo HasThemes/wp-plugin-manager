@@ -68,7 +68,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
             $capability  = isset( $notice['capability'] ) ? $notice['capability'] : 'manage_options';
 
             // User Capability check
-			if ( ! apply_filters( 'hastech_notice_user_cap_check', current_user_can( $capability ) ) ) {
+			if ( ! apply_filters( 'htpm_notice_user_cap_check', current_user_can( $capability ) ) ) {
                 $error_message = [
                     'message'  => __('You are not authorized.', 'htpm')
                 ];
@@ -83,7 +83,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
                 wp_send_json_error( $error_message );
             }
 
-            if ( ! empty( $notice_id ) && (strpos( $notice_id, 'hastech-notice' ) !== false) ) {
+            if ( ! empty( $notice_id ) && (strpos( $notice_id, 'htpm-notice' ) !== false) ) {
 
                 if( !empty( $alreadydid ) ) {
                     update_option( $notice_id , true );
@@ -108,45 +108,48 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
          */
         public function enqueue_scripts() {
 
-            $styles = ".hastech-admin-notice.promo-banner {
+            $styles = ".htpm-admin-notice.promo-banner {
                 position: relative;
                 padding-top: 20px !important;
                 padding-right: 40px;
             }
-            .hastech-admin-notice.notice img, .hastech-review-notice-wrap img{
+            .htpm-admin-notice.notice img, .htpm-review-notice-wrap img{
                 width: 100%;
             }
-            .hastech-review-notice-wrap{
+            .htpm-review-notice-wrap{
                 border-left-color: #2271b1 !important;
                 display: flex;
                 justify-content: left;
                 align-items: center;
                 padding: 10px 0;
             }
-            .hastech-review-notice-content {
+            .htpm-review-notice-content {
                 margin-left: 15px;
             }
-            .hastech-review-notice-action {
+            .htpm-review-notice-action {
                 display: flex;
                 align-items: center;
                 padding-top: 10px;
+                gap: 15px;
             }
-            .hastech-review-notice-action span.dashicons {
+            .htpm-review-notice-action span.dashicons {
                 font-size: 1.4em;
-                padding-left: 10px;
+                padding-left: 0;
             }
-            .hastech-review-notice-action a {
-                padding-left: 5px;
+            .htpm-review-notice-action a {
+                padding-left: 0;
                 text-decoration: none;
+                display: flex;
+                gap: 5px;
             }
-            .hastech-review-notice-content h3 {
+            .htpm-review-notice-content h3 {
                 margin: 0;
             }";
 
             $scripts = "jQuery(document).ready( function($) {
-                $( '.hastech-admin-notice.is-dismissible' ).on( 'click', '.notice-dismiss,.hastech-notice-close', function(e) {
+                $( '.htpm-admin-notice.is-dismissible' ).on( 'click', '.notice-dismiss,.htpm-notice-close', function(e) {
                     e.preventDefault();
-                    let noticeWrap = $( this ).parents( '.hastech-admin-notice' ),
+                    let noticeWrap = $( this ).parents( '.htpm-admin-notice' ),
                         noticeId = noticeWrap.attr( 'id' ) || '',
                         expireTime = noticeWrap.attr( 'expire-time' ) || '',
                         closeBy = noticeWrap.attr( 'close-by' ) || '',
@@ -261,7 +264,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
             ];
             $notice = wp_parse_args( $notice_data, $defaults );
 
-            $classes = [ 'hastech-admin-notice' ];
+            $classes = [ 'htpm-admin-notice' ];
 
             if ( isset( $notice['type'] ) ) {
                 $classes[] = 'notice-' . $notice['type'];

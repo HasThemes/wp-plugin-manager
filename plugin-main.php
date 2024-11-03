@@ -59,7 +59,9 @@ class HTPM_Main {
         add_filter('admin_menu', [$this, 'pro_submenu'], 101 );
         add_action( 'wp_ajax_htpm_ajax_plugin_activation', [$this, 'ajax_plugin_activation']);
         add_action('init', [$this, 'create_mu_file']);
-        add_action('init', [$this, 'show_admin_notice'] );
+        add_action('init', [$this, 'show_admin_diagnostic_data_notice'] );
+        add_action('init', [$this, 'show_admin_rating_notice'] );
+
 
     }
         
@@ -265,7 +267,60 @@ class HTPM_Main {
         }
     }
 
-    function show_admin_notice() {
+    function show_admin_diagnostic_data_notice() {
+        $notice_instance = HTPM_Diagnostic_Data::get_instance();
+        ob_start();
+        $notice_instance->show_notices();
+        $message = ob_get_clean();
+        
+        if (! empty( $message ) ) {
+            HTPM_Notice::set_notice(
+                [
+                    'id'          => 'htpm-diagnostic-notice',
+                    'type'        => 'success',
+                    'dismissible' => true,
+                    'message_type' => 'html',
+                    'message'     => $message,
+                    'display_after'  => ( 14 * DAY_IN_SECONDS ),
+                    'expire_time' => ( 20 * DAY_IN_SECONDS ),
+                    'close_by'    => 'transient'
+                ]
+            );
+        }
+    }
+
+    function show_admin_rating_notice() {
+        $logo_url = HTPM_ROOT_URL . "/assets/images/logo.jpg";
+        $message = '<div class="htpm-review-notice-wrap">
+            <div class="htpm-rating-notice-logo">
+                <img src="' . esc_url($logo_url) . '" alt="WP Plugin Manager" style="max-width:110px"/>
+            </div>
+            <div class="htpm-review-notice-content">
+                <h3>'.esc_html__('Thank you for choosing WP Plugin Manager to manage you plugins!','htpm').'</h3>
+                <p>'.esc_html__('Would you mind doing us a huge favor by providing your feedback on WordPress? Your support helps us spread the word and greatly boosts our motivation.','htpm').'</p>
+                <div class="htpm-review-notice-action">
+                    <a href="https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post" class="htpm-review-notice button-primary" target="_blank">'.esc_html__('Ok, you deserve it!','htpm').'</a>
+                    <a href="#" class="htpm-notice-close htpm-review-notice"><span class="dashicons dashicons-calendar"></span>'.esc_html__('Maybe Later','htpm').'</a>
+                    <a href="#" data-already-did="yes" class="htpm-notice-close htpm-review-notice"><span class="dashicons dashicons-smiley"></span>'.esc_html__('I already did','htpm').'</a>
+                </div>
+            </div>
+        </div>';
+    
+        HTPM_Notice::set_notice(
+            [
+                'id'          => 'htpm-rating-notice',
+                'type'        => 'info',
+                'dismissible' => true,
+                'message_type' => 'html',
+                'message'     => $message,
+                'display_after'  => ( 14 * DAY_IN_SECONDS ),
+                'expire_time' => ( 20 * DAY_IN_SECONDS ),
+                'close_by'    => 'transient'
+            ]
+        );
+    }
+
+    function show_admin_promo_notice() {
         require HTPM_ROOT_DIR . '/includes/notice-manager.php';
         require HTPM_ROOT_DIR . '/includes/class.notices.php';
         $noticeManager = HTPM_Notice_Manager::instance();
