@@ -131,7 +131,7 @@
                 title: 'Buy Pro',
                 modal: true,
                 draggable: false,
-                width: 500,
+                width: 450,
             });
         }
         $('.ui-widget-overlay').on('click', function() {

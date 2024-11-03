@@ -592,9 +592,10 @@ div#htpm_pro_notice {
     padding: 20px 30px 30px;
 }
 .htpm_pro_notice p {
-    font-size: 16px;
+    font-size: 14px;
     margin-top: 0;
     margin-bottom: 20px;
+    color: #6D7175;
 }
 .htpm_pro_notice .pro_notice_button {
     padding: 10px 20px;
