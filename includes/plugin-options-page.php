@@ -74,7 +74,7 @@ class HTPM_Option_Page {
 		echo '<div id="htpm_pro_notice" style="display:none">';
 			printf(
 				'<p>%s</p>',
-				esc_html__('This feature is available in the pro version.', 'htpm'),
+				esc_html__('Our free version is great, but it doesn\'t have all our advanced features. The best way to unlock all of the features in our plugin is by purchasing the pro version.', 'htpm'),
 			);
 			printf(
 				'<a target="_blank" class="pro_notice_button" href="%1$s">%2$s</a>',

@@ -128,10 +128,10 @@
         function proDialogBox () {
             $( "#htpm_pro_notice" ).dialog({
                 dialogClass: 'wp-dialog htpm_pro_notice',
-                title: 'Pro Version is Required!',
+                title: 'Buy Pro',
                 modal: true,
                 draggable: false,
-                width: 400,
+                width: 500,
             });
         }
         $('.ui-widget-overlay').on('click', function() {

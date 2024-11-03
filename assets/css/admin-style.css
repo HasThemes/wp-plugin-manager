@@ -552,12 +552,19 @@
     padding: 0;
 }
 .htpm_pro_notice .ui-dialog-titlebar {
-    padding: 5px 15px;
+    padding: 25px 15px 0 !important;
     background: transparent;
+    font-size: 40px;
     border: none;
-    border-bottom: 1px solid var(--htpm-border2);
+    border-bottom: none;
     border-radius: 0;
     text-align: center;
+    text-shadow: 3px 3px 0 #3858e957;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--htpm-primary);
+    height: auto;
+    line-height: 1;
 }
 .htpm_pro_notice .ui-dialog-titlebar .ui-dialog-title {
     float: none;
@@ -569,9 +576,11 @@
     background: transparent;
     border: none;
     border-radius: 0px;
-    width: 24px;
-    height: 24px;
-    margin-top: -12px;
+    right: 0;
+    top: 0;
+    margin: 0;
+    width: 30px;
+    height: 30px;
 }
 .htpm_pro_notice .ui-button.ui-dialog-titlebar-close:focus {
     box-shadow: none;
@@ -580,15 +589,15 @@
 }
 div#htpm_pro_notice {
     text-align: center;
-    padding: 30px;
+    padding: 20px 30px 30px;
 }
 .htpm_pro_notice p {
     font-size: 16px;
     margin-top: 0;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 .htpm_pro_notice .pro_notice_button {
-    padding: 8px 15px;
+    padding: 10px 20px;
     font-size: 14px;
     line-height: 1.5;
     background-color: var(--htpm-primary);
@@ -597,6 +606,7 @@ div#htpm_pro_notice {
     color: var(--htpm-white);
     font-weight: 400;
     display: inline-flex;
+    border-radius: 4px;
 }
 .htpm_pro_notice .pro_notice_button:hover {
     background-color: var(--htpm-primary-hover);
