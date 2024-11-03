@@ -147,7 +147,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
                 $(".htpm-diagnostic-data-button").on("click", function(e) {
                     e.preventDefault();
                     let thisButton = $(this),
-                        noticeWrap = thisButton.closest(".htpm-admin-notice"),
+                        noticeWrap = thisButton.closest(".hastech-admin-notice"),
                         agreed = thisButton.hasClass("htpm-diagnostic-data-agree") ? "yes" : "no";
                     $.ajax({
                         type: "POST",

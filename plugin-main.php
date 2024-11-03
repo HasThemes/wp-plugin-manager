@@ -61,7 +61,7 @@ class HTPM_Main {
         add_action('init', [$this, 'create_mu_file']);
         add_action('init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('init', [$this, 'show_admin_rating_notice'] );
-        add_action('init', [$this, 'show_admin_promo_notice'] );
+        // add_action('init', [$this, 'show_admin_promo_notice'] );
 
 
     }
@@ -292,17 +292,17 @@ class HTPM_Main {
 
     function show_admin_rating_notice() {
         $logo_url = HTPM_ROOT_URL . "/assets/images/logo.jpg";
-        $message = '<div class="htpm-review-notice-wrap">
-            <div class="htpm-rating-notice-logo">
+        $message = '<div class="hastech-review-notice-wrap">
+            <div class="hastech-rating-notice-logo">
                 <img src="' . esc_url($logo_url) . '" alt="WP Plugin Manager" style="max-width:110px"/>
             </div>
-            <div class="htpm-review-notice-content">
+            <div class="hastech-review-notice-content">
                 <h3>'.esc_html__('Thank you for choosing WP Plugin Manager to manage you plugins!','htpm').'</h3>
                 <p>'.esc_html__('Would you mind doing us a huge favor by providing your feedback on WordPress? Your support helps us spread the word and greatly boosts our motivation.','htpm').'</p>
-                <div class="htpm-review-notice-action">
-                    <a href="https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post" class="htpm-review-notice button-primary" target="_blank">'.esc_html__('Ok, you deserve it!','htpm').'</a>
-                    <a href="#" class="htpm-notice-close htpm-review-notice"><span class="dashicons dashicons-calendar"></span>'.esc_html__('Maybe Later','htpm').'</a>
-                    <a href="#" data-already-did="yes" class="htpm-notice-close htpm-review-notice"><span class="dashicons dashicons-smiley"></span>'.esc_html__('I already did','htpm').'</a>
+                <div class="hastech-review-notice-action">
+                    <a href="https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post" class="hastech-review-notice button-primary" target="_blank">'.esc_html__('Ok, you deserve it!','htpm').'</a>
+                    <a href="#" class="hastech-notice-close hastech-review-notice"><span class="dashicons dashicons-calendar"></span>'.esc_html__('Maybe Later','htpm').'</a>
+                    <a href="#" data-already-did="yes" class="hastech-notice-close hastech-review-notice"><span class="dashicons dashicons-smiley"></span>'.esc_html__('I already did','htpm').'</a>
                 </div>
             </div>
         </div>';
