@@ -72,7 +72,7 @@ class HTPM_Main {
      */
     function remove_admin_notice(){
         $current_screen = get_current_screen();
-        $hide_screen = ['toplevel_page_htpm-options', 'plugin-manager_page_htpm_recommendations'];
+        $hide_screen = ['toplevel_page_htpm-options', 'plugin-manager_page_htpm_recommendations', 'update'];
         if(  in_array( $current_screen->id, $hide_screen) ){
             remove_all_actions('admin_notices');
             remove_all_actions('all_admin_notices');
