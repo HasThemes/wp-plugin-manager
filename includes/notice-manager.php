@@ -8,7 +8,7 @@ class HTPM_Notice_Manager{
 
     // Transient Key
     const TRANSIENT_KEYS = [
-        'notice'  => 'wp_plugin_manager_notice_info',
+        'notice'  => 'htpm_notice_info',
     ];
 
     // API Endpoint
