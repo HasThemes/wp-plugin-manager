@@ -94,19 +94,91 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
                 return;
             }
 
-            add_action( 'admin_notices', function () {
-                $this->show_notices();
-            }, 0 );
-
-            add_action('plugins_loaded', function(){
-                $agreed  = ( isset( $_GET['htpm_diagnostic_data_agreed'] ) ? sanitize_key( $_GET['htpm_diagnostic_data_agreed'] ) : '' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
+            add_action( 'wp_ajax_htpm_diagnostic_data', function () {
+                check_ajax_referer( 'htpm-diagnostic-data-ajax-request' );
+                $agreed = isset( $_POST['agreed'] ) ? sanitize_key( $_POST['agreed'] ) : '' ;
                 if( $agreed === 'yes' ){
-                    $this->process_data( $agreed );
+                    $this->process_data( $agreed, true );
                 } elseif( $agreed === 'no' ) {
-                    $this->process_data( $agreed );
+                    $this->process_data( $agreed, true );
                 }
-            }, 11);
+            } );
+
+            add_action('init', function () {
+                if (isset($_GET['action']) && $_GET['action'] === 'htpm_diagnostic_data' && isset($_GET['_wpnonce'])) {
+                    check_ajax_referer( 'htpm-diagnostic-data-ajax-request' );
+                    $agreed = isset( $_GET['htpm_diagnostic_data_agreed'] ) ? sanitize_key( $_GET['htpm_diagnostic_data_agreed'] ) : '';
+                    if( $agreed === '1' ){
+                        $this->process_data( 'yes' );
+                    } elseif( $agreed === '0' ) {
+                        $this->process_data( 'no' );
+                    }
+                }
+            } );
+
+            add_action('admin_head', [$this, 'notice_css']);
+            add_action('admin_footer', [$this, 'notice_js']);
+        }
+
+        public function notice_css() {
+            echo '<style id="htpm-diagnostic-data-notice-style">.htpm-diagnostic-data-notice,.woocommerce-embed-page .htpm-diagnostic-data-notice{padding-top:.75em;padding-bottom:.75em;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons,.htpm-diagnostic-data-notice .htpm-diagnostic-data-list,.htpm-diagnostic-data-notice .htpm-diagnostic-data-message{padding:.25em 2px;margin:0;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-list{display:none;color:#646970;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons{padding-top:.75em;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons .button{margin-right:5px;box-shadow:none;}.htpm-diagnostic-data-loading{position:relative;}.htpm-diagnostic-data-loading::before{position:absolute;content:"";width:100%;height:100%;top:0;left:0;background-color:rgba(255,255,255,.5);z-index:999;}.htpm-diagnostic-data-disagree{border-width:0px !important;background-color: transparent!important; padding: 0!important;}h4.htpm-diagnostic-data-title {margin: 0 0 10px 0;font-size: 1.04em;font-weight: 600;}</style>';
+        }
+        public function notice_js() {
+            $ajax_nonce = wp_create_nonce( "htpm-diagnostic-data-ajax-request" );
+            $ajax_url = admin_url( 'admin-ajax.php' );
+            echo '<script type="text/javascript">;(function($) {
+                "use strict";
+                function htpmDismissThanksNotice(noticeWrap) {
+                    $(".htpm-diagnostic-data-thanks .notice-dismiss").on("click", function(e) {
+                        e.preventDefault();
+                        let thisButton = $(this),
+                            noticeWrap = thisButton.closest(".htpm-diagnostic-data-thanks");
+                        noticeWrap.fadeTo(100, 0, function() {
+                            noticeWrap.slideUp(100, function() {
+                                noticeWrap.remove()
+                            })
+                        })
+                    })
+                };
+                $(".htpm-diagnostic-data-list-toogle").on("click", function(e) {
+                    e.preventDefault();
+                    $(this).parents(".htpm-diagnostic-data-notice").find(".htpm-diagnostic-data-list").slideToggle("fast")
+                });
+                $(".htpm-diagnostic-data-button").on("click", function(e) {
+                    e.preventDefault();
+                    let thisButton = $(this),
+                        noticeWrap = thisButton.closest(".hastech-admin-notice"),
+                        agreed = thisButton.hasClass("htpm-diagnostic-data-agree") ? "yes" : "no";
+                    $.ajax({
+                        type: "POST",
+                        url: "'.esc_url($ajax_url).'",
+                        data: {
+                            action: "htpm_diagnostic_data",
+                            agreed: agreed,
+                            _wpnonce: "'.esc_attr($ajax_nonce).'"
+                        },
+                        beforeSend: function() {
+                            noticeWrap.addClass("htpm-diagnostic-data-loading")
+                        },
+                        success: function(response) {
+                            response = "object" === typeof response ? response : {};
+                            let success = response.hasOwnProperty("success") ? response.success : "no",
+                                notice = response.hasOwnProperty("notice") ? response.notice : "no",
+                                thanks_notice = response.hasOwnProperty("thanks_notice") ? response.thanks_notice : "";
+                            if ("yes" === success) {
+                                noticeWrap.replaceWith(thanks_notice);
+                            } else if ("no" === notice) {
+                                noticeWrap.remove();
+                            };
+                            noticeWrap.removeClass("htpm-diagnostic-data-loading");
+                            htpmDismissThanksNotice()
+                        },
+                        error: function() {
+                            noticeWrap.removeClass("htpm-diagnostic-data-loading")
+                        },
+                    })
+                })
+            })(jQuery);</script>';
         }
 
         /**
@@ -169,7 +241,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
         /**
          * Process data.
          */
-        private function process_data($agreed) {
+        private function process_data($agreed, $ajax = false) {
             $notice = 'no';
 
             if ( 'yes' === $agreed ) {
@@ -187,6 +259,22 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
 
             update_option( 'htpm_diagnostic_data_agreed', $agreed );
             update_option( 'htpm_diagnostic_data_notice', $notice );
+            set_transient( 'hastech-notice-id-htpm-diagnostic-notice', true );
+
+            if($ajax) {
+                $response = array(
+                    'success' => $agreed,
+                    'notice' => $notice,
+                );
+
+                if ( 'yes' === $agreed ) {
+                    $response['thanks_notice'] = $this->get_thanks_notice();
+                }
+
+                wp_send_json( $response );
+            } else {
+                echo wp_kses_post($this->get_thanks_notice());
+            }
         }
 
         /**
@@ -455,7 +543,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
         /**
          * Show notices.
          */
-        private function show_notices() {
+        public function show_notices() {
             if ( 'no' === $this->is_capable_user() ) {
                 return;
             }
@@ -485,13 +573,12 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
             $message_l2 = sprintf( esc_html__( 'Server information (Web server, PHP version, MySQL version), WordPress information, site name, site URL, number of plugins, number of users, your name, and email address. You can rest assured that no sensitive data will be collected or tracked. %1$sLearn more%2$s.', 'just-tables' ), '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>' );
 
             $button_text_1 = esc_html__( 'Count Me In', 'just-tables' );
-            $button_link_1 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => 'yes' ) );
+            $button_link_1 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => '1' ) );
 
             $button_text_2 = esc_html__( 'No, Thanks', 'just-tables' );
-            $button_link_2 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => 'no' ) );
+            $button_link_2 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => '0' ) );
             ?>
-            <div class="htpm-diagnostic-data-style"><style>.htpm-diagnostic-data-notice,.woocommerce-embed-page .htpm-diagnostic-data-notice{padding-top:.75em;padding-bottom:.75em;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons,.htpm-diagnostic-data-notice .htpm-diagnostic-data-list,.htpm-diagnostic-data-notice .htpm-diagnostic-data-message{padding:.25em 2px;margin:0;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-list{display:none;color:#646970;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons{padding-top:.75em;}.htpm-diagnostic-data-notice .htpm-diagnostic-data-buttons .button{margin-right:5px;box-shadow:none;}.htpm-diagnostic-data-loading{position:relative;}.htpm-diagnostic-data-loading::before{position:absolute;content:"";width:100%;height:100%;top:0;left:0;background-color:rgba(255,255,255,.5);z-index:999;}.htpm-diagnostic-data-disagree{border-width:0px !important;background-color: transparent!important; padding: 0!important;}h4.htpm-diagnostic-data-title {margin: 0 0 10px 0;font-size: 1.04em;font-weight: 600;}</style></div>
-            <div class="htpm-diagnostic-data-notice notice notice-success">
+            <div class="htpm-diagnostic-data-notice">
                 <h4 class="htpm-diagnostic-data-title"><?php
                     /*
                     * translators: %1$s: project name
@@ -506,6 +593,24 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
                 </p>
             </div>
             <?php
+        }
+        
+        /**
+         * Get thanks notice.
+         */
+        private function get_thanks_notice() {
+            /*
+            * translators: %1$s: project name
+            * translators: %2$s: strong start tag
+            * translators: %3$s: strong end tag
+            */
+            $message = sprintf( esc_html__( 'Thank you very much for supporting %2$s%1$s%3$s.', 'htpm' ), $this->project_name, '<strong>', '</strong>' );
+            /*
+            * translators: %1$s: Message content
+            */
+            $notice = sprintf( '<div class="htpm-diagnostic-data-thanks notice notice-success is-dismissible"><p>%1$s</p><button type="button" class="notice-dismiss"><span class="screen-reader-text"></span></button></div>', wp_kses_post( $message ) );
+
+            return $notice;
         }
 
     }

@@ -1,89 +1,142 @@
 (function($) {
     "use strict";
-
-    $( function() {
-      $( "#htpm_accordion" ).accordion({
-      	active: false ,
-      	collapsible: true,
-      	heightStyle: 'content'
-      });
-    } );
-
-    // Reapeter Field Increase
-    $( '.htpm-add-row' ).on('click', function() {
-        var row = $(this).parent().closest('tr').clone(true);
-        row.removeClass( 'htpm-empty-row screen-reader-text' );
-        $(this).parent().closest('tr').after(row);
-        return false;
-    });
-
-    // Reapeter Field Decrease
-    $( '.htpm-remove-row' ).on('click', function() {
-        $(this).parent().parent().remove();
-        return false;
-    });
-
-
-    $('.htpm_single_accordion .htpm_uri_type').on('change', function(){
-    	var select_val = $(this).val();
-
-    	if(select_val == 'page'){
-    		$(this).closest('.htpm_single_accordion').attr('data-htpm_uri_type', 'page');
-    	} else if(select_val == 'post'){
-    		$(this).closest('.htpm_single_accordion').attr('data-htpm_uri_type', 'post');
-    	} else if(select_val == 'page_post'){
-    		$(this).closest('.htpm_single_accordion').attr('data-htpm_uri_type', 'page_post');
-    	} else if(select_val == 'custom'){
-    		$(this).closest('.htpm_single_accordion').attr('data-htpm_uri_type', 'custom');
-    	}
-    });
-
-    // select2 activation
     $(document).ready(function() {
-        $('.htpm_select2_active').select2();
-    });
-
-    // pro popup
-    $('.htpm_accordion .htpm_repeater').on('click', function(e){
-    	$( "#htpm_pro_notice" ).dialog({
-    		'dialogClass': 'wp-dialog',
-    		title: 'Pro Version is Required!',
-    		modal: true,
-    	}); return;
-    });
-
-    $('.htpm_accordion .htpm_uri_type').on('change', function(e){
-        var value = $(this).val();
-        if(value == 'page_post_cpt'){
-            $( "#htpm_pro_notice" ).dialog({
-                'dialogClass': 'wp-dialog',
-                title: 'Pro Version is Required!',
-                modal: true,
-            }); return;
-        }
-    });
-
-    $( document ).on('click','.htmp-nav.nav-tab', function() {
-
-        // Check for active
-        $('.htmp-nav.nav-tab').removeClass('nav-tab-active');
-        $('.htpm-tab-group').removeClass('htmp-active-tab');
-        $(this).addClass('nav-tab-active');
-
-        // Display active tab
-        let currentTab = $(this).attr('href');
-        $(currentTab).addClass('htmp-active-tab');
-
-        return false;
         
-    });
+        /**
+         * Tab Navigation
+         */
+        $( document ).on('click', '.htpm-nav', function(e) {
+            e.preventDefault();
+            const $this = $( this );
+            if(!$this.hasClass('htpm-nav-active')) {
+                $this.addClass('htpm-nav-active').siblings().removeClass('htpm-nav-active')
+                $($this.attr('href')).addClass('htpm-active').siblings().removeClass('htpm-active');
+            }
+        });
+        
+        /**
+         * Accordion Activation
+         */
+        $( "#htpm_accordion" ).accordion({
+            active: false ,
+            collapsible: true,
+            heightStyle: 'content'
+        });
 
-    $('.htpm_plugin_disable_checkbox').on('change', function() {
-        const hidden_fields = $(this.closest('.htpm_single_accordion')).find('.htpm_group_hidden_fields');
-        if(this.checked) {
-            $(hidden_fields).slideDown();
-        } else {
-            $(hidden_fields).slideUp();
+        /**
+         * Select2 Activation
+         */
+        $('.htpm_select2_active').select2();
+
+        /**
+         * Plugin Disable event handler
+         */
+        $('.htpm_disable_plugin input[type="checkbox"]').on('click', function() {
+            const $this = $(this),
+                $fieldGroup = $this.closest('.htpm_field').siblings('.htpm_field_group'),
+                $accordionHeader = $this.closest('.htpm_single_accordion').prev('.ui-accordion-header');
+            $fieldGroup.stop(true, true).slideToggle(400, function () {
+                $(this).css('display', $this.is(':checked') ? 'flex' : 'none');
+            });
+            $accordionHeader.toggleClass('htpm_is_disabled', $this.is(':checked'));
+        });
+
+        /**
+         * Show and hide the info box tooltip for custom post type uri.
+         * Page Type / URI Type Change Event
+         */
+        $('.htpm_uri_type select').each(function() {
+            if($(this).val() !== 'page_post_cpt') {
+                $(this).siblings('.htpm_field_info').hide()
+            }
+        }).on('change', function() {
+            const $this = $(this),
+                $value = $this.val(),
+                $accordion = $this.closest('.htpm_single_accordion');
+            if($value === 'page_post_cpt' || $value === 'custom') {
+                proDialogBox();
+            }
+            $accordion.attr('data-htpm_uri_type', $value);
+            $accordion.find('[data-uri_type]').each(function() {
+                const $field = $(this),
+                    $url_types = JSON.parse($field.attr('data-uri_type'));
+                $field.addClass('htpm_field_hidden');
+                if($value !== 'page_post_cpt' && $url_types.includes($value)) {
+                    $field.removeClass('htpm_field_hidden');
+                    $this.siblings('.htpm_field_info').hide()
+                }
+                if($value === 'page_post_cpt' && $url_types.includes($value)) {
+                    const $selected_post_types = Array.from($accordion.find('.htpm_select_post_types input:checked')).map(input => input.value),
+                        $post_type = $field.attr('data-post_types');
+                    $field.removeClass('htpm_field_hidden');
+                    if($post_type && !$selected_post_types.includes($post_type)) {
+                        $field.addClass('htpm_field_hidden');
+                    }
+                    $this.siblings('.htpm_field_info').show(0, function() {
+                        $(this).css('display', 'inline-block');
+                    });
+                }
+            });
+        });
+
+        /**
+         * Select Post Types Change Event
+         */
+        $('.htpm_select_post_types input').on('click', function () {
+            const $this = $(this),
+                $value = $this.val(),
+                $accordion = $this.closest('.htpm_single_accordion');
+            $accordion.find('[data-uri_type]').each(function() {
+                const $field = $(this),
+                    $post_type = $field.attr('data-post_types');
+                if ($value === $post_type) {
+                    if ($this.is(':checked')) {
+                        $field.removeClass('htpm_field_hidden');
+                    } else {
+                        $field.addClass('htpm_field_hidden');
+                    }
+                }
+            });
+        });
+
+        /**
+         * ADD: Repeater field event handler
+         */
+        $('.htpm_field_repeater_add').on('click', function () {
+            const $newRow = $(this).closest('tr').clone(true);
+            $(this).closest('tr').after($newRow);
+        });
+
+        /**
+         * REMOVE: Repeater field event handler
+         */
+        $('.htpm_field_repeater_remove').on('click', function () {
+            const $tbody = $(this).closest('tbody');
+            if ($tbody.children('tr').length > 1) {
+                $(this).closest('tr').remove();
+            }
+        });
+
+        $('.htpm_field_disabled input[type="checkbox"], .htpm_field_repeater_disabled').on('click', function(e){
+            e.preventDefault();
+            proDialogBox();
+        });
+        $('.htpm_field_disabled select, .htpm_field_disabled .select2-container').on('mousedown', function(e){
+            e.preventDefault();
+            proDialogBox();
+        });
+        function proDialogBox () {
+            $( "#htpm_pro_notice" ).dialog({
+                dialogClass: 'wp-dialog htpm_pro_notice',
+                title: 'Buy Pro',
+                modal: true,
+                draggable: false,
+                width: 450,
+            });
         }
+        $('.ui-widget-overlay').on('click', function() {
+            $( "#htpm_pro_notice" ).dialog('close');
+        });
+
     });
 })(jQuery);

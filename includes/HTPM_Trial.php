@@ -109,7 +109,6 @@ if ( ! class_exists( 'HTPM_Trial' ) ) {
         public function is_pro_installed() {
             $plugins = get_plugins();
             $result = ( isset( $plugins[ $this->pro_file ] ) ? true : false );
-
             if ( $result ) {
                 update_option( $this->prefix . '_htiop', 'no' );
                 update_option( $this->prefix . '_htiop_bar', 'no' );
@@ -345,7 +344,7 @@ if ( ! class_exists( 'HTPM_Trial' ) ) {
             }
 
             if ( $bar ) {
-                add_action( 'admin_notices', [ $this, 'show_offer_bar' ], 999999 );
+                add_action( 'htpm_admin_notices', [ $this, 'show_offer_bar' ], 999999 );
             }
 
             if ( $popup ) {

@@ -8,8 +8,8 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
-    class HTPM_Rating_Notice{
+if ( ! class_exists( 'HTPM_Notice' ) ){
+    class HTPM_Notice{
 
         /**
          * [$instance]
@@ -47,6 +47,7 @@ if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
          */
         public function __construct(){
             add_action( 'admin_notices', [ $this, 'show_admin_notices' ] );
+            add_action( 'htpm_admin_notices', [ $this, 'show_admin_notices' ] );
             add_action(	'admin_footer', [ $this, 'enqueue_scripts' ], 999 );
             add_action( 'wp_ajax_htpm_notices', [ $this, 'ajax_dismiss' ] );
         }
@@ -129,14 +130,16 @@ if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
                 display: flex;
                 align-items: center;
                 padding-top: 10px;
+                gap: 15px;
             }
             .hastech-review-notice-action span.dashicons {
                 font-size: 1.4em;
-                padding-left: 10px;
+                padding-left: 0;
             }
             .hastech-review-notice-action a {
-                padding-left: 5px;
+                padding-left: 0;
                 text-decoration: none;
+                gap: 5px
             }
             .hastech-review-notice-content h3 {
                 margin: 0;
@@ -445,6 +448,6 @@ if ( ! class_exists( 'HTPM_Rating_Notice' ) ){
     }
 
     // Call instance
-    HTPM_Rating_Notice::instance();
+    HTPM_Notice::instance();
 
 }
