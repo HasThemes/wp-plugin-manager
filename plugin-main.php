@@ -283,7 +283,7 @@ class HTPM_Main {
                     'message_type' => 'html',
                     'message'     => $message,
                     'display_after'  => ( 7 * DAY_IN_SECONDS ),
-                    'expire_time' => ( 20 * DAY_IN_SECONDS ),
+                    'expire_time' => ( 0 * DAY_IN_SECONDS ),
                     'close_by'    => 'transient'
                 ]
             );
