@@ -46,6 +46,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
          * [__construct]
          */
         public function __construct(){
+            add_action( 'admin_notices', [ $this, 'show_admin_notices' ] );
             add_action( 'htpm_admin_notices', [ $this, 'show_admin_notices' ] );
             add_action(	'admin_footer', [ $this, 'enqueue_scripts' ], 999 );
             add_action( 'wp_ajax_htpm_notices', [ $this, 'ajax_dismiss' ] );
