@@ -59,9 +59,9 @@ class HTPM_Main {
         add_filter('admin_menu', [$this, 'pro_submenu'], 101 );
         add_action( 'wp_ajax_htpm_ajax_plugin_activation', [$this, 'ajax_plugin_activation']);
         add_action('init', [$this, 'create_mu_file']);
-        add_action('init', [$this, 'show_admin_diagnostic_data_notice'] );
-        add_action('init', [$this, 'show_admin_rating_notice'] );
-        add_action('init', [$this, 'show_admin_promo_notice'] );
+        add_action('admin_init', [$this, 'show_admin_diagnostic_data_notice'] );
+        add_action('admin_init', [$this, 'show_admin_rating_notice'] );
+        add_action('admin_init', [$this, 'show_admin_promo_notice'] );
 
 
     }
