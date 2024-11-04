@@ -332,7 +332,9 @@ class HTPM_Main {
                 return $notice;
             }, $notices);
             foreach ($notices as $notice) {
-                HTPM_Notice::set_notice($notice);
+                if(!empty($notice['disable'])) {
+                    HTPM_Notice::set_notice($notice);
+                }
             }
         }
     }
