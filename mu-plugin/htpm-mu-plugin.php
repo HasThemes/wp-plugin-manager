@@ -66,6 +66,12 @@ function htpm_filter_plugins( $plugins ){
 	$current_page_url = trim( $current_page_url, "/" );
 	$current_page_slug = trim(str_replace($main_domain, '', $current_page_url), '/');
 
+	$page_path = $current_page_slug;
+	if($main_domain === $current_page_url){
+		$page_path = '/';
+	}
+	$page_path = explode('?', $page_path)[0];
+
 	// loop through each active plugin
 	foreach($htpm_options as $plugin => $individual_options){
 		if(isset($individual_options['enable_deactivation'])){
@@ -73,39 +79,49 @@ function htpm_filter_plugins( $plugins ){
 
 			if($uri_type == 'page'){
 				$page_list = isset($individual_options['pages']) ? $individual_options['pages'] : array();
-				foreach($page_list as $page_info){
-					$page_info_arr = explode(',', $page_info);
-					$page_id = $page_info_arr[0];
-					$page_link = $page_info_arr[1];
+				$current_page = get_page_by_path( basename($page_path),'OBJECT',get_option('htpm_available_post_types') );
+				if(in_array('all_pages,all_pages', $page_list) && !empty($current_page) && $current_page->post_type == 'page'){
+					$remove_plugins[] = $plugin;
+				} else {
+					foreach($page_list as $page_info){
+						$page_info_arr = explode(',', $page_info);
+						$page_id = $page_info_arr[0];
+						$page_link = $page_info_arr[1];
 
-					$page_link = str_replace(array('http://','https://'), '', $page_link);
-					$page_link = trim( $page_link, '/' );
-					$slug = '';
-					$slug = get_post_field( 'post_name', $page_id );
-					if(
-						$slug && in_array( $slug, explode('/', $current_page_url ) ) ||
-						$page_link && $page_link == $current_page_url
-					){
-						$remove_plugins[] = $plugin;
+						$page_link = str_replace(array('http://','https://'), '', $page_link);
+						$page_link = trim( $page_link, '/' );
+						$slug = '';
+						$slug = get_post_field( 'post_name', $page_id );
+						if(
+							$slug && in_array( $slug, explode('/', $current_page_url ) ) ||
+							$page_link && $page_link == $current_page_url
+						){
+							$remove_plugins[] = $plugin;
+						}
 					}
 				}
 			}
 
 			if($uri_type == 'post'){
 				$post_list = isset($individual_options['posts']) ? $individual_options['posts'] : array();
-				foreach($post_list as $post_info){
-					$post_info_arr = explode(',', $post_info);
-					$post_id = $post_info_arr[0];
-					$post_link = $post_info_arr[1];
-					$post_link = str_replace(array('http://','https://'), '', $post_link);
-					$slug = '';
-					$slug = get_post_field( 'post_name', $post_id );
+				$current_page = get_page_by_path( basename($page_path),'OBJECT',get_option('htpm_available_post_types') );
+				if(in_array('all_posts,all_posts', $post_list) && !empty($current_page) && $current_page->post_type == 'post'){
+					$remove_plugins[] = $plugin;
+				} else {
+					foreach($post_list as $post_info){
+						$post_info_arr = explode(',', $post_info);
+						$post_id = $post_info_arr[0];
+						$post_link = $post_info_arr[1];
+						$post_link = str_replace(array('http://','https://'), '', $post_link);
+						$slug = '';
+						$slug = get_post_field( 'post_name', $post_id );
 
-					if(
-						$slug && in_array($slug, explode('/', $current_page_url)) ||
-						$post_link && $post_link == $current_page_url
-					){
-						$remove_plugins[] = $plugin;
+						if(
+							$slug && in_array($slug, explode('/', $current_page_url)) ||
+							$post_link && $post_link == $current_page_url
+						){
+							$remove_plugins[] = $plugin;
+						}
 					}
 				}
 			}
@@ -114,22 +130,28 @@ function htpm_filter_plugins( $plugins ){
 				$page_list = isset($individual_options['pages']) ? $individual_options['pages'] : array();
 				$post_list = isset($individual_options['posts']) ? $individual_options['posts'] : array();
 				$page_nd_post_list = array_merge($page_list, $post_list );
+				$current_page = get_page_by_path( basename($page_path),'OBJECT',get_option('htpm_available_post_types') );
+				if(in_array('all_pages,all_pages', $page_nd_post_list) && !empty($current_page) && $current_page->post_type == 'page'){
+					$remove_plugins[] = $plugin;
+				} elseif(in_array('all_posts,all_posts', $page_nd_post_list) && !empty($current_page) && $current_page->post_type == 'post'){
+					$remove_plugins[] = $plugin;
+				} else {
+					foreach($page_nd_post_list as $post_info){
+						$post_info_arr = explode(',', $post_info);
+						$post_id = $post_info_arr[0];
+						$post_link = $post_info_arr[1];
 
-				foreach($page_nd_post_list as $post_info){
-					$post_info_arr = explode(',', $post_info);
-					$post_id = $post_info_arr[0];
-					$post_link = $post_info_arr[1];
+						$post_link = str_replace(array('http://','https://'), '', $post_link);
+						$post_link = trim( $post_link, '/' );
+						$slug = '';
+						$slug = get_post_field( 'post_name', $post_id );
 
-					$post_link = str_replace(array('http://','https://'), '', $post_link);
-					$post_link = trim( $post_link, '/' );
-					$slug = '';
-					$slug = get_post_field( 'post_name', $post_id );
-
-					if(
-						$slug && in_array($slug, explode('/', $current_page_url)) ||
-						$post_link && $post_link == $current_page_url
-					){
-						$remove_plugins[] = $plugin;
+						if(
+							$slug && in_array($slug, explode('/', $current_page_url)) ||
+							$post_link && $post_link == $current_page_url
+						){
+							$remove_plugins[] = $plugin;
+						}
 					}
 				}
 			}
