@@ -393,13 +393,13 @@ class HTPM_Option_Page {
 												'options' => array_reduce(get_pages(), function($carry, $page) {
 													$carry[$page->ID . ',' . get_page_link( $page->ID )] = $page->post_title;
 													return $carry;
-												}, []),
+												}, ['all_pages,all_pages' => __('All Pages', 'htpmpro')]),
 												'value' => $plugin_data['pages'],
 												'select2' => true,
 												'multiple' => true,
 												'classes' => [
 													'htpm_select_pages',
-													$plugin_data['uri_type'] === 'page' || ( $plugin_data['uri_type'] === 'page_post_cpt' &&  in_array('page', $plugin_data['post_types']) ) ? '' : 'htpm_field_hidden',
+													$plugin_data['uri_type'] === 'page' || $plugin_data['uri_type'] === 'page_post' || ( $plugin_data['uri_type'] === 'page_post_cpt' &&  in_array('page', $plugin_data['post_types']) ) ? '' : 'htpm_field_hidden',
 												],
 												'uri_type' => ['page', 'page_post', 'page_post_cpt'],
 												'post_types' => 'page',
@@ -413,13 +413,13 @@ class HTPM_Option_Page {
 												'options' => array_reduce(get_posts(['numberposts' => $posts_limit]), function($carry, $post) {
 													$carry[$post->ID . ',' . get_permalink( $post->ID )] = $post->post_title;
 													return $carry;
-												}, []),
+												}, ['all_posts,all_posts' => __('All Posts', 'htpmpro')]),
 												'value' => $plugin_data['posts'],
 												'select2' => true,
 												'multiple' => true,
 												'classes' => [
 													'htpm_select_posts',
-													$plugin_data['uri_type'] === 'post' || ( $plugin_data['uri_type'] === 'page_post_cpt' &&  in_array('post', $plugin_data['post_types']) ) ? '' : 'htpm_field_hidden',
+													$plugin_data['uri_type'] === 'post' || $plugin_data['uri_type'] === 'page_post' || ( $plugin_data['uri_type'] === 'page_post_cpt' &&  in_array('post', $plugin_data['post_types']) ) ? '' : 'htpm_field_hidden',
 												],
 												'uri_type' => ['post', 'page_post', 'page_post_cpt'],
 												'post_types' => 'post',
@@ -436,7 +436,7 @@ class HTPM_Option_Page {
 														'options' => array_reduce(get_posts(['post_type' => $post_type, 'numberposts' => $posts_limit]), function($carry, $post) {
 															$carry[$post->ID . ',' . get_permalink( $post->ID )] = $post->post_title;
 															return $carry;
-														}, []),
+														}, ["all_{$post_type}s,all_{$post_type}s" => __('All ', 'htpmpro') . ucwords($post_type) .'s']),
 														'value' => $plugin_data["{$post_type}s"] ?? [],
 														'pro' => true,
 														'select2' => true,
