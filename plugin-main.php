@@ -327,11 +327,6 @@ class HTPM_Main {
         $noticeManager = HTPM_Notice_Manager::instance();
         $notices = $noticeManager->get_notices_info();
         if(!empty($notices)) {
-            $notices = array_map(function($notice) {
-                $notice["display_after"] *= DAY_IN_SECONDS;
-                $notice["expire_time"] *= DAY_IN_SECONDS;
-                return $notice;
-            }, $notices);
             foreach ($notices as $notice) {
                 if(empty($notice['disable'])) {
                     HTPM_Notice::set_notice($notice);
