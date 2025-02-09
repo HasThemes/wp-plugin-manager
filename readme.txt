@@ -4,7 +4,7 @@ Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, perf
 Requires at least: 5.0
 Tested up to: 6.7
 Requires PHP: 5.4
-Stable tag: 1.2.8
+Stable tag: 1.2.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,9 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+
+= Version: 1.2.9 Date: 09 February 2025 =
+* Improved: User interface for better user experience.
 
 = Version: 1.2.8 Date: 03 December 2024 =
 * Added: Option to disable/enable plugin in all Page/Post/Custom Post Type.
