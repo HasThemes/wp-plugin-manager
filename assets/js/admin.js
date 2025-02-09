@@ -55,6 +55,9 @@
                 $accordion = $this.closest('.htpm_single_accordion');
             if($value === 'page_post_cpt' || $value === 'custom') {
                 proDialogBox();
+                $accordion.find('.htpm_select_posts, .htpm_select_pages').addClass('htpm_field_disabled');
+            } else {
+                $accordion.find('.htpm_select_posts, .htpm_select_pages').removeClass('htpm_field_disabled');
             }
             $accordion.attr('data-htpm_uri_type', $value);
             $accordion.find('[data-uri_type]').each(function() {
@@ -117,11 +120,11 @@
             }
         });
 
-        $('.htpm_field_disabled input[type="checkbox"], .htpm_field_repeater_disabled').on('click', function(e){
+        $(document).on('click', '.htpm_field_disabled input[type="checkbox"], .htpm_field_repeater_disabled input[type="checkbox"]', function(e){
             e.preventDefault();
             proDialogBox();
         });
-        $('.htpm_field_disabled select, .htpm_field_disabled .select2-container').on('mousedown', function(e){
+        $(document).on('mousedown', '.htpm_field_disabled select, .htpm_field_disabled .select2-container', function(e){
             e.preventDefault();
             proDialogBox();
         });

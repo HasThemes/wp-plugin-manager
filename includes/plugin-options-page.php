@@ -397,6 +397,7 @@ class HTPM_Option_Page {
 												'value' => $plugin_data['pages'],
 												'select2' => true,
 												'multiple' => true,
+												'pro' => $plugin_data['uri_type'] === 'page_post_cpt',
 												'classes' => [
 													'htpm_select_pages',
 													$plugin_data['uri_type'] === 'page' || $plugin_data['uri_type'] === 'page_post' || ( $plugin_data['uri_type'] === 'page_post_cpt' &&  in_array('page', $plugin_data['post_types']) ) ? '' : 'htpm_field_hidden',
@@ -417,6 +418,7 @@ class HTPM_Option_Page {
 												'value' => $plugin_data['posts'],
 												'select2' => true,
 												'multiple' => true,
+												'pro' => $plugin_data['uri_type'] === 'page_post_cpt',
 												'classes' => [
 													'htpm_select_posts',
 													$plugin_data['uri_type'] === 'post' || $plugin_data['uri_type'] === 'page_post' || ( $plugin_data['uri_type'] === 'page_post_cpt' &&  in_array('post', $plugin_data['post_types']) ) ? '' : 'htpm_field_hidden',
