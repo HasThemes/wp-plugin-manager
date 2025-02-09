@@ -1,0 +1,15 @@
+[
+    {
+        "id": "htpm-promo-notice-01012025",
+        "message": "Celebrate 2025 with Big Savings! Get Flat 30% OFF WP Plugin Manager. Use Code: <strong>WELCOME25</strong> <a href='https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=free-plugin&utm_medium=wp-plugin-manager-dashboard&utm_campaign=newyear-notice' target='_blank'>Yes, I Want to Save 30% Now!</a>",
+        "banner": {
+            "url": "https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=free-plugin&utm_medium=wp-plugin-manager-dashboard&utm_campaign=newyear-notice",
+            "image": "<img src='https://feed.hasthemes.com/notices/wp-plugin-manager-upgrade.png?v=1735712912' />"
+        },
+        "close_by": "transient",
+        "dismissible": true,
+        "disable": false,
+        "priority": -1
+    }
+]
+

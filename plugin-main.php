@@ -3,7 +3,7 @@
 * Plugin Name: WP Plugin Manager
 * Plugin URI: https://hasthemes.com/plugins/
 * Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-* Version: 1.2.8
+* Version: 1.2.9
 * Author: HasThemes
 * Author URI: https://hasthemes.com/
 * Text Domain: htpm
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
-define( 'HTPM_PLUGIN_VERSION', '1.2.8' );
+define( 'HTPM_PLUGIN_VERSION', '1.2.9' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );
@@ -327,11 +327,6 @@ class HTPM_Main {
         $noticeManager = HTPM_Notice_Manager::instance();
         $notices = $noticeManager->get_notices_info();
         if(!empty($notices)) {
-            $notices = array_map(function($notice) {
-                $notice["display_after"] *= DAY_IN_SECONDS;
-                $notice["expire_time"] *= DAY_IN_SECONDS;
-                return $notice;
-            }, $notices);
             foreach ($notices as $notice) {
                 if(empty($notice['disable'])) {
                     HTPM_Notice::set_notice($notice);

@@ -166,11 +166,14 @@
     border: 1px solid var(--htpm-danger);
     color: var(--htpm-danger);
     padding: 2px 5px;
-    display: inline-flex;
     border-radius: 3px;
     font-size: 12px;
     font-weight: 500;
     line-height: 1;
+    display: none;
+}
+.htpm_field_disabled .htpm_pro_badge {
+    display: inline-flex;
 }
 
 /* Common filed style */
