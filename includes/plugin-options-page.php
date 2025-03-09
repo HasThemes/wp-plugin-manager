@@ -35,8 +35,8 @@ class HTPM_Option_Page {
 		global $submenu;
 		
 		add_menu_page(
-			esc_html__( 'Plugin Manager', 'htpm' ),
-			esc_html__( 'Plugin Manager', 'htpm' ),
+			esc_html__( 'Plugin Manager', 'wp-plugin-manager' ),
+			esc_html__( 'Plugin Manager', 'wp-plugin-manager' ),
 			'manage_options',
 			'htpm-options',
 			[$this, 'page_render'],
@@ -49,7 +49,7 @@ class HTPM_Option_Page {
 		}
 		
         if ( isset( $submenu['htpm-options'] ) ) {
-            $submenu['htpm-options'][0][0] = esc_html__('Settings', 'htpm');
+            $submenu['htpm-options'][0][0] = esc_html__('Settings', 'wp-plugin-manager');
         }
 	}
 
@@ -74,12 +74,12 @@ class HTPM_Option_Page {
 		echo '<div id="htpm_pro_notice" style="display:none">';
 			printf(
 				'<p>%s</p>',
-				esc_html__('Our free version is great, but it doesn\'t have all our advanced features. The best way to unlock all of the features in our plugin is by purchasing the pro version.', 'htpm'),
+				esc_html__('Our free version is great, but it doesn\'t have all our advanced features. The best way to unlock all of the features in our plugin is by purchasing the pro version.', 'wp-plugin-manager'),
 			);
 			printf(
 				'<a target="_blank" class="pro_notice_button" href="%1$s">%2$s</a>',
 				esc_url('//hasthemes.com/plugins/wp-plugin-manager-pro/'),
-				esc_html__('More details', 'htpm'),
+				esc_html__('More details', 'wp-plugin-manager'),
 			);
 		echo '</div>';
 	}
@@ -96,7 +96,7 @@ class HTPM_Option_Page {
 
 		// show message when updated
 		if ( isset( $_GET['settings-updated'] ) ) {
-			add_settings_error( 'htpm_messages', 'htpm_message', esc_html__( 'Settings Saved', 'htpm' ), 'updated' );
+			add_settings_error( 'htpm_messages', 'htpm_message', esc_html__( 'Settings Saved', 'wp-plugin-manager' ), 'updated' );
 		}
 		
 		// show error/update messages
@@ -108,7 +108,7 @@ class HTPM_Option_Page {
 
 				<!-- Navigation -->
 				<div class="htpm-tab-nav">
-					<a href="#htpm-tab-1" class="htpm-nav htpm-nav-active"><?php esc_html_e('Settings', 'htpm')?></a>
+					<a href="#htpm-tab-1" class="htpm-nav htpm-nav-active"><?php esc_html_e('Settings', 'wp-plugin-manager')?></a>
 				</div>
 
 				<!-- Tab Content -->
@@ -124,7 +124,7 @@ class HTPM_Option_Page {
 
 								// output save settings button
 								submit_button(
-									__('Save Settings', 'htpm')
+									__('Save Settings', 'wp-plugin-manager')
 								);
 							?>
 						</form>
@@ -151,7 +151,7 @@ class HTPM_Option_Page {
 
 		add_settings_field(
 			'htpm_enabled_post_types',
-			esc_html__( 'Select Post Types', 'htpm' ) . '<span class="htpm_pro_badge">' . esc_html__('Pro', 'htpm') . '</span>',
+			esc_html__( 'Select Post Types', 'wp-plugin-manager' ) . '<span class="htpm_pro_badge">' . esc_html__('Pro', 'wp-plugin-manager') . '</span>',
 			[$this, 'enabled_post_types_cb'],
 			'options_group_general',
 			'settings',
@@ -163,7 +163,7 @@ class HTPM_Option_Page {
 
 		add_settings_field(
 			'htpm_load_posts',
-			esc_html__( 'Number Of Posts to Load', 'htpm' ),
+			esc_html__( 'Number Of Posts to Load', 'wp-plugin-manager' ),
 			[$this, 'load_posts_cb'],
 			'options_group_general',
 			'settings',
@@ -175,7 +175,7 @@ class HTPM_Option_Page {
 
 		add_settings_field(
 			'htpm_list_plugins',
-			esc_html__( 'Plugins List', 'htpm' ),
+			esc_html__( 'Plugins List', 'wp-plugin-manager' ),
 			[$this, 'plugins_list_cb'],
 			'options_group_general',
 			'settings',
@@ -199,7 +199,7 @@ class HTPM_Option_Page {
 			'_builtin' => false
 		];
 		$post_types = get_post_types( $cpt_args );
-		$desc = __('Select the custom post types where you want to disable plugins. <br/>Note: Make sure that, you click on "Save Settings" button so you\'ll see options for each plugin for the custom post types you selected.', 'htpm');
+		$desc = __('Select the custom post types where you want to disable plugins. <br/>Note: Make sure that, you click on "Save Settings" button so you\'ll see options for each plugin for the custom post types you selected.', 'wp-plugin-manager');
 
 		$this->field_select(
 			[
@@ -223,7 +223,7 @@ class HTPM_Option_Page {
 	function load_posts_cb( $args ){
 		$options = get_option( 'htpm_options' );
 		$load_posts = !empty($options['htpm_load_posts']) ? $options['htpm_load_posts'] : 150;
-		$desc = __('For better performance, the number of pages, posts, or custom posts has been set to 150. <br/> Please adjust the number if you have more than 150 pages, posts, or custom posts, then click "Save Settings" to see them in the dropdown list.', 'htpm');	
+		$desc = __('For better performance, the number of pages, posts, or custom posts has been set to 150. <br/> Please adjust the number if you have more than 150 pages, posts, or custom posts, then click "Save Settings" to see them in the dropdown list.', 'wp-plugin-manager');	
 		$this->field_input(
 			[
 				"type" => "number", 
@@ -298,13 +298,13 @@ class HTPM_Option_Page {
 
 								$this->field_checkbox(
 									[
-										'label' => __('Disable This Plugin:', 'htpm'),
+										'label' => __('Disable This Plugin:', 'wp-plugin-manager'),
 										'name' => "{$field_name}[enable_deactivation]",
 										'value' => [$plugin_data['enable_deactivation']],
 										'options' => [
 											[
 												'id' => $plugin,
-												'label' => __('Yes', 'htpm'),
+												'label' => __('Yes', 'wp-plugin-manager'),
 												'value' => 'yes',
 											]
 											],
@@ -318,51 +318,51 @@ class HTPM_Option_Page {
 								);
 									$this->field_select(
 										[
-											'label' => __('Disable Plugin on:', 'htpm'),
+											'label' => __('Disable Plugin on:', 'wp-plugin-manager'),
 											'name' => "{$field_name}[device_type]",
 											'value' => [$plugin_data['device_type']],
 											'pro' => true,
 											'options' => [
-												'all' => 'All Devices',
-												'desktop' => 'Desktop',
-												'tablet' => 'Tablet',
-												'mobile' => 'Mobile',
-												'desktop_plus_tablet' => 'Desktop + Tablet',
-												'tablet_plus_mobile' => 'Tablet + Mobile',
+												'all' => __( 'All Devices', 'wp-plugin-manager' ),
+												'desktop' => __( 'Desktop', 'wp-plugin-manager' ),
+												'tablet' => __( 'Tablet', 'wp-plugin-manager' ),
+												'mobile' => __( 'Mobile', 'wp-plugin-manager' ),
+												'desktop_plus_tablet' => __( 'Desktop + Tablet', 'wp-plugin-manager' ),
+												'tablet_plus_mobile' => __( 'Tablet + Mobile', 'wp-plugin-manager' ),
 											],
-											'desc' => __('Select the device(s) where this plugin should be disabled.', 'htpm'),
+											'desc' => __('Select the device(s) where this plugin should be disabled.', 'wp-plugin-manager'),
 											'classes' => ['htpm_device_type', 'htpm_field_has_desc'],
 										]
 									);
 									$this->field_select(
 										[
-											'label' => __('Action:', 'htpm'),
+											'label' => __('Action:', 'wp-plugin-manager'),
 											'name' => "{$field_name}[condition_type]",
 											'options' => [
-												'disable_on_selected' => 'Disable on Selected Pages',
-												'enable_on_selected' => 'Enable on Selected Pages',
+												'disable_on_selected' => __('Disable on Selected Pages', 'wp-plugin-manager'),
+												'enable_on_selected' => __('Enable on Selected Pages', 'wp-plugin-manager'),
 											],
 											'value' => [$plugin_data['condition_type']],
 											'pro' => true,
-											'desc' => __('Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.', 'htpm'),
+											'desc' => __('Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.', 'wp-plugin-manager'),
 											'classes' => ['htpm_condition_type', 'htpm_field_has_desc'],
 										]
 									);
 									$this->field_select(
 										[
-											'label' => __('Page Type:', 'htpm'),
+											'label' => __('Page Type:', 'wp-plugin-manager'),
 											'name' => "{$field_name}[uri_type]",
 											'options' => [
-												'page' => 'Page',
-												'post' => 'Post',
-												'page_post' => 'Page & Post',
-												'page_post_cpt' => 'Post, Pages & Custom Post Type',
-												'custom' => 'Custom',
+												'page' => __( 'Page', 'wp-plugin-manager' ),
+												'post' => __( 'Post', 'wp-plugin-manager' ),
+												'page_post' => __( 'Page & Post', 'wp-plugin-manager' ),
+												'page_post_cpt' => __( 'Post, Pages & Custom Post Type', 'wp-plugin-manager' ),
+												'custom' => __( 'Custom', 'wp-plugin-manager' ),
 											],
 											'value' => [$plugin_data['uri_type']],
-											'desc' => __('Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.'),
+											'desc' => __('Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.', 'wp-plugin-manager'),
 											'classes' => ['htpm_uri_type', 'htpm_field_has_desc'],
-											'info' => __('If you wish to select custom posts, please choose the custom post above through the "Select Post Types" option.', 'htpm'),
+											'info' => __('If you wish to select custom posts, please choose the custom post above through the "Select Post Types" option.', 'wp-plugin-manager'),
 										]
 									);
 
@@ -370,7 +370,7 @@ class HTPM_Option_Page {
 										$this->field_checkbox(
 											[
 												'id' => $plugin,
-												'label' => __('Select Post Types:', 'htpm'),
+												'label' => __('Select Post Types:', 'wp-plugin-manager'),
 												'name' => "{$field_name}[post_types][]",
 												'value' => $plugin_data['post_types'],
 												'options' => array_reduce($post_types, function($carry, $type){
@@ -388,12 +388,12 @@ class HTPM_Option_Page {
 										
 										$this->field_select(
 											[
-												'label' => __('Select Pages:', 'htpm'),
+												'label' => __('Select Pages:', 'wp-plugin-manager'),
 												'name' => "{$field_name}[pages][]",
 												'options' => array_reduce(get_pages(), function($carry, $page) {
 													$carry[$page->ID . ',' . get_page_link( $page->ID )] = $page->post_title;
 													return $carry;
-												}, ['all_pages,all_pages' => __('All Pages', 'htpmpro')]),
+												}, ['all_pages,all_pages' => __('All Pages', 'wp-plugin-manager')]),
 												'value' => $plugin_data['pages'],
 												'select2' => true,
 												'multiple' => true,
@@ -409,12 +409,12 @@ class HTPM_Option_Page {
 
 										$this->field_select(
 											[
-												'label' => __('Select Posts:', 'htpm'),
+												'label' => __('Select Posts:', 'wp-plugin-manager'),
 												'name' => "{$field_name}[posts][]",
 												'options' => array_reduce(get_posts(['numberposts' => $posts_limit]), function($carry, $post) {
 													$carry[$post->ID . ',' . get_permalink( $post->ID )] = $post->post_title;
 													return $carry;
-												}, ['all_posts,all_posts' => __('All Posts', 'htpmpro')]),
+												}, ['all_posts,all_posts' => __('All Posts', 'wp-plugin-manager')]),
 												'value' => $plugin_data['posts'],
 												'select2' => true,
 												'multiple' => true,
@@ -433,12 +433,12 @@ class HTPM_Option_Page {
 											if( $count_posts->publish ) {
 												$this->field_select(
 													[
-														'label' => __('Select ', 'htpm') . ucfirst( "{$post_type}s:"),
+														'label' => __('Select ', 'wp-plugin-manager') . ucfirst( "{$post_type}s:"),
 														'name' => "{$field_name}[{$post_type}s][]",
 														'options' => array_reduce(get_posts(['post_type' => $post_type, 'numberposts' => $posts_limit]), function($carry, $post) {
 															$carry[$post->ID . ',' . get_permalink( $post->ID )] = $post->post_title;
 															return $carry;
-														}, ["all_{$post_type}s,all_{$post_type}s" => __('All ', 'htpmpro') . ucwords($post_type) .'s']),
+														}, ["all_{$post_type}s,all_{$post_type}s" => __('All ', 'wp-plugin-manager') . ucwords($post_type) .'s']),
 														'value' => $plugin_data["{$post_type}s"] ?? [],
 														'pro' => true,
 														'select2' => true,
@@ -471,7 +471,7 @@ class HTPM_Option_Page {
 						echo '</div>';
 					}
 				} else {
-					echo esc_html__('You don\'t have any active plugins!!', 'htpm');
+					echo esc_html__('You don\'t have any active plugins!!', 'wp-plugin-manager');
 				}
 			?>
 		</div> <!-- .htpm_accordion -->
@@ -520,7 +520,7 @@ class HTPM_Option_Page {
 			'placeholder' => $args['placeholder'] ?? false,
 		];
 		
-		$pro_badge = !empty($args['pro']) ? '<span class="htpm_pro_badge">' . esc_html__('Pro', 'htpm') . '</span>' : '';
+		$pro_badge = !empty($args['pro']) ? '<span class="htpm_pro_badge">' . esc_html__('Pro', 'wp-plugin-manager') . '</span>' : '';
 		printf(
 			'<div %1$s >
 				%2$s
@@ -600,7 +600,7 @@ class HTPM_Option_Page {
 			'data-uri_type' => !empty($args['uri_type']) ? json_encode($args['uri_type']) : false,
 			'data-post_types' => !empty($args['post_types']) ? $args['post_types'] : false,
 		];
-		$pro_badge = !empty($args['pro']) ? '<span class="htpm_pro_badge">' . esc_html__('Pro', 'htpm') . '</span>' : '';
+		$pro_badge = !empty($args['pro']) ? '<span class="htpm_pro_badge">' . esc_html__('Pro', 'wp-plugin-manager') . '</span>' : '';
 		printf(
 			'<div %1$s >
 				%2$s
@@ -660,7 +660,7 @@ class HTPM_Option_Page {
 			'name' => $args['name'],
 			'multiple' => $args['multiple'] ?? false,
 		];
-		$pro_badge = !empty($args['pro']) ? '<span class="htpm_pro_badge">' . esc_html__('Pro', 'htpm') . '</span>' : '';
+		$pro_badge = !empty($args['pro']) ? '<span class="htpm_pro_badge">' . esc_html__('Pro', 'wp-plugin-manager') . '</span>' : '';
 		ob_start(); ?>
 		<div <?php echo $this->render_attributes($field_attrs); ?>>
 			<?php echo !empty($args['label']) ? '<label>' . esc_html($args['label']) . $pro_badge . '</label>' : ''; ?>
@@ -703,9 +703,9 @@ class HTPM_Option_Page {
 		<table <?php echo $this->render_attributes($field_attrs); ?>>
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'URI Condition', 'htpm' ) ?></th>
-					<th style="width: 50%;"><?php esc_html_e( 'Value', 'htpm' ); ?></th>
-					<th><?php esc_html_e( 'Action', 'htpm' ); ?></th>
+					<th><?php esc_html_e( 'URI Condition', 'wp-plugin-manager' ) ?></th>
+					<th style="width: 50%;"><?php esc_html_e( 'Value', 'wp-plugin-manager' ); ?></th>
+					<th><?php esc_html_e( 'Action', 'wp-plugin-manager' ); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -716,13 +716,13 @@ class HTPM_Option_Page {
 							<?php
 								$this->field_select(
 									[
-										'label' => __('', 'htpm'),
+										'label' => __('', 'wp-plugin-manager'),
 										'name' => "{$args['name']}[name][]",
 										'options' => [
-											'uri_equals' => __( 'URI Equals', 'htpm' ),
-											'uri_not_equals' => __( 'URI Not Equals', 'htpm' ),
-											'uri_contains' => __( 'URI Contains', 'htpm' ),
-											'uri_not_contains' => __( 'URI Not Contains', 'htpm' ),
+											'uri_equals' => __( 'URI Equals', 'wp-plugin-manager' ),
+											'uri_not_equals' => __( 'URI Not Equals', 'wp-plugin-manager' ),
+											'uri_contains' => __( 'URI Contains', 'wp-plugin-manager' ),
+											'uri_not_contains' => __( 'URI Not Contains', 'wp-plugin-manager' ),
 										],
 										'value' => [$args['value']['name'][$key]],
 									]
@@ -735,15 +735,15 @@ class HTPM_Option_Page {
 									[
 										"name" => "{$args['name']}[value][]",
 										"value" => $args['value']['value'][$key],
-										"desc" => __('e.g: You can use \'contact-us\' on URLs like https://example.com/contact-us or leave it blank for the homepage', 'htpm'),
+										"desc" => __('e.g: You can use \'contact-us\' on URLs like https://example.com/contact-us or leave it blank for the homepage', 'wp-plugin-manager'),
 									]
 								);
 							?>
 						</td>
 						<td>
 							<div class="htpm_field_repeater_actions">
-								<button type="button" class="button htpm_field_repeater_remove" href="#"><?php echo esc_html__('Remove', 'htpm') ?></button>
-								<button type="button" class="button htpm_field_repeater_add" href="#"><?php echo esc_html__( 'Clone', 'htpm' ) ?></button>
+								<button type="button" class="button htpm_field_repeater_remove" href="#"><?php echo esc_html__('Remove', 'wp-plugin-manager') ?></button>
+								<button type="button" class="button htpm_field_repeater_add" href="#"><?php echo esc_html__( 'Clone', 'wp-plugin-manager' ) ?></button>
 							</div>
 						</td>
 					</tr>
@@ -891,7 +891,7 @@ class HTPM_Option_Page {
 				esc_html($plugin['title']),
 				esc_html($plugin['desc']),
 				esc_url($plugin['url']),
-				esc_html__( 'More Details', 'htpm' ),
+				esc_html__( 'More Details', 'wp-plugin-manager' ),
 				htpm_plugin_install_button( esc_attr($plugin['location']), esc_attr($plugin['slug']) )
 			);
 		}

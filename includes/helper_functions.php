@@ -23,18 +23,18 @@ function htpm_plugin_install_button( $pl_location, $pl_slug ){
         if ( file_exists( WP_PLUGIN_DIR . '/' . $pl_location ) && is_plugin_inactive( $pl_location ) ) {
 
             $button_classes = 'button activate-now button-primary';
-            $button_text    = esc_html__( 'Activate', 'htpm' );
+            $button_text    = esc_html__( 'Activate', 'wp-plugin-manager' );
 
         // Not Installed.
         } elseif ( ! file_exists( WP_PLUGIN_DIR . '/' . $pl_location ) ) {
             $button_classes = 'button install-now';
-            $button_text    = esc_html__( 'Install Now', 'htpm' );
+            $button_text    = esc_html__( 'Install Now', 'wp-plugin-manager' );
 
         // Activated.
         } else {
             $activation_url = '#';
             $button_classes = 'button disabled';
-            $button_text    = esc_html__( 'Activated', 'htpm' );
+            $button_text    = esc_html__( 'Activated', 'wp-plugin-manager' );
         }
 
         ?>
@@ -116,7 +116,7 @@ function htpm_get_taxonomies( $htmega_texonomy = 'category' ){
  */
 function htpm_post_name( $post_type = 'post' ){
     $options = array();
-    $options['0'] = __('Select','htpm');
+    $options['0'] = __('Select','wp-plugin-manager');
     $all_post = array( 'posts_per_page' => -1, 'post_type'=> $post_type );
     $post_terms = get_posts( $all_post );
     if ( ! empty( $post_terms ) && ! is_wp_error( $post_terms ) ){

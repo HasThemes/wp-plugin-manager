@@ -6,7 +6,7 @@
 * Version: 1.2.9
 * Author: HasThemes
 * Author URI: https://hasthemes.com/
-* Text Domain: htpm
+* Text Domain: wp-plugin-manager
 */
 
 defined( 'ABSPATH' ) or die();
@@ -117,7 +117,7 @@ class HTPM_Main {
      * Load text domain
      */
     function i18n() {
-        load_plugin_textdomain( 'htpm', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+        load_plugin_textdomain( 'wp-plugin-manager', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
     }
 
     function init() {
@@ -170,19 +170,19 @@ class HTPM_Main {
                     'adminURL'         => admin_url(),
                     'pluginURL'        => plugin_dir_url( __FILE__ ),
                     'message'          =>[
-                        'packagedesc'=> esc_html__( 'in this package', 'htpm' ),
-                        'allload'    => esc_html__( 'All Items have been Loaded', 'htpm' ),
-                        'notfound'   => esc_html__( 'Nothing Found', 'htpm' ),
+                        'packagedesc'=> esc_html__( 'in this package', 'wp-plugin-manager' ),
+                        'allload'    => esc_html__( 'All Items have been Loaded', 'wp-plugin-manager' ),
+                        'notfound'   => esc_html__( 'Nothing Found', 'wp-plugin-manager' ),
                     ],
                     'buttontxt'      =>[
-                        'tmplibrary' => esc_html__( 'Import to Library', 'htpm' ),
-                        'tmppage'    => esc_html__( 'Import to Page', 'htpm' ),
-                        'import'     => esc_html__( 'Import', 'htpm' ),
-                        'buynow'     => esc_html__( 'Buy Now', 'htpm' ),
-                        'preview'    => esc_html__( 'Preview', 'htpm' ),
-                        'installing' => esc_html__( 'Installing..', 'htpm' ),
-                        'activating' => esc_html__( 'Activating..', 'htpm' ),
-                        'active'     => esc_html__( 'Active', 'htpm' ),
+                        'tmplibrary' => esc_html__( 'Import to Library', 'wp-plugin-manager' ),
+                        'tmppage'    => esc_html__( 'Import to Page', 'wp-plugin-manager' ),
+                        'import'     => esc_html__( 'Import', 'wp-plugin-manager' ),
+                        'buynow'     => esc_html__( 'Buy Now', 'wp-plugin-manager' ),
+                        'preview'    => esc_html__( 'Preview', 'wp-plugin-manager' ),
+                        'installing' => esc_html__( 'Installing..', 'wp-plugin-manager' ),
+                        'activating' => esc_html__( 'Activating..', 'wp-plugin-manager' ),
+                        'active'     => esc_html__( 'Active', 'wp-plugin-manager' ),
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
@@ -197,8 +197,8 @@ class HTPM_Main {
     function pro_submenu(  ) {
 		add_submenu_page( 
 			'htpm-options', 
-			esc_html__('Upgrade to Pro', 'htpm'), 
-			esc_html__('Upgrade to Pro', 'htpm'), 
+			esc_html__('Upgrade to Pro', 'wp-plugin-manager'), 
+			esc_html__('Upgrade to Pro', 'wp-plugin-manager'), 
 			'manage_options', 
 			'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
 		);
@@ -214,7 +214,7 @@ class HTPM_Main {
             wp_send_json_error(
                 array(
                     'success' => false,
-                    'message' => esc_html__( 'Plugin Not Found', 'htpm' ),
+                    'message' => esc_html__( 'Plugin Not Found', 'wp-plugin-manager' ),
                 )
             );
         }
@@ -234,7 +234,7 @@ class HTPM_Main {
         wp_send_json_success(
             array(
                 'success' => true,
-                'message' => esc_html__( 'Plugin Successfully Activated', 'htpm' ),
+                'message' => esc_html__( 'Plugin Successfully Activated', 'wp-plugin-manager' ),
             )
         );
 
@@ -298,12 +298,12 @@ class HTPM_Main {
                 <img src="' . esc_url($logo_url) . '" alt="WP Plugin Manager" style="max-width:110px"/>
             </div>
             <div class="hastech-review-notice-content">
-                <h3>'.esc_html__('Thank you for choosing WP Plugin Manager to manage you plugins!','htpm').'</h3>
-                <p>'.esc_html__('Would you mind doing us a huge favor by providing your feedback on WordPress? Your support helps us spread the word and greatly boosts our motivation.','htpm').'</p>
+                <h3>'.esc_html__('Thank you for choosing WP Plugin Manager to manage you plugins!','wp-plugin-manager').'</h3>
+                <p>'.esc_html__('Would you mind doing us a huge favor by providing your feedback on WordPress? Your support helps us spread the word and greatly boosts our motivation.','wp-plugin-manager').'</p>
                 <div class="hastech-review-notice-action">
-                    <a href="https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post" class="hastech-review-notice button-primary" target="_blank">'.esc_html__('Ok, you deserve it!','htpm').'</a>
-                    <a href="#" class="hastech-notice-close hastech-review-notice"><span class="dashicons dashicons-calendar"></span>'.esc_html__('Maybe Later','htpm').'</a>
-                    <a href="#" data-already-did="yes" class="hastech-notice-close hastech-review-notice"><span class="dashicons dashicons-smiley"></span>'.esc_html__('I already did','htpm').'</a>
+                    <a href="https://wordpress.org/support/plugin/wp-plugin-manager/reviews/?filter=5#new-post" class="hastech-review-notice button-primary" target="_blank">'.esc_html__('Ok, you deserve it!','wp-plugin-manager').'</a>
+                    <a href="#" class="hastech-notice-close hastech-review-notice"><span class="dashicons dashicons-calendar"></span>'.esc_html__('Maybe Later','wp-plugin-manager').'</a>
+                    <a href="#" data-already-did="yes" class="hastech-notice-close hastech-review-notice"><span class="dashicons dashicons-smiley"></span>'.esc_html__('I already did','wp-plugin-manager').'</a>
                 </div>
             </div>
         </div>';

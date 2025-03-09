@@ -564,18 +564,18 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
             * translators: %4$s: anchor start tag with privacy policy url
             * translators: %5$s: anchor end tag
             */
-            $message_l1 = sprintf( esc_html__( 'At %2$s%1$s%3$s, we prioritize continuous improvement and compatibility. To achieve this, we gather non-sensitive diagnostic information and details about plugin usage. This includes your site\'s URL, the versions of WordPress and PHP you\'re using, and a list of your installed plugins and themes. We also require your email address to provide you with exclusive discount coupons and updates. This data collection is crucial for ensuring that %2$s%1$s%3$s remains up-to-date and compatible with the most widely-used plugins and themes. Rest assured, your privacy is our priority – no spam, guaranteed. %4$sPrivacy Policy%5$s', 'just-tables' ), esc_html( $this->project_name ), '<strong>', '</strong>', '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>', '<h4 class="htpm-diagnostic-data-title">', '</h4>' );
+            $message_l1 = sprintf( esc_html__( 'At %2$s%1$s%3$s, we prioritize continuous improvement and compatibility. To achieve this, we gather non-sensitive diagnostic information and details about plugin usage. This includes your site\'s URL, the versions of WordPress and PHP you\'re using, and a list of your installed plugins and themes. We also require your email address to provide you with exclusive discount coupons and updates. This data collection is crucial for ensuring that %2$s%1$s%3$s remains up-to-date and compatible with the most widely-used plugins and themes. Rest assured, your privacy is our priority – no spam, guaranteed. %4$sPrivacy Policy%5$s',  'wp-plugin-manager' ), esc_html( $this->project_name ), '<strong>', '</strong>', '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>', '<h4 class="htpm-diagnostic-data-title">', '</h4>' );
 
             /*
             * translators: %1$s: anchor start tag with privacy policy url
             * translators: %2$s: anchor end tag
             */
-            $message_l2 = sprintf( esc_html__( 'Server information (Web server, PHP version, MySQL version), WordPress information, site name, site URL, number of plugins, number of users, your name, and email address. You can rest assured that no sensitive data will be collected or tracked. %1$sLearn more%2$s.', 'just-tables' ), '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>' );
+            $message_l2 = sprintf( esc_html__( 'Server information (Web server, PHP version, MySQL version), WordPress information, site name, site URL, number of plugins, number of users, your name, and email address. You can rest assured that no sensitive data will be collected or tracked. %1$sLearn more%2$s.',  'wp-plugin-manager' ), '<a target="_blank" href="' . esc_url( $this->privacy_policy ) . '">', '</a>' );
 
-            $button_text_1 = esc_html__( 'Count Me In', 'just-tables' );
+            $button_text_1 = esc_html__( 'Count Me In',  'wp-plugin-manager' );
             $button_link_1 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => '1' ) );
 
-            $button_text_2 = esc_html__( 'No, Thanks', 'just-tables' );
+            $button_text_2 = esc_html__( 'No, Thanks',  'wp-plugin-manager' );
             $button_link_2 = add_query_arg( array( 'htpm_diagnostic_data_agreed' => '0' ) );
             ?>
             <div class="htpm-diagnostic-data-notice">
@@ -583,7 +583,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
                     /*
                     * translators: %1$s: project name
                     */
-                    echo sprintf( esc_html__('🌟 Enhance Your %1$s Experience as a Valued Contributor!','just-tables'), esc_html( $this->project_name ));
+                    echo sprintf( esc_html__('🌟 Enhance Your %1$s Experience as a Valued Contributor!', 'wp-plugin-manager'), esc_html( $this->project_name ));
                 ?></h4>
                 <p class="htpm-diagnostic-data-message"><?php echo wp_kses_post( $message_l1 ); ?></p>
                 <p class="htpm-diagnostic-data-list"><?php echo wp_kses_post( $message_l2 ); ?></p>
@@ -604,7 +604,7 @@ if ( ! class_exists( 'HTPM_Diagnostic_Data' ) ) {
             * translators: %2$s: strong start tag
             * translators: %3$s: strong end tag
             */
-            $message = sprintf( esc_html__( 'Thank you very much for supporting %2$s%1$s%3$s.', 'htpm' ), $this->project_name, '<strong>', '</strong>' );
+            $message = sprintf( esc_html__( 'Thank you very much for supporting %2$s%1$s%3$s.', 'wp-plugin-manager' ), $this->project_name, '<strong>', '</strong>' );
             /*
             * translators: %1$s: Message content
             */
