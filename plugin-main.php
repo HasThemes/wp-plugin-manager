@@ -137,7 +137,9 @@ class HTPM_Main {
     function include_files() {
         require_once HTPM_ROOT_DIR . '/includes/helper_functions.php';
         require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/class.recommended-plugins.php';
-        require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
+        add_action('init', function() {
+            require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
+        });
         require_once HTPM_ROOT_DIR . '/includes/plugin-options-page.php';
         if(is_admin()){
             include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
