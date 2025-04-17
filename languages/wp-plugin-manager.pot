@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Plugin Manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-03 05:13+0000\n"
+"POT-Creation-Date: 2025-04-17 05:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -13,42 +13,78 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.6.6; wp-6.4.3\n"
-"X-Domain: htpm"
+"X-Loco-Version: 2.7.2; wp-6.8\n"
+"X-Domain: wp-plugin-manager"
 
-#: includes/plugin-options-page.php:223
+#. %s: Number of installations.
+#: includes/recommended-plugins/class.recommended-plugins.php:299
+#, php-format
+msgid "%s Active Installations"
+msgstr ""
+
+#: includes/plugin-options-page.php:708
 msgid "Action"
 msgstr ""
 
+#: includes/plugin-options-page.php:339
+msgid "Action:"
+msgstr ""
+
 #: includes/helper_functions.php:26
-#: includes/recommended-plugins/class.recommended-plugins.php:243
+#: includes/recommended-plugins/class.recommended-plugins.php:244
 msgid "Activate"
 msgstr ""
 
 #: includes/helper_functions.php:37
 #: includes/recommended-plugins/class.recommended-plugins.php:127
-#: includes/recommended-plugins/class.recommended-plugins.php:254
+#: includes/recommended-plugins/class.recommended-plugins.php:255
 msgid "Activated"
 msgstr ""
 
-#: plugin-main.php:178
+#: plugin-main.php:186
 #: includes/recommended-plugins/class.recommended-plugins.php:126
 msgid "Activating.."
 msgstr ""
 
-#: plugin-main.php:179
+#: plugin-main.php:187
 msgid "Active"
 msgstr ""
 
-#: includes/plugin-options-page.php:291
-msgid "Add Another"
+#. %s: Number of millions.
+#: includes/recommended-plugins/class.recommended-plugins.php:373
+#, php-format
+msgctxt "Active plugin installations"
+msgid "%s+ Million"
+msgid_plural "%s+ Million"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/recommended-plugins/class.recommended-plugins.php:377
+msgctxt "Active plugin installations"
+msgid "Less Than 10"
 msgstr ""
 
-#: plugin-main.php:168
+#: includes/plugin-options-page.php:441
+msgid "All "
+msgstr ""
+
+#: includes/plugin-options-page.php:326
+msgid "All Devices"
+msgstr ""
+
+#: plugin-main.php:176
 msgid "All Items have been Loaded"
 msgstr ""
 
-#: includes/class.notices.php:80
+#: includes/plugin-options-page.php:396
+msgid "All Pages"
+msgstr ""
+
+#: includes/plugin-options-page.php:417
+msgid "All Posts"
+msgstr ""
+
+#: includes/class.notices.php:81
 msgid "Are you cheating?"
 msgstr ""
 
@@ -59,18 +95,43 @@ msgid ""
 "the product variations in a whole new light with Swatchly."
 msgstr ""
 
-#: plugin-main.php:175
+#. %1$s: project name
+#. %2$s: strong start tag
+#. %3$s: strong end tag
+#. %4$s: anchor start tag with privacy policy url
+#. %5$s: anchor end tag
+#: includes/class-diagnostic-data.php:567
+#, php-format
+msgid ""
+"At %2$s%1$s%3$s, we prioritize continuous improvement and compatibility. To "
+"achieve this, we gather non-sensitive diagnostic information and details "
+"about plugin usage. This includes your site's URL, the versions of WordPress "
+"and PHP you're using, and a list of your installed plugins and themes. We "
+"also require your email address to provide you with exclusive discount "
+"coupons and updates. This data collection is crucial for ensuring that "
+"%2$s%1$s%3$s remains up-to-date and compatible with the most widely-used "
+"plugins and themes. Rest assured, your privacy is our priority – no spam, "
+"guaranteed. %4$sPrivacy Policy%5$s"
+msgstr ""
+
+#: plugin-main.php:183
 #: includes/recommended-plugins/class.recommended-plugins.php:123
-#: includes/recommended-plugins/class.recommended-plugins.php:231
-#: includes/recommended-plugins/class.recommended-plugins.php:285
+#: includes/recommended-plugins/class.recommended-plugins.php:232
+#: includes/recommended-plugins/class.recommended-plugins.php:286
 msgid "Buy Now"
 msgstr ""
 
-#: includes/recommended-plugins/class.recommended-plugins.php:271
+#: includes/recommended-plugins/class.recommended-plugins.php:272
 msgid "By "
 msgstr ""
 
-#: includes/plugin-options-page.php:246 includes/plugin-options-page.php:270
+#: includes/plugin-options-page.php:363
+msgid ""
+"Choose the types of pages. \"Custom\" allows you to specify pages matching a "
+"particular URI pattern."
+msgstr ""
+
+#: includes/plugin-options-page.php:746
 msgid "Clone"
 msgstr ""
 
@@ -86,11 +147,15 @@ msgid ""
 "addition to its basic features."
 msgstr ""
 
+#: includes/class-diagnostic-data.php:575
+msgid "Count Me In"
+msgstr ""
+
 #: includes/recommended-plugins/recommendations.php:320
 msgid "Coupon Zen"
 msgstr ""
 
-#: includes/plugin-options-page.php:169
+#: includes/plugin-options-page.php:360
 msgid "Custom"
 msgstr ""
 
@@ -98,11 +163,33 @@ msgstr ""
 msgid "DataCaptia"
 msgstr ""
 
-#: includes/plugin-options-page.php:154
+#: includes/plugin-options-page.php:327
+msgid "Desktop"
+msgstr ""
+
+#: includes/plugin-options-page.php:330
+msgid "Desktop + Tablet"
+msgstr ""
+
+#: includes/plugin-options-page.php:342
+msgid "Disable on Selected Pages"
+msgstr ""
+
+#: includes/plugin-options-page.php:347
+msgid ""
+"Disable on Selected Pages refers to the pages where the plugin will be "
+"disabled and enabled elsewhere."
+msgstr ""
+
+#: includes/plugin-options-page.php:321
+msgid "Disable Plugin on:"
+msgstr ""
+
+#: includes/plugin-options-page.php:301
 msgid "Disable This Plugin:"
 msgstr ""
 
-#: includes/class.notices.php:270
+#: includes/class.notices.php:273
 msgid "Dismiss this notice."
 msgstr ""
 
@@ -114,8 +201,10 @@ msgstr ""
 msgid "Docus – YouTube Video Playlist"
 msgstr ""
 
-#: includes/plugin-options-page.php:242 includes/plugin-options-page.php:266
-msgid "E.g: http://example.com/contact-us/ you can use 'contact-us'"
+#: includes/plugin-options-page.php:738
+msgid ""
+"e.g: You can use 'contact-us' on URLs like https://example.com/contact-us or "
+"leave it blank for the homepage"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:259
@@ -125,9 +214,8 @@ msgid ""
 "and popular by keeping the visitors on your website for a longer period."
 msgstr ""
 
-#. field name
-#: includes/plugin-options-page.php:99
-msgid "Enable/Disable Plugins"
+#: includes/plugin-options-page.php:343
+msgid "Enable on Selected Pages"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:66
@@ -142,16 +230,12 @@ msgstr ""
 msgid "Faster YouTube Embed"
 msgstr ""
 
-#: includes/plugin-options-page.php:121
+#: includes/plugin-options-page.php:226
 msgid ""
 "For better performance, the number of pages, posts, or custom posts has been "
 "set to 150. <br/> Please adjust the number if you have more than 150 pages, "
 "posts, or custom posts, then click \"Save Settings\" to see them in the "
 "dropdown list."
-msgstr ""
-
-#: plugin-main.php:196
-msgid "Go Pro"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:229
@@ -176,7 +260,7 @@ msgstr ""
 msgid "HashBar Pro"
 msgstr ""
 
-#: includes/recommended-plugins/class.recommended-plugins.php:228
+#: includes/recommended-plugins/class.recommended-plugins.php:229
 msgid "HasTheme"
 msgstr ""
 
@@ -269,7 +353,7 @@ msgstr ""
 msgid "https://hasthemes.com/plugins/"
 msgstr ""
 
-#: plugin-main.php:64
+#: plugin-main.php:308
 msgid "I already did"
 msgstr ""
 
@@ -281,19 +365,25 @@ msgid ""
 "Review"
 msgstr ""
 
-#: plugin-main.php:174
+#: includes/plugin-options-page.php:365
+msgid ""
+"If you wish to select custom posts, please choose the custom post above "
+"through the \"Select Post Types\" option."
+msgstr ""
+
+#: plugin-main.php:182
 msgid "Import"
 msgstr ""
 
-#: plugin-main.php:172
+#: plugin-main.php:180
 msgid "Import to Library"
 msgstr ""
 
-#: plugin-main.php:173
+#: plugin-main.php:181
 msgid "Import to Page"
 msgstr ""
 
-#: plugin-main.php:167
+#: plugin-main.php:175
 msgid "in this package"
 msgstr ""
 
@@ -308,11 +398,11 @@ msgid ""
 msgstr ""
 
 #: includes/helper_functions.php:31
-#: includes/recommended-plugins/class.recommended-plugins.php:249
+#: includes/recommended-plugins/class.recommended-plugins.php:250
 msgid "Install Now"
 msgstr ""
 
-#: plugin-main.php:177
+#: plugin-main.php:185
 #: includes/recommended-plugins/class.recommended-plugins.php:125
 msgid "Installing.."
 msgstr ""
@@ -335,12 +425,21 @@ msgstr ""
 msgid "JustTables Pro"
 msgstr ""
 
-#: plugin-main.php:62
+#: plugin-main.php:307
 msgid "Maybe Later"
 msgstr ""
 
-#: includes/recommended-plugins/class.recommended-plugins.php:293
+#: includes/plugin-options-page.php:329
+msgid "Mobile"
+msgstr ""
+
+#: includes/plugin-options-page.php:894
+#: includes/recommended-plugins/class.recommended-plugins.php:294
 msgid "More Details"
+msgstr ""
+
+#: includes/plugin-options-page.php:82
+msgid "More details"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:108
@@ -358,16 +457,19 @@ msgid ""
 "switch to their preferred currency or their country’s currency."
 msgstr ""
 
-#: plugin-main.php:169
+#: includes/class-diagnostic-data.php:578
+msgid "No, Thanks"
+msgstr ""
+
+#: plugin-main.php:177
 msgid "Nothing Found"
 msgstr ""
 
-#. field name
-#: includes/plugin-options-page.php:87
+#: includes/plugin-options-page.php:166
 msgid "Number Of Posts to Load"
 msgstr ""
 
-#: plugin-main.php:60
+#: plugin-main.php:306
 msgid "Ok, you deserve it!"
 msgstr ""
 
@@ -375,51 +477,63 @@ msgstr ""
 msgid "Others"
 msgstr ""
 
-#: includes/plugin-options-page.php:165
+#: includes/plugin-options-page.php:77
+msgid ""
+"Our free version is great, but it doesn't have all our advanced features. "
+"The best way to unlock all of the features in our plugin is by purchasing "
+"the pro version."
+msgstr ""
+
+#: includes/plugin-options-page.php:356
 msgid "Page"
 msgstr ""
 
-#: includes/plugin-options-page.php:162
+#: includes/plugin-options-page.php:358
+msgid "Page & Post"
+msgstr ""
+
+#: includes/plugin-options-page.php:353
 msgid "Page Type:"
 msgstr ""
 
-#: includes/plugin-options-page.php:8
+#: includes/plugin-options-page.php:38 includes/plugin-options-page.php:39
 msgid "Plugin Manager"
 msgstr ""
 
-#: includes/plugin-options-page.php:47
-msgid "Plugin Manager Options"
-msgstr ""
-
-#: plugin-main.php:214
-#: includes/recommended-plugins/class.recommended-plugins.php:396
+#: plugin-main.php:219
+#: includes/recommended-plugins/class.recommended-plugins.php:397
 msgid "Plugin Not Found"
 msgstr ""
 
-#: plugin-main.php:234
-#: includes/recommended-plugins/class.recommended-plugins.php:416
+#: plugin-main.php:239
+#: includes/recommended-plugins/class.recommended-plugins.php:417
 msgid "Plugin Successfully Activated"
 msgstr ""
 
-#: includes/plugin-options-page.php:166
+#: includes/plugin-options-page.php:178
+msgid "Plugins List"
+msgstr ""
+
+#: includes/plugin-options-page.php:357
 msgid "Post"
 msgstr ""
 
-#: includes/plugin-options-page.php:167
-msgid "Post And Pages"
-msgstr ""
-
-#: includes/plugin-options-page.php:168
+#: includes/plugin-options-page.php:359
 msgid "Post, Pages & Custom Post Type"
 msgstr ""
 
-#: plugin-main.php:176
+#: plugin-main.php:184
 #: includes/recommended-plugins/class.recommended-plugins.php:124
 msgid "Preview"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:296
 msgid "Preview Link Generator"
+msgstr ""
+
+#: includes/plugin-options-page.php:154 includes/plugin-options-page.php:523
+#: includes/plugin-options-page.php:603 includes/plugin-options-page.php:663
+msgid "Pro"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:139
@@ -442,28 +556,65 @@ msgstr ""
 msgid "Recommended"
 msgstr ""
 
-#: includes/plugin-options-page.php:245 includes/plugin-options-page.php:269
-#: includes/plugin-options-page.php:290
+#: includes/plugin-options-page.php:745
 msgid "Remove"
+msgstr ""
+
+#: includes/plugin-options-page.php:127
+msgid "Save Settings"
 msgstr ""
 
 #: includes/helper_functions.php:119
 msgid "Select"
 msgstr ""
 
-#: includes/plugin-options-page.php:176
+#: includes/plugin-options-page.php:436
+msgid "Select "
+msgstr ""
+
+#: includes/plugin-options-page.php:391
 msgid "Select Pages:"
 msgstr ""
 
-#: includes/plugin-options-page.php:199
+#: includes/plugin-options-page.php:154
+msgid "Select Post Types"
+msgstr ""
+
+#: includes/plugin-options-page.php:373
+msgid "Select Post Types:"
+msgstr ""
+
+#: includes/plugin-options-page.php:412
 msgid "Select Posts:"
 msgstr ""
 
-#: plugin-main.php:193
+#: includes/plugin-options-page.php:202
+msgid ""
+"Select the custom post types where you want to disable plugins. <br/>Note: "
+"Make sure that, you click on \"Save Settings\" button so you'll see options "
+"for each plugin for the custom post types you selected."
+msgstr ""
+
+#: includes/plugin-options-page.php:333
+msgid "Select the device(s) where this plugin should be disabled."
+msgstr ""
+
+#. %1$s: anchor start tag with privacy policy url
+#. %2$s: anchor end tag
+#: includes/class-diagnostic-data.php:573
+#, php-format
+msgid ""
+"Server information (Web server, PHP version, MySQL version), WordPress "
+"information, site name, site URL, number of plugins, number of users, your "
+"name, and email address. You can rest assured that no sensitive data will be "
+"collected or tracked. %1$sLearn more%2$s."
+msgstr ""
+
+#: includes/plugin-options-page.php:52 includes/plugin-options-page.php:111
 msgid "Settings"
 msgstr ""
 
-#: includes/plugin-options-page.php:37
+#: includes/plugin-options-page.php:99
 msgid "Settings Saved"
 msgstr ""
 
@@ -471,35 +622,51 @@ msgstr ""
 msgid "Sirve – Simple Directory Listing"
 msgstr ""
 
-#: plugin-main.php:57
+#: includes/plugin-options-page.php:328
+msgid "Tablet"
+msgstr ""
+
+#: includes/plugin-options-page.php:331
+msgid "Tablet + Mobile"
+msgstr ""
+
+#: plugin-main.php:303
 msgid "Thank you for choosing WP Plugin Manager to manage you plugins!"
 msgstr ""
 
-#: includes/plugin-options-page.php:12
+#. %1$s: project name
+#. %2$s: strong start tag
+#. %3$s: strong end tag
+#: includes/class-diagnostic-data.php:607
+#, php-format
+msgid "Thank you very much for supporting %2$s%1$s%3$s."
+msgstr ""
+
+#: plugin-main.php:202 plugin-main.php:203
 msgid "Upgrade to Pro"
 msgstr ""
 
-#: includes/plugin-options-page.php:221
+#: includes/plugin-options-page.php:706
 msgid "URI Condition"
 msgstr ""
 
-#: includes/plugin-options-page.php:237 includes/plugin-options-page.php:261
+#: includes/plugin-options-page.php:724
 msgid "URI Contains"
 msgstr ""
 
-#: includes/plugin-options-page.php:235 includes/plugin-options-page.php:259
+#: includes/plugin-options-page.php:722
 msgid "URI Equals"
 msgstr ""
 
-#: includes/plugin-options-page.php:238 includes/plugin-options-page.php:262
+#: includes/plugin-options-page.php:725
 msgid "URI Not Contains"
 msgstr ""
 
-#: includes/plugin-options-page.php:236 includes/plugin-options-page.php:260
+#: includes/plugin-options-page.php:723
 msgid "URI Not Equals"
 msgstr ""
 
-#: includes/plugin-options-page.php:222
+#: includes/plugin-options-page.php:707
 msgid "Value"
 msgstr ""
 
@@ -560,7 +727,7 @@ msgstr ""
 msgid "WordPress Mega Menu Builder for Elementor"
 msgstr ""
 
-#: plugin-main.php:58
+#: plugin-main.php:304
 msgid ""
 "Would you mind doing us a huge favor by providing your feedback on WordPress?"
 " Your support helps us spread the word and greatly boosts our motivation."
@@ -587,18 +754,24 @@ msgid ""
 "your WordPress site to improve the overall site performance."
 msgstr ""
 
-#: includes/plugin-options-page.php:156
+#: includes/plugin-options-page.php:307
 msgid "Yes"
 msgstr ""
 
-#: includes/class.notices.php:72
+#: includes/class.notices.php:73
 msgid "You are not authorized."
 msgstr ""
 
-#: includes/plugin-options-page.php:300
+#: includes/plugin-options-page.php:474
 msgid "You don't have any active plugins!!"
 msgstr ""
 
 #: includes/recommended-plugins/recommendations.php:115
 msgid "You May Also Like"
+msgstr ""
+
+#. %1$s: project name
+#: includes/class-diagnostic-data.php:586
+#, php-format
+msgid "🌟 Enhance Your %1$s Experience as a Valued Contributor!"
 msgstr ""
