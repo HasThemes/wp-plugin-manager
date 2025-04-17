@@ -2,9 +2,9 @@
 Contributors: hasthemes, htplugins, devitemsllc, tarekht, zenaulislam, aslamhasib, alberuni-azad
 Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, performance
 Requires at least: 5.0
-Tested up to: 6.7
+Tested up to: 6.8
 Requires PHP: 5.4
-Stable tag: 1.2.9
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,6 +86,10 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+
+= Version: 1.3.0 Date: 17 April 2025 =
+* Updated: Plugin text domain for improved translation support.
+* Tested: Compatibility with the latest version of WordPress.
 
 = Version: 1.2.9 Date: 09 February 2025 =
 * Improved: User interface for better user experience.
