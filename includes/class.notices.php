@@ -70,7 +70,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
             // User Capability check
 			if ( ! apply_filters( 'hastech_notice_user_cap_check', current_user_can( $capability ) ) ) {
                 $error_message = [
-                    'message'  => __('You are not authorized.', 'htpm')
+                    'message'  => __('You are not authorized.', 'wp-plugin-manager')
                 ];
                 wp_send_json_error( $error_message );
 			}
@@ -78,7 +78,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
             // Nonce verification check
             if( !wp_verify_nonce( $nonce, 'htpm_notices_nonce') ) {
                 $error_message = [
-                    'message'  => __('Are you cheating?', 'htpm')
+                    'message'  => __('Are you cheating?', 'wp-plugin-manager')
                 ];
                 wp_send_json_error( $error_message );
             }
@@ -270,7 +270,7 @@ if ( ! class_exists( 'HTPM_Notice' ) ){
                 if( $notice['type'] !== 'custom'){
                     $classes[] = 'notice';
                 }else{
-                    $notice['dismissible_btn'] = '<button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__('Dismiss this notice.','htpm').'</span></button>';
+                    $notice['dismissible_btn'] = '<button type="button" class="notice-dismiss"><span class="screen-reader-text">'.esc_html__('Dismiss this notice.','wp-plugin-manager').'</span></button>';
                 }
             }
 
