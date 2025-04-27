@@ -2,26 +2,21 @@ import { defineStore } from 'pinia'
 
 export const usePluginStore = defineStore('plugins', {
   state: () => ({
-    plugins: [
-      {
-        id: 1,
-        name: 'Query Monitor',
-        icon: 'path/to/icon.png',
-        active: true,
-        settings: {
-          disabled: false,
-          deviceType: 'desktop_tablet',
-          action: 'enable',
-          pageType: 'custom',
-          uriCondition: ''
-        }
-      },
-      // More plugins...
-    ]
+    plugins: [],
+    loading: false,
+    error: null
   }),
+
+  getters: {
+    activePlugins: (state) => state.plugins.filter(p => p.active),
+    inactivePlugins: (state) => state.plugins.filter(p => !p.active),
+    updateAvailable: (state) => state.plugins.filter(p => p.updateAvailable),
+    totalPlugins: (state) => state.plugins.length
+  },
 
   actions: {
     async fetchPlugins() {
+      this.loading = true
       try {
         const response = await fetch('/wp-admin/admin-ajax.php', {
           method: 'POST',
@@ -29,18 +24,20 @@ export const usePluginStore = defineStore('plugins', {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           body: new URLSearchParams({
-            action: 'htpm_get_plugins'
+            action: 'htpm_get_plugins',
+            nonce: window.htpmData.nonce
           })
         })
-        
-        if (!response.ok) throw new Error('Failed to fetch plugins')
-        
         const data = await response.json()
         if (data.success) {
           this.plugins = data.data
+        } else {
+          throw new Error(data.message)
         }
       } catch (error) {
-        console.error('Error fetching plugins:', error)
+        this.error = error.message
+      } finally {
+        this.loading = false
       }
     },
 
@@ -52,25 +49,27 @@ export const usePluginStore = defineStore('plugins', {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           body: new URLSearchParams({
-            action: 'htpm_ajax_plugin_activation',
-            plugin: plugin.id,
-            active: plugin.active
+            action: 'htpm_toggle_plugin',
+            plugin: plugin.file,
+            active: !plugin.active,
+            nonce: window.htpmData.nonce
           })
         })
-
-        if (!response.ok) throw new Error('Failed to toggle plugin')
-
         const data = await response.json()
-        if (!data.success) {
-          plugin.active = !plugin.active // Revert the change
+        if (data.success) {
+          const index = this.plugins.findIndex(p => p.file === plugin.file)
+          if (index !== -1) {
+            this.plugins[index] = { ...this.plugins[index], active: !plugin.active }
+          }
+        } else {
           throw new Error(data.message)
         }
       } catch (error) {
-        console.error('Error toggling plugin:', error)
+        this.error = error.message
       }
     },
 
-    async updatePluginSettings({ plugin, settings }) {
+    async updatePlugin(plugin) {
       try {
         const response = await fetch('/wp-admin/admin-ajax.php', {
           method: 'POST',
@@ -78,23 +77,22 @@ export const usePluginStore = defineStore('plugins', {
             'Content-Type': 'application/x-www-form-urlencoded'
           },
           body: new URLSearchParams({
-            action: 'htpm_update_plugin_settings',
-            plugin: plugin.id,
-            settings: JSON.stringify(settings)
+            action: 'htpm_update_plugin',
+            plugin: plugin.file,
+            nonce: window.htpmData.nonce
           })
         })
-
-        if (!response.ok) throw new Error('Failed to update plugin settings')
-
         const data = await response.json()
         if (data.success) {
-          const index = this.plugins.findIndex(p => p.id === plugin.id)
+          const index = this.plugins.findIndex(p => p.file === plugin.file)
           if (index !== -1) {
-            this.plugins[index].settings = settings
+            this.plugins[index] = { ...this.plugins[index], version: data.version }
           }
+        } else {
+          throw new Error(data.message)
         }
       } catch (error) {
-        console.error('Error updating plugin settings:', error)
+        this.error = error.message
       }
     }
   }

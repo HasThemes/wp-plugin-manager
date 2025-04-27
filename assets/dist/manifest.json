@@ -1,8 +1,8 @@
 {
-  "assets/js/main.js": {
+  "src/main.js": {
     "file": "js/main.js",
     "isEntry": true,
-    "src": "assets/js/main.js"
+    "src": "src/main.js"
   },
   "style.css": {
     "file": "css/style.css",

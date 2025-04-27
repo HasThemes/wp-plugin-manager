@@ -1,15 +1,17 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { resolve } from 'path'
+import * as sass from 'sass'
 
 export default defineConfig({
+  logLevel: 'error', // Only show errors
   plugins: [vue()],
   build: {
     outDir: 'assets/dist',
     assetsDir: '',
     manifest: true,
     rollupOptions: {
-      input: 'assets/js/main.js',
+      input: 'src/main.js',
       output: {
         entryFileNames: 'js/[name].js',
         chunkFileNames: 'js/[name]-[hash].js',
@@ -24,9 +26,16 @@ export default defineConfig({
       }
     }
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        implementation: sass
+      }
+    }
+  },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'assets/js')
+      '@': resolve(__dirname, 'src')
     }
   }
 })
