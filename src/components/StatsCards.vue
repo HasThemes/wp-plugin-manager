@@ -75,7 +75,6 @@ const props = defineProps({
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease;
 
     &:hover {
