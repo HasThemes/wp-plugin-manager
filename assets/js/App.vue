@@ -1,26 +1,51 @@
 <template>
   <div class="htpm-dashboard">
     <!-- Header -->
-    <div class="htpm-header">
-      <el-menu mode="horizontal" class="htpm-nav">
-        <el-menu-item index="1">General</el-menu-item>
-        <el-menu-item index="2">Settings</el-menu-item>
-        <el-menu-item index="3">Tools</el-menu-item>
-        <el-menu-item index="4">License</el-menu-item>
-        <el-menu-item index="5">Documentation</el-menu-item>
-        <el-menu-item index="6">Support</el-menu-item>
-      </el-menu>
-      
-      <div class="htpm-header-actions">
-        <el-badge :value="updateCount" :hidden="!updateCount" class="notification-badge">
-          <el-button :icon="Bell" circle @click="showChangelog" />
-        </el-badge>
-        <el-button type="primary" @click="upgradeToPro">Upgrade to Pro</el-button>
-      </div>
-    </div>
+
+    <el-row align="middle" justify="space-between" class="htpm-header-row">
+      <el-col :span="18">
+        <el-menu mode="horizontal" class="htpm-nav" :ellipsis="false">
+          <el-menu-item index="1">
+            <el-icon><Grid /></el-icon>
+            General
+          </el-menu-item>
+          <el-menu-item index="2">
+            <el-icon><Setting /></el-icon>
+            Settings
+          </el-menu-item>
+          <el-menu-item index="3">
+            <el-icon><Tools /></el-icon>
+            Tools
+          </el-menu-item>
+          <el-menu-item index="4">
+            <el-icon><Key /></el-icon>
+            License
+          </el-menu-item>
+          <el-menu-item index="5" @click="documentationDialog = true">
+            <el-icon><Document /></el-icon>
+            Documentation
+          </el-menu-item>
+          <el-menu-item index="6">
+            <el-icon><Service /></el-icon>
+            Support
+          </el-menu-item>
+        </el-menu>
+      </el-col>
+      <el-col :span="6" class="htpm-header-actions">
+        <el-space>
+          <el-button type="primary" @click="upgradeToPro">
+            <el-icon><Top /></el-icon>
+            Upgrade to Pro
+          </el-button>
+          <el-badge :value="updateCount" :hidden="!updateCount" class="notification-badge">
+            <el-button :icon="Bell" circle @click="showChangelog" />
+          </el-badge>
+        </el-space>
+      </el-col>
+    </el-row>
 
     <el-row :gutter="20" class="htpm-content">
-      <el-col :span="16">
+      <el-col :span="20">
         <!-- Stats Cards -->
         <div class="htpm-stats">
           <el-row :gutter="20">
@@ -90,7 +115,7 @@
             <el-table-column prop="name" label="Plugin Name">
               <template #default="{ row }">
                 <div class="plugin-info">
-                  <el-icon><Extension /></el-icon>
+                  <el-icon><Box /></el-icon>
                   <span class="plugin-name">{{ row.name }}</span>
                   <el-tag size="small" type="success" v-if="row.active">Active</el-tag>
                 </div>
@@ -149,6 +174,93 @@
           </template>
         </el-dialog>
 
+        <!-- Documentation Section -->
+        <el-dialog
+          v-model="documentationDialog"
+          title="Documentation"
+          width="80%"
+          class="documentation-dialog"
+        >
+          <el-container>
+            <el-aside width="250px" class="doc-sidebar">
+              <el-menu
+                default-active="getting-started"
+                class="doc-menu"
+                @select="handleDocSelect"
+              >
+                <el-menu-item index="getting-started">
+                  <el-icon><Guide /></el-icon>
+                  <span>Getting Started</span>
+                </el-menu-item>
+                <el-menu-item index="installation">
+                  <el-icon><Download /></el-icon>
+                  <span>Installation</span>
+                </el-menu-item>
+                <el-menu-item index="configuration">
+                  <el-icon><Setting /></el-icon>
+                  <span>Configuration</span>
+                </el-menu-item>
+                <el-menu-item index="usage">
+                  <el-icon><Operation /></el-icon>
+                  <span>Basic Usage</span>
+                </el-menu-item>
+                <el-menu-item index="advanced">
+                  <el-icon><Cpu /></el-icon>
+                  <span>Advanced Features</span>
+                </el-menu-item>
+                <el-menu-item index="faq">
+                  <el-icon><QuestionFilled /></el-icon>
+                  <span>FAQ</span>
+                </el-menu-item>
+              </el-menu>
+            </el-aside>
+            <el-main class="doc-content">
+              <div v-if="currentDoc === 'getting-started'">
+                <h2>Getting Started with WP Plugin Manager</h2>
+                <p>Welcome to WP Plugin Manager! This guide will help you get started with managing your WordPress plugins efficiently.</p>
+                <el-divider />
+                <h3>Key Features</h3>
+                <el-row :gutter="20">
+                  <el-col :span="8">
+                    <el-card>
+                      <template #header>
+                        <div class="card-header">
+                          <el-icon><Monitor /></el-icon>
+                          <span>Easy Management</span>
+                        </div>
+                      </template>
+                      <div class="card-content">Manage all your plugins from a single dashboard</div>
+                    </el-card>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-card>
+                      <template #header>
+                        <div class="card-header">
+                          <el-icon><Refresh /></el-icon>
+                          <span>Auto Updates</span>
+                        </div>
+                      </template>
+                      <div class="card-content">Keep plugins updated automatically</div>
+                    </el-card>
+                  </el-col>
+                  <el-col :span="8">
+                    <el-card>
+                      <template #header>
+                        <div class="card-header">
+                          <el-icon><Lock /></el-icon>
+                          <span>Security</span>
+                        </div>
+                      </template>
+                      <div class="card-content">Monitor plugin security and vulnerabilities</div>
+                    </el-card>
+                  </el-col>
+                </el-row>
+              </div>
+              <!-- Add other documentation sections here -->
+            </el-main>
+          </el-container>
+        </el-dialog>
+
         <!-- Changelog Modal -->
         <el-dialog
           v-model="changelogDialog.visible"
@@ -164,7 +276,7 @@
         </el-dialog>
       </el-col>
 
-      <el-col :span="8">
+      <el-col :span="4">
         <!-- Sidebar -->
         <div class="htpm-sidebar">
           <!-- Upgrade Banner -->
@@ -195,17 +307,32 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { Star } from '@element-plus/icons-vue'
-import {
-  Bell,
+import { 
+  Star,
+  Grid,
   Setting,
+  Tools,
+  Key,
+  Document,
+  Service,
+  Bell,
+  Top,
   Search,
   Filter,
   Sort,
+  Box,
   Collection,
   Select,
-  RefreshRight,
-  Close
+  Timer,
+  Remove,
+  Guide,
+  Download,
+  Operation,
+  Cpu,
+  QuestionFilled,
+  Monitor,
+  Refresh,
+  Lock
 } from '@element-plus/icons-vue'
 import { usePluginStore } from './store/plugins'
 
@@ -225,12 +352,18 @@ const settingsDialog = ref({
   plugin: null,
   form: {
     disabled: false,
-    deviceType: 'desktop_tablet',
-    action: 'enable',
-    pageType: 'custom',
-    uriCondition: ''
+    autoUpdate: true,
+    emailNotifications: false,
+    priority: 1
   }
 })
+
+const documentationDialog = ref(false)
+const currentDoc = ref('getting-started')
+
+const handleDocSelect = (key) => {
+  currentDoc.value = key
+}
 
 const changelogDialog = ref({
   visible: false,
@@ -290,14 +423,134 @@ const ratePlugin = () => {
   background: #f5f7fa;
   min-height: calc(100vh - 32px);
   
-  .htpm-header {
+  .htpm-header-row {
     background: #fff;
     border-bottom: 1px solid #e4e7ed;
     margin-bottom: 20px;
+    padding: 0 20px;
+    position: sticky;
+    top: 32px;
+    z-index: 100;
+
+    .htpm-nav {
+      border: none;
+      padding: 0;
+
+      .el-menu-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        height: 60px;
+        padding: 0 16px;
+        font-weight: 500;
+
+        .el-icon {
+          font-size: 18px;
+        }
+
+        &.is-active {
+          color: var(--el-color-primary);
+          border-bottom-color: var(--el-color-primary);
+        }
+      }
+    }
+
+    .htpm-header-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      height: 60px;
+      padding-right: 16px;
+
+      .el-button {
+        &.is-circle {
+          margin-right: 8px;
+        }
+      }
+    }
   }
 
   .htpm-content {
     padding: 0 20px;
+  }
+
+  .documentation-dialog {
+    .el-dialog__body {
+      padding: 0;
+    }
+
+    .doc-sidebar {
+      background: #f5f7fa;
+      border-right: 1px solid #e4e7ed;
+      height: calc(80vh - 100px);
+
+      .doc-menu {
+        border-right: none;
+
+        .el-menu-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          height: 50px;
+          padding: 0 16px;
+          font-weight: 500;
+
+          .el-icon {
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    .doc-content {
+      padding: 24px;
+      height: calc(80vh - 100px);
+      overflow-y: auto;
+
+      h2 {
+        margin-top: 0;
+        margin-bottom: 16px;
+        font-size: 24px;
+        font-weight: 600;
+      }
+
+      h3 {
+        margin-top: 24px;
+        margin-bottom: 16px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      p {
+        color: #606266;
+        line-height: 1.6;
+        margin-bottom: 16px;
+      }
+
+      .el-divider {
+        margin: 24px 0;
+      }
+
+      .el-card {
+        margin-bottom: 16px;
+
+        .card-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-weight: 500;
+
+          .el-icon {
+            font-size: 18px;
+          }
+        }
+
+        .card-content {
+          color: #606266;
+          line-height: 1.6;
+        }
+      }
+    }
   }
 
   .htpm-stats,
