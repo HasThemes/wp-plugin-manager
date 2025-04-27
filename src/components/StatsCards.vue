@@ -16,7 +16,7 @@
       <el-col :span="6">
         <div class="stat-card active">
           <div class="icon-box">
-            <el-icon><Check /></el-icon>
+            <el-icon><CircleCheck /></el-icon>
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.activePlugins }}</div>
@@ -54,7 +54,7 @@
 
 <script setup>
 import { defineProps } from 'vue'
-import { List, Check, Refresh, Close } from '@element-plus/icons-vue'
+import { List, Check, Refresh, Close,CircleCheck } from '@element-plus/icons-vue'
 
 const props = defineProps({
   stats: {
@@ -71,7 +71,7 @@ const props = defineProps({
   .stat-card {
     background: #fff;
     border-radius: 12px;
-    padding: 20px;
+    padding: 30px 20px;
     display: flex;
     align-items: center;
     gap: 16px;
@@ -109,32 +109,45 @@ const props = defineProps({
 
       .stat-label {
         font-size: 14px;
-        color: #909399;
+        color: #6b7280;
         margin-top: 4px;
+        font-weight: 500;
       }
     }
 
     &.total {
       .icon-box {
-        background: linear-gradient(135deg, #409EFF, #3a8ee6);
+        background: rgba(67, 97, 238, 0.1);
+        & .el-icon {
+          color: #4361ee;
+        }
       }
     }
 
     &.active {
       .icon-box {
-        background: linear-gradient(135deg, #67C23A, #529b2e);
+        background: rgba(0, 163, 42, 0.1);
+        & .el-icon {
+          color: #00a32a;
+        }
       }
     }
 
     &.updates {
       .icon-box {
-        background: linear-gradient(135deg, #E6A23C, #b88230);
+        background: rgba(219, 166, 23, 0.1);
+        & .el-icon {
+          color: #dba617;
+        }
       }
     }
 
     &.inactive {
       .icon-box {
-        background: linear-gradient(135deg, #F56C6C, #c45656);
+        background: rgba(214, 54, 56, 0.1);
+        & .el-icon {
+          color: #d63638;
+        }
       }
     }
   }
