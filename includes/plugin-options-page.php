@@ -25,6 +25,102 @@ class HTPM_Option_Page {
 		add_action( 'admin_footer', [$this, 'pro_menu_scripts'], 11 );
 		add_action( 'admin_footer', [$this, 'pro_notice_content'] );
 		add_action( 'admin_init', [$this, 'settings_init'] );
+		add_action( 'admin_enqueue_scripts', [$this, 'enqueue_scripts'] );
+		add_action( 'wp_ajax_htpm_get_plugins', [$this, 'ajax_get_plugins'] );
+		add_action( 'wp_ajax_htpm_update_plugin_settings', [$this, 'ajax_update_plugin_settings'] );
+    }
+
+    /**
+     * Enqueue scripts and styles for the plugin manager
+     */
+    public function enqueue_scripts($hook) {
+        if ('toplevel_page_htpm-options' !== $hook) {
+            return;
+        }
+
+        // Enqueue Vue app assets and styles
+        add_action('admin_head', function() {
+            printf(
+                '<link rel="stylesheet" href="%s">',
+                esc_url(HTPM_ROOT_URL . '/assets/dist/css/style.css')
+            );
+        });
+
+        add_action('admin_print_footer_scripts', function() {
+            printf(
+                '<script type="module" src="%s"></script>',
+                esc_url(HTPM_ROOT_URL . '/assets/dist/js/main.js')
+            );
+        });
+
+        // Add plugin data to JavaScript
+        wp_localize_script('jquery', 'htpmData', [
+            'nonce' => wp_create_nonce('htpm-nonce'),
+            'ajaxUrl' => admin_url('admin-ajax.php')
+        ]);
+    }
+
+    /**
+     * AJAX handler for getting plugins list
+     */
+    public function ajax_get_plugins() {
+        check_ajax_referer('htpm-nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Unauthorized');
+        }
+
+        $plugins = get_plugins();
+        $active_plugins = get_option('active_plugins');
+        $plugin_data = [];
+
+        foreach ($plugins as $plugin_file => $plugin) {
+            $plugin_data[] = [
+                'id' => $plugin_file,
+                'name' => $plugin['Name'],
+                'icon' => plugins_url('assets/images/icon.png', $plugin_file),
+                'active' => in_array($plugin_file, $active_plugins),
+                'settings' => get_option('htpm_plugin_' . sanitize_key($plugin_file), [
+                    'disabled' => false,
+                    'deviceType' => 'desktop_tablet',
+                    'action' => 'enable',
+                    'pageType' => 'custom',
+                    'uriCondition' => ''
+                ])
+            ];
+        }
+
+        wp_send_json_success($plugin_data);
+    }
+
+    /**
+     * AJAX handler for updating plugin settings
+     */
+    public function ajax_update_plugin_settings() {
+        check_ajax_referer('htpm-nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error('Unauthorized');
+        }
+
+        $plugin = sanitize_text_field($_POST['plugin']);
+        $settings = json_decode(stripslashes($_POST['settings']), true);
+
+        if (!$plugin || !$settings) {
+            wp_send_json_error('Invalid data');
+        }
+
+        // Sanitize settings
+        $sanitized_settings = [
+            'disabled' => (bool) $settings['disabled'],
+            'deviceType' => sanitize_text_field($settings['deviceType']),
+            'action' => sanitize_text_field($settings['action']),
+            'pageType' => sanitize_text_field($settings['pageType']),
+            'uriCondition' => sanitize_text_field($settings['uriCondition'])
+        ];
+
+        update_option('htpm_plugin_' . sanitize_key($plugin), $sanitized_settings);
+        wp_send_json_success();
     }
 
 	/**
@@ -94,44 +190,17 @@ class HTPM_Option_Page {
 			return;
 		}
 
-		// show message when updated
-		if ( isset( $_GET['settings-updated'] ) ) {
-			add_settings_error( 'htpm_messages', 'htpm_message', esc_html__( 'Settings Saved', 'wp-plugin-manager' ), 'updated' );
-		}
-		
-		// show error/update messages
-		settings_errors( 'htpm_messages' );
-		?>
-			<div class="wrap">
+		// Add styles to hide default WordPress notices
+		echo '<style>
+			.wrap > .notice { display: none !important; }
+			.wrap > #message { display: none !important; }
+			.wrap > h1 { display: none !important; }
+			#wpbody-content > .notice { display: none !important; }
+			#wpbody-content > #message { display: none !important; }
+		</style>';
 
-				<?php do_action('htpm_admin_notices') ?>
-
-				<!-- Navigation -->
-				<div class="htpm-tab-nav">
-					<a href="#htpm-tab-1" class="htpm-nav htpm-nav-active"><?php esc_html_e('Settings', 'wp-plugin-manager')?></a>
-				</div>
-
-				<!-- Tab Content -->
-				<div class="htpm-tab-content">
-					<div id="htpm-tab-1" class="htpm-tab-pane htpm-active">
-						<form action="options.php" method="post">
-							<?php
-								// output general section and their fields
-								do_settings_sections( 'options_group_general' );
-
-								// general option fields
-								settings_fields( 'options_group_general' );
-
-								// output save settings button
-								submit_button(
-									__('Save Settings', 'wp-plugin-manager')
-								);
-							?>
-						</form>
-					</div>
-				</div>
-			</div>
-		<?php
+		// Render Vue app container
+		echo '<div class="wrap"><div id="htpm-app"></div></div>';
 	}
 
 	/**

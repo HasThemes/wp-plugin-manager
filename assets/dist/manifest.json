@@ -1,0 +1,11 @@
+{
+  "assets/js/main.js": {
+    "file": "js/main.js",
+    "isEntry": true,
+    "src": "assets/js/main.js"
+  },
+  "style.css": {
+    "file": "css/style.css",
+    "src": "style.css"
+  }
+}
