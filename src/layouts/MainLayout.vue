@@ -44,7 +44,27 @@
     </el-row>
 
     <!-- Main Content -->
-    <slot></slot>
+    <slot @show-documentation="documentationDialog = true"></slot>
+
+    <!-- Documentation Modal -->
+    <documentation v-model="documentationDialog" />
+
+    <!-- Changelog Modal -->
+    <el-dialog
+      v-model="changelogDialog"
+      title="What's New"
+      width="60%"
+    >
+      <div class="changelog-content">
+        <h3>Version 2.0.0</h3>
+        <ul>
+          <li>Complete UI redesign with Vue 3 and Element Plus</li>
+          <li>Improved plugin management features</li>
+          <li>Better performance and stability</li>
+          <li>Enhanced security measures</li>
+        </ul>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -60,12 +80,14 @@ import {
   Bell,
   Top
 } from '@element-plus/icons-vue'
+import Documentation from '../components/Documentation.vue'
 
 const updateCount = ref(3)
 const documentationDialog = ref(false)
+const changelogDialog = ref(false)
 
 const showChangelog = () => {
-  // Implement changelog logic
+  changelogDialog.value = true
 }
 
 const upgradeToPro = () => {

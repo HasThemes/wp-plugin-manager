@@ -1,7 +1,6 @@
 <template>
   <el-dialog
-    :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', $event)"
+    v-model="dialogVisible"
     title="Documentation"
     width="80%"
     class="documentation-dialog"
@@ -87,7 +86,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import {
   Guide,
   Download,
@@ -100,14 +99,19 @@ import {
   Lock
 } from '@element-plus/icons-vue'
 
-defineProps({
+const props = defineProps({
   modelValue: {
     type: Boolean,
     required: true
   }
 })
 
-defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue'])
+
+const dialogVisible = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value)
+})
 
 const currentDoc = ref('getting-started')
 
