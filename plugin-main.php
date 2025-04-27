@@ -63,6 +63,11 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
 
+        // In your main plugin class constructor
+        add_action('wp_ajax_htpm_get_plugins_data', array($this, 'ajax_get_plugins_data'));
+        add_action('wp_ajax_htpm_save_plugin_settings', array($this, 'ajax_save_plugin_settings'));
+        add_action('wp_ajax_htpm_toggle_plugin_state', array($this, 'ajax_toggle_plugin_state'));
+
 
     }
         
@@ -145,6 +150,8 @@ class HTPM_Main {
             include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
             include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
             include_once( HTPM_ROOT_DIR . '/includes/HTPM_Trial.php');
+            require_once HTPM_ROOT_DIR . '/includes/htpm-vue-integration.php';
+            HTPM_Vue_Integration::instance();
         }
     }
 
