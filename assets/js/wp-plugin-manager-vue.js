@@ -6,14 +6,40 @@
  * Main Vue application for the WP Plugin Manager dashboard
  */
 
-import { createApp, ref, reactive, computed, onMounted, watch } from 'vue';
-import ElementPlus from 'element-plus';
-import 'element-plus/dist/index.css';
-import {
+// Use global Vue and Element Plus from CDN
+const { ref, reactive, computed, onMounted, watch } = Vue;
+
+// Get Element Plus components and icons
+const {
+  ElMessage,
+  ElButton,
+  ElInput,
+  ElCard,
+  ElDropdown,
+  ElDropdownMenu,
+  ElDropdownItem,
+  ElBadge,
+  ElIcon,
+  ElSwitch,
+  ElForm,
+  ElFormItem,
+  ElSelect,
+  ElOption,
+  ElTable,
+  ElTableColumn,
+  ElDialog,
+  ElNotification,
+  ElSkeleton,
+  ElSkeletonItem,
+  ElTooltip
+} = ElementPlus;
+
+// Import icons from global ElementPlusIconsVue
+const {
   Setting, Bell, Document, Tools, Key, QuestionFilled,
   Search, Refresh, Filter, ArrowDown, Plus, Minus,
   Check, Close, Edit, ArrowUp, CircleCheck, Warning
-} from '@element-plus/icons-vue';
+} = ElementPlusIconsVue;
 
 // Define the Vue app
 const PluginManagerApp = {
@@ -365,30 +391,49 @@ const PluginManagerApp = {
 
 // Initialize the Vue app when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  const app = createApp(PluginManagerApp);
+  const app = Vue.createApp(PluginManagerApp);
   
-  // Register Element Plus
-  app.use(ElementPlus);
+  // Register Element Plus components
+  app.component('el-button', ElButton);
+  app.component('el-input', ElInput);
+  app.component('el-card', ElCard);
+  app.component('el-dropdown', ElDropdown);
+  app.component('el-dropdown-menu', ElDropdownMenu);
+  app.component('el-dropdown-item', ElDropdownItem);
+  app.component('el-badge', ElBadge);
+  app.component('el-icon', ElIcon);
+  app.component('el-switch', ElSwitch);
+  app.component('el-form', ElForm);
+  app.component('el-form-item', ElFormItem);
+  app.component('el-select', ElSelect);
+  app.component('el-option', ElOption);
+  app.component('el-table', ElTable);
+  app.component('el-table-column', ElTableColumn);
+  app.component('el-dialog', ElDialog);
+  app.component('el-notification', ElNotification);
+  app.component('el-skeleton', ElSkeleton);
+  app.component('el-skeleton-item', ElSkeletonItem);
+  app.component('el-tooltip', ElTooltip);
   
-  // Register all icon components
-  app.component('el-icon-setting', Setting);
-  app.component('el-icon-bell', Bell);
-  app.component('el-icon-document', Document);
-  app.component('el-icon-tools', Tools);
-  app.component('el-icon-key', Key);
-  app.component('el-icon-question-filled', QuestionFilled);
-  app.component('el-icon-search', Search);
-  app.component('el-icon-refresh', Refresh);
-  app.component('el-icon-filter', Filter);
-  app.component('el-icon-arrow-down', ArrowDown);
-  app.component('el-icon-plus', Plus);
-  app.component('el-icon-minus', Minus);
-  app.component('el-icon-check', Check);
-  app.component('el-icon-close', Close);
-  app.component('el-icon-edit', Edit);
-  app.component('el-icon-arrow-up', ArrowUp);
-  app.component('el-icon-circle-check', CircleCheck);
-  app.component('el-icon-warning', Warning);
+  // Register icon components
+  app.component('setting', Setting);
+  app.component('bell', Bell);
+  app.component('document', Document);
+  app.component('tools', Tools);
+  app.component('key', Key);
+  app.component('question-filled', QuestionFilled);
+  app.component('search', Search);
+  app.component('refresh', Refresh);
+  app.component('filter', Filter);
+  app.component('arrow-down', ArrowDown);
+  app.component('plus', Plus);
+  app.component('minus', Minus);
+  app.component('check', Check);
+  app.component('close', Close);
+  app.component('edit', Edit);
+  app.component('arrow-up', ArrowUp);
+  app.component('circle-check', CircleCheck);
+  app.component('warning', Warning);
   
   // Mount the app
   app.mount('#htpm-vue-app');

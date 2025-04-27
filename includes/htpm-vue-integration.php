@@ -50,14 +50,14 @@ class HTPM_Vue_Integration {
         }
 
         // Add Vue.js dependencies
-        wp_enqueue_script('vue', 'https://unpkg.com/vue@3.2.45/dist/vue.global.prod.js', [], '3.2.45', true);
-        wp_enqueue_script('element-plus', 'https://unpkg.com/element-plus@2.3.1/dist/index.full.min.js', ['vue'], '2.3.1', true);
-        wp_enqueue_style('element-plus-css', 'https://unpkg.com/element-plus@2.3.1/dist/index.css', [], '2.3.1');
-        wp_enqueue_style('element-plus-icons', 'https://unpkg.com/@element-plus/icons-vue@2.1.0/dist/index.css', [], '2.1.0');
+        wp_enqueue_script('vue', 'https://unpkg.com/vue@3.3.4/dist/vue.global.js', [], '3.3.4', true);
+        wp_enqueue_script('element-plus', 'https://unpkg.com/element-plus', ['vue'], '2.3.12', true);
+        wp_enqueue_script('element-plus-icons', 'https://unpkg.com/@element-plus/icons-vue', ['vue', 'element-plus'], '2.1.0', true);
+        wp_enqueue_style('element-plus-css', 'https://unpkg.com/element-plus/dist/index.css', [], '2.3.12');
 
         // Add custom scripts and styles
         wp_enqueue_style('htpm-vue-styles', HTPM_ROOT_URL . '/assets/css/wp-plugin-manager-vue.css', [], HTPM_PLUGIN_VERSION);
-        wp_enqueue_script('htpm-vue-app', HTPM_ROOT_URL . '/assets/js/wp-plugin-manager-vue.js', ['vue', 'element-plus', 'jquery'], HTPM_PLUGIN_VERSION, true);
+        wp_enqueue_script('htpm-vue-app', HTPM_ROOT_URL . '/assets/js/wp-plugin-manager-vue.js', ['vue', 'element-plus', 'element-plus-icons', 'jquery'], HTPM_PLUGIN_VERSION, true);
 
         // Localize the script with necessary data
         wp_localize_script('htpm-vue-app', 'htpmParams', [

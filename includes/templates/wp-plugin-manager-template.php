@@ -13,12 +13,176 @@ if (!defined('ABSPATH')) {
 <div class="wrap htpm-vue-wrapper">
     <?php do_action('htpm_admin_notices'); ?>
     
-    <div id="htpm-vue-app">
-        <!-- Vue.js app will be mounted here -->
-        <div class="htpm-loading" v-if="!initialized">
+    <div id="htpm-vue-app" class="htpm-vue-dashboard">
+        <!-- Loading State -->
+        <div class="htpm-loading" v-if="loading">
             <div class="htpm-spinner"></div>
             <p><?php echo esc_html__('Loading Plugin Manager...', 'wp-plugin-manager'); ?></p>
         </div>
+        
+        <template v-else>
+            <!-- Top Navigation Bar -->
+            <div class="htpm-top-navbar">
+              <div class="htpm-nav-links">
+                <a href="#" 
+                   :class="['htpm-nav-link', { 'htpm-active': currentTab === 'general' }]" 
+                   @click.prevent="currentTab = 'general'">
+                  <el-icon><setting /></el-icon> General
+                </a>
+                <a href="#" 
+                   :class="['htpm-nav-link', { 'htpm-active': currentTab === 'settings' }]" 
+                   @click.prevent="currentTab = 'settings'">
+                  <el-icon><setting /></el-icon> Settings
+                </a>
+                <a href="#" 
+                   :class="['htpm-nav-link', { 'htpm-active': currentTab === 'tools' }]" 
+                   @click.prevent="currentTab = 'tools'">
+                  <el-icon><tools /></el-icon> Tools
+                </a>
+                <a href="#" 
+                   :class="['htpm-nav-link', { 'htpm-active': currentTab === 'license' }]" 
+                   @click.prevent="currentTab = 'license'">
+                  <el-icon><key /></el-icon> License
+                </a>
+                <a href="#" 
+                   :class="['htpm-nav-link', { 'htpm-active': currentTab === 'documentation' }]" 
+                   @click.prevent="currentTab = 'documentation'">
+                  <el-icon><document /></el-icon> Documentation
+                </a>
+                <a href="#" 
+                   :class="['htpm-nav-link', { 'htpm-active': currentTab === 'support' }]" 
+                   @click.prevent="currentTab = 'support'">
+                  <el-icon><question-filled /></el-icon> Support
+                </a>
+              </div>
+              
+              <div class="htpm-nav-actions">
+                <el-button type="primary" class="htpm-upgrade-btn">
+                  Upgrade to Pro
+                </el-button>
+                
+                <div class="htpm-notification-wrapper">
+                  <el-badge :value="notifications.length" :hidden="notifications.length === 0">
+                    <el-button class="htpm-notification-btn" circle @click="toggleNotifications">
+                      <el-icon><bell /></el-icon>
+                    </el-button>
+                  </el-badge>
+                  
+                  <!-- Notifications Dropdown -->
+                  <div class="htpm-notifications-dropdown" v-if="notificationsVisible">
+                    <h3 class="htpm-notifications-title">Notifications</h3>
+                    <div v-if="notifications.length === 0" class="htpm-no-notifications">
+                      No new notifications
+                    </div>
+                    <ul v-else class="htpm-notifications-list">
+                      <li v-for="(notification, index) in notifications" :key="index" class="htpm-notification-item">
+                        <div class="htpm-notification-content">
+                          <h4>{{ notification.title }}</h4>
+                          <p>{{ notification.message }}</p>
+                          <span class="htpm-notification-time">{{ notification.time }}</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Stats Row -->
+            <div class="htpm-stats-row">
+              <el-card class="htpm-stat-card">
+                <div class="htpm-stat-icon htpm-blue">
+                  <el-icon><document /></el-icon>
+                </div>
+                <div class="htpm-stat-info">
+                  <div class="htpm-stat-value">{{ stats.total }}</div>
+                  <div class="htpm-stat-label">Total Plugins</div>
+                </div>
+              </el-card>
+              
+              <el-card class="htpm-stat-card">
+                <div class="htpm-stat-icon htpm-green">
+                  <el-icon><circle-check /></el-icon>
+                </div>
+                <div class="htpm-stat-info">
+                  <div class="htpm-stat-value">{{ stats.active }}</div>
+                  <div class="htpm-stat-label">Active Plugins</div>
+                </div>
+              </el-card>
+              
+              <el-card class="htpm-stat-card">
+                <div class="htpm-stat-icon htpm-yellow">
+                  <el-icon><warning /></el-icon>
+                </div>
+                <div class="htpm-stat-info">
+                  <div class="htpm-stat-value">{{ stats.updates }}</div>
+                  <div class="htpm-stat-label">Update Available</div>
+                </div>
+              </el-card>
+              
+              <el-card class="htpm-stat-card">
+                <div class="htpm-stat-icon htpm-red">
+                  <el-icon><close /></el-icon>
+                </div>
+                <div class="htpm-stat-info">
+                  <div class="htpm-stat-value">{{ stats.inactive }}</div>
+                  <div class="htpm-stat-label">Inactive Plugins</div>
+                </div>
+              </el-card>
+            </div>
+            
+            <!-- Plugins Section -->
+            <el-card class="htpm-plugins-section">
+              <template #header>
+                <div class="htpm-plugins-header">
+                  <h2 class="htpm-plugins-title">
+                    <el-icon><document /></el-icon>
+                    Manage Plugins
+                  </h2>
+                  
+                  <div class="htpm-plugins-actions">
+                    <el-input 
+                      v-model="searchQuery" 
+                      placeholder="Search plugins..." 
+                      class="htpm-search-input"
+                      prefix-icon="Search"
+                    />
+                    
+                    <el-dropdown trigger="click">
+                      <el-button type="default" class="htpm-filter-button">
+                        <el-icon><filter /></el-icon>
+                        Filter
+                      </el-button>
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item @click="filterPlugins('all')">All Plugins</el-dropdown-item>
+                          <el-dropdown-item @click="filterPlugins('active')">Active Plugins</el-dropdown-item>
+                          <el-dropdown-item @click="filterPlugins('inactive')">Inactive Plugins</el-dropdown-item>
+                          <el-dropdown-item @click="filterPlugins('updates')">Update Available</el-dropdown-item>
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
+                    
+                    <el-dropdown trigger="click">
+                      <el-button type="default" class="htpm-sort-button">
+                        <el-icon><arrow-down /></el-icon>
+                        Sort
+                      </el-button>
+                      <template #dropdown>
+                        <el-dropdown-menu>
+                          <el-dropdown-item @click="sortPlugins('name')">Sort by Name</el-dropdown-item>
+                          <el-dropdown-item @click="sortPlugins('status')">Sort by Status</el-dropdown-item>
+                        </el-dropdown-menu>
+                      </template>
+                    </el-dropdown>
+                  </div>
+                </div>
+              </template>
+              
+              <!-- Plugins List -->
+              <div class="htpm-plugins-list">
+                <div v-for="plugin in filteredPlugins" :key="plugin.id" class="htpm-plugin-item">
+        </template>
     </div>
 </div>
 
