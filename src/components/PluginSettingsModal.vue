@@ -6,7 +6,7 @@
     class="plugin-settings-modal"
     destroy-on-close
   >
-    <el-form label-position="top">
+    <el-form label-position="top" v-loading="loading">
       <!-- Enable/Disable plugin toggle -->
       <div class="form-field">
         <el-switch
@@ -47,7 +47,7 @@
         <!-- URI Type Selector -->
         <div class="form-field">
           <label>Page Type:</label>
-          <el-select v-model="pluginSettings.uri_type" class="w-full">
+          <el-select v-model="pluginSettings.uri_type" class="w-full" @change="handleUriTypeChange">
             <el-option label="Page" value="page" />
             <el-option label="Post" value="post" />
             <el-option label="Page & Post" value="page_post" />
@@ -55,20 +55,19 @@
             <el-option label="Custom" value="custom" />
           </el-select>
           <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
-          <div class="field-info" v-if="pluginSettings.uri_type === 'page_post_cpt'">
-            <el-tooltip
-              content="If you wish to select custom posts, please choose the custom post types below"
-              placement="top"
-            >
-              <el-icon class="info-icon"><InfoFilled /></el-icon>
-            </el-tooltip>
-          </div>
+          <el-tooltip
+            v-if="pluginSettings.uri_type === 'page_post_cpt'"
+            content="If you wish to select custom posts, please choose the custom post types below"
+            placement="top"
+          >
+            <el-icon class="info-icon"><InfoFilled /></el-icon>
+          </el-tooltip>
         </div>
 
         <!-- Post Types Selection -->
         <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
           <label>Select Post Types:</label>
-          <el-checkbox-group v-model="pluginSettings.post_types" style="display: flex;gap: 10px;">
+          <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange">
             <el-checkbox v-for="postType in availablePostTypes" :key="postType" :label="postType">
               {{ formatPostTypeName(postType) }}
             </el-checkbox>
@@ -101,17 +100,25 @@
           </el-select>
         </div>
 
-        <!-- Custom Post Type Selections -->
+        <!-- Custom Post Type Selections - Dynamically rendered for each selected post type -->
         <template v-if="pluginSettings.uri_type === 'page_post_cpt'">
           <div 
-            v-for="postType in customPostTypes" 
+            v-for="postType in selectedCustomPostTypes" 
             :key="postType"
-            class="form-field" 
-            v-show="pluginSettings.post_types.includes(postType)"
+            class="form-field"
           >
             <label>Select {{ formatPostTypeName(postType) }}s:</label>
-            <el-select v-model="pluginSettings[postType + 's']" multiple filterable class="w-full">
-              <el-option :label="'All ' + formatPostTypeName(postType) + 's'" :value="'all_' + postType + 's,all_' + postType + 's'" />
+            <el-select 
+              v-model="pluginSettings[postType + 's']" 
+              multiple 
+              filterable 
+              class="w-full"
+              :loading="loadingCustomPosts[postType]"
+            >
+              <el-option 
+                :label="'All ' + formatPostTypeName(postType) + 's'" 
+                :value="'all_' + postType + 's,all_' + postType + 's'" 
+              />
               <el-option 
                 v-for="item in getCustomPostTypeItems(postType)" 
                 :key="item.id" 
@@ -135,11 +142,17 @@
               </el-select>
               <el-input 
                 v-model="pluginSettings.condition_list.value[index]" 
-                placeholder="e.g. contact-us or leave blank for homepage"
+                placeholder="e.g: contact-us or leave blank for homepage"
                 class="condition-value"
               />
               <div class="condition-actions">
-                <el-button type="danger" circle size="small" @click="removeCondition(index)" :disabled="pluginSettings.condition_list.name.length <= 1">
+                <el-button 
+                  type="danger" 
+                  circle 
+                  size="small" 
+                  @click="removeCondition(index)" 
+                  :disabled="pluginSettings.condition_list.name.length <= 1"
+                >
                   <el-icon><Delete /></el-icon>
                 </el-button>
                 <el-button type="primary" circle size="small" @click="cloneCondition(index)">
@@ -158,14 +171,14 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="saveSettings">Save</el-button>
+        <el-button type="primary" @click="saveSettings" :loading="saving">Save</el-button>
       </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, watch, computed, onMounted } from 'vue'
+import { ref, defineProps, defineEmits, watch, computed, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
 
@@ -181,6 +194,11 @@ const dialogVisible = computed({
   set: (value) => emit('update:visible', value)
 })
 
+// Loading states
+const loading = ref(false)
+const saving = ref(false)
+const loadingCustomPosts = reactive({})
+
 // Default settings structure matching PHP
 const pluginSettings = ref({
   enable_deactivation: 'no',
@@ -190,7 +208,6 @@ const pluginSettings = ref({
   post_types: ['page', 'post'],
   posts: [],
   pages: [],
-  // Initialize custom post type arrays
   // These will be set dynamically when loading settings
   condition_list: {
     name: ['uri_equals'],
@@ -199,8 +216,10 @@ const pluginSettings = ref({
 })
 
 // Available post types from the PHP code
-const availablePostTypes = ref(['page', 'post'])
-const customPostTypes = ref([])
+const availablePostTypes = ref(['page', 'post', 'product', 'portfolio', 'testimonial'])
+const selectedCustomPostTypes = computed(() => {
+  return pluginSettings.value.post_types.filter(type => !['page', 'post'].includes(type))
+})
 
 // Pages and posts data
 const pages = ref([])
@@ -208,50 +227,52 @@ const posts = ref([])
 const customPostTypeItems = ref({})
 
 // Load data when the component is mounted
-onMounted(() => {
-  // In a real application, these would be loaded from an API
-  loadPostTypes()
-})
-
-watch(() => props.visible, (newVal) => {
-  if (newVal && props.plugin) {
-    // Load plugin settings when modal opens
-    loadPluginSettings()
+onMounted(async () => {
+  if (props.plugin) {
+    await loadData()
   }
 })
 
-const loadPostTypes = async () => {
+// Watch for changes in the plugin prop
+watch(() => props.plugin, async (newPlugin) => {
+  if (newPlugin) {
+    await loadData()
+  }
+}, { immediate: true })
+
+// Watch for changes in the visible prop
+watch(() => props.visible, async (newVisible) => {
+  if (newVisible && props.plugin) {
+    await loadData()
+  }
+})
+
+// Load all required data
+const loadData = async () => {
+  loading.value = true
   try {
-    // In a real app, this would be loaded from WordPress API
-    // For now, we'll use the static data
-    availablePostTypes.value = ['page', 'post', 'product', 'portfolio', 'testimonial']
-    
-    // Filter out page and post to get custom post types
-    customPostTypes.value = availablePostTypes.value.filter(type => !['page', 'post'].includes(type))
-    
-    // Initialize empty arrays for each custom post type
-    customPostTypes.value.forEach(type => {
-      pluginSettings.value[type + 's'] = []
-      
-      // Sample data for each custom post type
-      customPostTypeItems.value[type] = [
-        { id: 1, title: `${type} 1`, url: `/${type}/1` },
-        { id: 2, title: `${type} 2`, url: `/${type}/2` },
-        { id: 3, title: `${type} 3`, url: `/${type}/3` }
-      ]
-    })
+    await Promise.all([
+      loadPluginSettings(),
+      loadPages(),
+      loadPosts(),
+      loadPostTypes()
+    ])
   } catch (error) {
-    ElMessage.error('Failed to load post types')
+    console.error('Error loading data:', error)
+    ElMessage.error('Failed to load settings data')
+  } finally {
+    loading.value = false
   }
 }
 
+// Load plugin settings
 const loadPluginSettings = async () => {
   try {
-    // In a real app, this would load settings from the WordPress API
-    // For now, we'll set some sample data
-    
+    // In a real application, this would fetch from an API
+    // For demo purposes, we're using simulated data
+
     // Reset settings first
-    pluginSettings.value = {
+    const defaultSettings = {
       enable_deactivation: props.plugin.active ? 'no' : 'yes',
       device_type: 'all',
       condition_type: 'disable_on_selected',
@@ -265,12 +286,44 @@ const loadPluginSettings = async () => {
       }
     }
     
+    // For the demo, add some sample data based on plugin ID
+    if (props.plugin.id === 1) {
+      defaultSettings.enable_deactivation = 'yes'
+      defaultSettings.uri_type = 'page_post'
+      defaultSettings.pages = ['1,/home', '2,/about']
+      defaultSettings.posts = ['all_posts,all_posts']
+    } else if (props.plugin.id === 2) {
+      defaultSettings.enable_deactivation = 'yes'
+      defaultSettings.uri_type = 'custom'
+      defaultSettings.condition_list.name = ['uri_equals', 'uri_contains']
+      defaultSettings.condition_list.value = ['contact', 'product']
+    } else if (props.plugin.id === 3) {
+      defaultSettings.enable_deactivation = 'yes'
+      defaultSettings.uri_type = 'page_post_cpt'
+      defaultSettings.post_types = ['page', 'post', 'product']
+      defaultSettings.pages = ['all_pages,all_pages']
+      defaultSettings.products = ['1,/product/1']
+    }
+    
     // Initialize custom post type arrays
-    customPostTypes.value.forEach(type => {
-      pluginSettings.value[type + 's'] = []
+    selectedCustomPostTypes.value.forEach(type => {
+      if (!defaultSettings[type + 's']) {
+        defaultSettings[type + 's'] = []
+      }
     })
     
-    // Load sample pages and posts
+    pluginSettings.value = defaultSettings
+    
+  } catch (error) {
+    console.error('Error loading plugin settings:', error)
+    throw error
+  }
+}
+
+// Load pages data
+const loadPages = async () => {
+  try {
+    // In a real application, this would fetch from an API
     pages.value = [
       { id: 1, title: 'Home', url: '/home' },
       { id: 2, title: 'About', url: '/about' },
@@ -278,7 +331,16 @@ const loadPluginSettings = async () => {
       { id: 4, title: 'Services', url: '/services' },
       { id: 5, title: 'Portfolio', url: '/portfolio' }
     ]
+  } catch (error) {
+    console.error('Error loading pages:', error)
+    throw error
+  }
+}
 
+// Load posts data
+const loadPosts = async () => {
+  try {
+    // In a real application, this would fetch from an API
     posts.value = [
       { id: 1, title: 'First Post', url: '/posts/1' },
       { id: 2, title: 'Second Post', url: '/posts/2' },
@@ -286,83 +348,141 @@ const loadPluginSettings = async () => {
       { id: 4, title: 'Fourth Post', url: '/posts/4' },
       { id: 5, title: 'Fifth Post', url: '/posts/5' }
     ]
-    
-    // For the demo, add some sample data if this is the first plugin
-    if (props.plugin.id === 1) {
-      pluginSettings.value.enable_deactivation = 'yes'
-      pluginSettings.value.uri_type = 'page_post'
-      pluginSettings.value.pages = ['1,/home', '2,/about']
-      pluginSettings.value.posts = ['all_posts,all_posts']
-    }
-    
-    // Sample data for the second plugin (custom URI)
-    if (props.plugin.id === 2) {
-      pluginSettings.value.enable_deactivation = 'yes'
-      pluginSettings.value.uri_type = 'custom'
-      pluginSettings.value.condition_list.name = ['uri_equals', 'uri_contains']
-      pluginSettings.value.condition_list.value = ['contact', 'product']
-    }
-    
-    // Sample data for the third plugin (custom post types)
-    if (props.plugin.id === 3) {
-      pluginSettings.value.enable_deactivation = 'yes'
-      pluginSettings.value.uri_type = 'page_post_cpt'
-      pluginSettings.value.post_types = ['page', 'post', 'product']
-      pluginSettings.value.pages = ['all_pages,all_pages']
-      pluginSettings.value.products = ['1,/product/1']
-    }
-    
   } catch (error) {
-    ElMessage.error('Failed to load plugin settings')
+    console.error('Error loading posts:', error)
+    throw error
   }
 }
 
-const formatPostTypeName = (postType) => {
-  // Format post type name (e.g., "my_post_type" to "My Post Type")
-  return postType
-    .replace(/_/g, ' ')
-    .replace(/\b\w/g, l => l.toUpperCase())
+// Load post types
+const loadPostTypes = async () => {
+  try {
+    // In a real application, this would fetch from an API
+    availablePostTypes.value = ['page', 'post', 'product', 'portfolio', 'testimonial']
+    
+    // Load sample data for each custom post type
+    const customTypes = availablePostTypes.value.filter(type => !['page', 'post'].includes(type))
+    customTypes.forEach(async (type) => {
+      await loadCustomPostTypeItems(type)
+    })
+  } catch (error) {
+    console.error('Error loading post types:', error)
+    throw error
+  }
 }
 
+// Load items for a specific custom post type
+const loadCustomPostTypeItems = async (postType) => {
+  loadingCustomPosts[postType] = true
+  try {
+    // Initialize the array if needed
+    if (!pluginSettings.value[postType + 's']) {
+      pluginSettings.value[postType + 's'] = []
+    }
+    
+    // In a real application, this would fetch from an API
+    customPostTypeItems.value[postType] = [
+      { id: 1, title: `${formatPostTypeName(postType)} 1`, url: `/${postType}/1` },
+      { id: 2, title: `${formatPostTypeName(postType)} 2`, url: `/${postType}/2` },
+      { id: 3, title: `${formatPostTypeName(postType)} 3`, url: `/${postType}/3` }
+    ]
+  } catch (error) {
+    console.error(`Error loading ${postType} items:`, error)
+  } finally {
+    loadingCustomPosts[postType] = false
+  }
+}
+
+// Handle URI type change
+const handleUriTypeChange = async (value) => {
+  // If changing to page_post_cpt, ensure post_types are properly set
+  if (value === 'page_post_cpt') {
+    // Make sure we have at least page and post selected
+    if (!pluginSettings.value.post_types.includes('page')) {
+      pluginSettings.value.post_types.push('page')
+    }
+    if (!pluginSettings.value.post_types.includes('post')) {
+      pluginSettings.value.post_types.push('post')
+    }
+    
+    // Load custom post type items
+    selectedCustomPostTypes.value.forEach(async (type) => {
+      await loadCustomPostTypeItems(type)
+    })
+  }
+}
+
+// Handle post types selection change
+const handlePostTypesChange = async (selectedTypes) => {
+  // Ensure we're loading data for newly selected post types
+  selectedCustomPostTypes.value.forEach(async (type) => {
+    if (!customPostTypeItems.value[type]) {
+      await loadCustomPostTypeItems(type)
+    }
+  })
+}
+
+// Format post type name for better display
+const formatPostTypeName = (postType) => {
+  return postType
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, letter => letter.toUpperCase())
+}
+
+// Get custom post type items for a specific post type
 const getCustomPostTypeItems = (postType) => {
   return customPostTypeItems.value[postType] || []
 }
 
-const saveSettings = async () => {
-  try {
-    // Here we would normally send the settings to the server
-    console.log('Saving settings:', pluginSettings.value)
-    
-    // Update plugin active state based on enable_deactivation setting
-    props.plugin.active = pluginSettings.value.enable_deactivation !== 'yes'
-    
-    ElMessage.success('Settings saved successfully')
-    dialogVisible.value = false
-    emit('save', { plugin: props.plugin, settings: pluginSettings.value })
-  } catch (error) {
-    ElMessage.error('Failed to save settings')
-  }
-}
-
+// Add new URI condition
 const addCondition = () => {
   pluginSettings.value.condition_list.name.push('uri_equals')
   pluginSettings.value.condition_list.value.push('')
 }
 
+// Remove a URI condition
 const removeCondition = (index) => {
-  // Don't remove if it's the last condition
   if (pluginSettings.value.condition_list.name.length <= 1) return
   
   pluginSettings.value.condition_list.name.splice(index, 1)
   pluginSettings.value.condition_list.value.splice(index, 1)
 }
 
+// Clone a URI condition
 const cloneCondition = (index) => {
   const name = pluginSettings.value.condition_list.name[index]
   const value = pluginSettings.value.condition_list.value[index]
   
   pluginSettings.value.condition_list.name.splice(index + 1, 0, name)
   pluginSettings.value.condition_list.value.splice(index + 1, 0, value)
+}
+
+// Save settings and close modal
+const saveSettings = async () => {
+  saving.value = true
+  try {
+    // In a real application, this would send data to the server
+    console.log('Saving settings:', pluginSettings.value)
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 600))
+    
+    // Emit the save event with settings and plugin data
+    emit('save', {
+      plugin: props.plugin,
+      settings: pluginSettings.value
+    })
+    
+    // Close the dialog
+    dialogVisible.value = false
+    
+    ElMessage.success('Settings saved successfully')
+  } catch (error) {
+    console.error('Error saving settings:', error)
+    ElMessage.error('Failed to save settings')
+  } finally {
+    saving.value = false
+  }
 }
 </script>
 
@@ -383,9 +503,6 @@ const cloneCondition = (index) => {
     border-top: 1px solid #eee;
   }
 }
-.el-checkbox{
-  margin-right: 0;
-}
 
 .form-field {
   margin-bottom: 20px;
@@ -404,16 +521,13 @@ const cloneCondition = (index) => {
     color: #909399;
   }
   
-  .field-info {
+  .info-icon {
     position: absolute;
     right: 0;
     top: 0;
     color: #409EFF;
-    
-    .info-icon {
-      font-size: 18px;
-      cursor: help;
-    }
+    font-size: 18px;
+    cursor: help;
   }
   
   .disable-switch {

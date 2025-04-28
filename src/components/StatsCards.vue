@@ -53,14 +53,42 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
-import { List, Check, Refresh, Close,CircleCheck } from '@element-plus/icons-vue'
+import { computed } from 'vue'
+import { List, CircleCheck, Refresh, Close } from '@element-plus/icons-vue'
+import { usePluginStore } from '../store/plugins'
 
 const props = defineProps({
   stats: {
     type: Object,
-    required: true
+    default: () => ({
+      totalPlugins: 0,
+      activePlugins: 0,
+      updateAvailable: 0,
+      inactivePlugins: 0
+    })
   }
+})
+
+// If we're not getting stats from props, use the store
+const store = usePluginStore()
+const storeStats = computed(() => ({
+  totalPlugins: store.totalPlugins,
+  activePlugins: store.activePlugins.length,
+  updateAvailable: store.updateAvailable.length,
+  inactivePlugins: store.inactivePlugins.length
+}))
+
+// Use either props or store stats
+const displayStats = computed(() => {
+  // If any prop stat is 0 and we have store stats available, use store stats
+  if (
+    (props.stats.totalPlugins === 0 || 
+     props.stats.activePlugins === 0) && 
+    store.plugins.length > 0
+  ) {
+    return storeStats.value
+  }
+  return props.stats
 })
 </script>
 
@@ -75,10 +103,12 @@ const props = defineProps({
     display: flex;
     align-items: center;
     gap: 16px;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
 
     &:hover {
       transform: translateY(-2px);
+      box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
     }
 
     .icon-box {

@@ -57,68 +57,119 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { Search, Filter, Sort, Box, Setting, Monitor, Edit, Grid } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
+import { usePluginStore } from '../store/plugins'
 
+const store = usePluginStore()
 const searchQuery = ref('')
 const showSettings = ref(false)
 const selectedPlugin = ref(null)
+
+// Props for component flexibility
 const props = defineProps({
   plugins: {
     type: Array,
-    required: true,
     default: () => []
   }
 })
 
+// Emits for component events
+const emit = defineEmits(['toggle', 'update-settings'])
+
+// Use store plugins or prop plugins
+const storePlugins = computed(() => store.plugins)
+const activePlugins = computed(() => store.activePlugins)
+
+// Filtered plugins based on search query
 const filteredPlugins = computed(() => {
-  if (!searchQuery.value) return props.plugins
+  // Use plugins from props if provided, otherwise use from store
+  const pluginsSource = props.plugins.length > 0 ? props.plugins : storePlugins.value
   
-  return props.plugins.filter(plugin => 
+  if (!searchQuery.value) return pluginsSource
+  
+  return pluginsSource.filter(plugin => 
     plugin.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 })
 
+// Load plugins on component mount if using store
+onMounted(async () => {
+  if (props.plugins.length === 0) {
+    try {
+      await store.fetchPlugins()
+    } catch (error) {
+      ElMessage.error('Failed to load plugins')
+      console.error('Error loading plugins:', error)
+    }
+  }
+})
+
+// Filter plugins handling
 const handleFilter = () => {
-  // Implement advanced filter logic
+  // Implement advanced filter logic - e.g. by status, updates, etc.
+  ElMessage.info('Filter functionality will be implemented here')
 }
 
+// Sort plugins handling
 const handleSort = () => {
-  // Implement sort logic
+  // Implement sort logic - e.g. by name, status, etc.
+  ElMessage.info('Sort functionality will be implemented here')
 }
 
+// Toggle plugin active status
 const togglePlugin = async (plugin) => {
   try {
-    await emit('toggle', plugin)
+    if (props.plugins.length > 0) {
+      // If using props, emit event to parent
+      emit('toggle', plugin)
+    } else {
+      // If using store, update through store
+      await store.togglePlugin(plugin)
+    }
   } catch (error) {
-    ElMessage.error('Failed to toggle plugin')
+    ElMessage.error('Failed to toggle plugin status')
+    console.error('Error toggling plugin:', error)
   }
 }
 
+// Open settings modal for a plugin
 const openSettings = (plugin) => {
   selectedPlugin.value = plugin
   showSettings.value = true
 }
 
+// Save plugin settings
 const savePluginSettings = async (data) => {
   try {
-    // TODO: Implement API call to save plugin settings
-    // await savePluginSettingsAPI(data)
+    // Update plugin settings
+    if (props.plugins.length > 0) {
+      // If using props, emit event to parent
+      emit('update-settings', data)
+    } else {
+      // If using store, update plugin in store
+      const { plugin, settings } = data
+      await store.updatePluginSettings(plugin.id, settings)
+    }
+    
     ElMessage.success('Plugin settings saved successfully')
   } catch (error) {
     ElMessage.error('Failed to save plugin settings')
+    console.error('Error saving plugin settings:', error)
   }
 }
 
+// Get plugin icon class based on plugin name
 const getPluginIconClass = (name) => {
   if (name.includes('Query Monitor')) return 'query-monitor'
   if (name.includes('Elementor')) return 'elementor'
   if (name.includes('HT Mega')) return 'htmega'
+  if (name.includes('WooCommerce')) return 'woocommerce'
+  if (name.includes('Yoast SEO')) return 'yoast'
   return 'default'
 }
-
-
 </script>
 
 <style lang="scss" scoped>
@@ -127,6 +178,7 @@ const getPluginIconClass = (name) => {
   border-radius: 8px;
   padding: 20px;
   margin-top: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 
   .htpm-plugins-header {
     display: flex;
@@ -154,9 +206,14 @@ const getPluginIconClass = (name) => {
       align-items: center;
       padding: 16px;
       border-bottom: 1px solid #ebeef5;
+      transition: background-color 0.3s;
 
       &:last-child {
         border-bottom: none;
+      }
+
+      &:hover {
+        background-color: #f8f9fa;
       }
 
       .plugin-info {
@@ -174,8 +231,6 @@ const getPluginIconClass = (name) => {
           font-size: 16px;
           color: #fff;
           background: #e9ecef;
-          position: static;
-          margin: 0;
 
           &.query-monitor {
             background: #4c6ef5;
@@ -187,6 +242,14 @@ const getPluginIconClass = (name) => {
 
           &.htmega {
             background: #0073aa;
+          }
+
+          &.woocommerce {
+            background: #7f54b3;
+          }
+
+          &.yoast {
+            background: #a4286a;
           }
 
           :deep(.el-icon) {
@@ -208,8 +271,8 @@ const getPluginIconClass = (name) => {
             gap: 6px;
 
             .status-dot {
-              width: 4px;
-              height: 4px;
+              width: 6px;
+              height: 6px;
               border-radius: 50%;
               background: #909399;
 
