@@ -81,9 +81,19 @@
                 (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('page'))"
         >
           <label>Select Pages:</label>
-          <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
+          <!-- <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
             <el-option label="All Pages" value="all_pages,all_pages" />
             <el-option v-for="page in pages" :key="page.id" :label="page.title" :value="page.id + ',' + page.url" />
+          </el-select> -->
+
+          <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
+            <el-option label="All Pages" value="all_pages,all_pages" />
+            <el-option 
+              v-for="page in store.pages" 
+              :key="page.id" 
+              :label="page.title" 
+              :value="page.id + ',' + page.url" 
+            />
           </el-select>
         </div>
 
@@ -253,13 +263,18 @@ const loadData = async () => {
   try {
     await Promise.all([
       loadPluginSettings(),
-      loadPages(),
-      loadPosts(),
-      loadPostTypes()
+      store.fetchPages(),
+      store.fetchPosts(),
+      store.fetchPostTypes()
     ])
+    
+    // Get post types and load data for custom post types
+    const customTypes = store.customPostTypes
+    customTypes.forEach(async (type) => {
+      await store.fetchCustomPostTypeItems(type)
+    })
   } catch (error) {
     console.error('Error loading data:', error)
-    ElMessage.error('Failed to load settings data')
   } finally {
     loading.value = false
   }

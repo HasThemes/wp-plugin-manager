@@ -145,6 +145,7 @@ class HTPM_Main {
             include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
             include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
             include_once( HTPM_ROOT_DIR . '/includes/HTPM_Trial.php');
+            include_once( HTPM_ROOT_DIR . '/includes/admin-dashboard-api.php');
         }
     }
 
@@ -153,6 +154,20 @@ class HTPM_Main {
      */
     function admin_scripts( $hook_suffix ) {
         if( $hook_suffix ==  'toplevel_page_htpm-options' ){
+            // Add REST API data for JavaScript
+            wp_localize_script('htpm-admin', 'htpmData', [
+                'restUrl' => rest_url(),  // This will include the wp-json prefix
+                'nonce' => wp_create_nonce('wp_rest'),
+                'pluginUrl' => plugin_dir_url(__FILE__),
+                'ajaxurl' => admin_url('admin-ajax.php')
+            ]);
+            wp_localize_script('htpm-admin', 'HTPMM', [
+                'restUrl' => rest_url(),  // This will include the wp-json prefix
+                'nonce' => wp_create_nonce('wp_rest'),
+                'pluginUrl' => plugin_dir_url(__FILE__),
+                'ajaxurl' => admin_url('admin-ajax.php')
+            ]);
+            
             wp_enqueue_style( 'wp-jquery-ui-dialog' );
             wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css', [], HTPM_PLUGIN_VERSION );
             wp_enqueue_style( 'htpm-admin', HTPM_ROOT_URL . '/assets/css/admin-style.css', [], HTPM_PLUGIN_VERSION );
