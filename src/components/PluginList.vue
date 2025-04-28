@@ -48,9 +48,9 @@
 
     <!-- Plugin Settings Modal -->
     <plugin-settings-modal
-      v-if="selectedPlugin"
-      v-model:visible="showSettings"
+      :visible="showSettings"
       :plugin="selectedPlugin"
+      @update:visible="showSettings = $event"
       @save="savePluginSettings"
     />
   </div>

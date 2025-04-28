@@ -1,177 +1,265 @@
 <template>
   <el-dialog
-    :title="plugin.name + ' Settings'"
     v-model="dialogVisible"
+    :title="plugin?.name + ' Settings'"
     width="600px"
-    @close="handleClose"
+    class="plugin-settings-modal"
+    destroy-on-close
   >
-    <el-form :model="form" label-width="150px">
+    <el-form>
       <el-form-item label="Disable This Plugin:">
-        <el-switch v-model="form.disabled" />
+        <el-switch v-model="pluginSettings.enable_deactivation" active-value="yes" inactive-value="no" />
       </el-form-item>
 
-      <el-form-item label="Disable Plugin on:">
-        <el-select v-model="form.devices" placeholder="Select devices" style="width: 100%">
-          <el-option label="All Devices" value="all" />
-          <el-option label="Desktop Only" value="desktop" />
-          <el-option label="Mobile Only" value="mobile" />
-          <el-option label="Tablet Only" value="tablet" />
-        </el-select>
-      </el-form-item>
+        <el-form-item label="Disable Plugin on:" v-show="pluginSettings.enable_deactivation === 'yes'">
+              <el-select v-model="pluginSettings.device_type" class="w-full">
+                <el-option label="Desktop + Tablet" value="desktop_plus_tablet" />
+                <el-option label="Desktop" value="desktop" />
+                <el-option label="Tablet" value="tablet" />
+                <el-option label="Mobile" value="mobile" />
+                <el-option label="Tablet + Mobile" value="tablet_plus_mobile" />
+                <el-option label="All Devices" value="all" />
+              </el-select>
+              <div class="field-desc">Select the device(s) where this plugin should be disabled.</div>
+            </el-form-item>
 
-      <el-form-item label="Action:">
-        <el-select v-model="form.action" placeholder="Select action" style="width: 100%">
-          <el-option label="Enable on Selected Pages" value="enable" />
-          <el-option label="Disable on Selected Pages" value="disable" />
-        </el-select>
-        <div class="el-form-item-description">
-          {{ form.action === 'enable' ? 'Plugin will be enabled only on selected pages' : 'Plugin will be disabled only on selected pages' }}
-        </div>
-      </el-form-item>
+            <el-form-item label="Action:" v-show="pluginSettings.enable_deactivation === 'yes'">
+              <el-select v-model="pluginSettings.condition_type" class="w-full">
+                <el-option label="Disable on Selected Pages" value="disable_on_selected" />
+                <el-option label="Enable on Selected Pages" value="enable_on_selected" />
+              </el-select>
+              <div class="field-desc">Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.</div>
+            </el-form-item>
 
-      <el-form-item label="Page Type:">
-        <el-select v-model="form.pageType" placeholder="Select page type" style="width: 100%">
-          <el-option label="Post, Pages & Custom Post Type" value="all" />
-          <el-option label="Custom" value="custom" />
-        </el-select>
-      </el-form-item>
+            <el-form-item label="Page Type:" v-show="pluginSettings.enable_deactivation === 'yes'">
+              <el-select v-model="pluginSettings.uri_type" class="w-full">
+                <el-option label="Page" value="page" />
+                <el-option label="Post" value="post" />
+                <el-option label="Page & Post" value="page_post" />
+                <el-option label="Post, Pages & Custom Post Type" value="page_post_cpt" />
+                <el-option label="Custom" value="custom" />
+              </el-select>
+              <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
+            </el-form-item>
 
-      <el-form-item label="Select Post Types:">
-        <el-checkbox-group v-model="form.postTypes">
-          <el-checkbox label="page">Page</el-checkbox>
-          <el-checkbox label="post">Post</el-checkbox>
-        </el-checkbox-group>
-      </el-form-item>
+            <!-- Post Types Selection -->
+            <el-form-item 
+              label="Select Post Types:" 
+              v-show="pluginSettings.enable_deactivation === 'yes' && pluginSettings.uri_type === 'page_post_cpt'"
+            >
+              <el-checkbox-group v-model="pluginSettings.post_types">
+                <el-checkbox v-for="type in postTypes" :key="type" :label="type">{{ type }}</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
 
-      <el-form-item label="Select Pages:" v-if="form.postTypes.includes('page')">
-        <el-select
-          v-model="form.selectedPages"
-          multiple
-          filterable
-          remote
-          placeholder="Start typing to search pages..."
-          :remote-method="searchPages"
-          style="width: 100%"
-        >
-          <el-option
-            v-for="page in pages"
-            :key="page.id"
-            :label="page.title"
-            :value="page.id"
-          />
-        </el-select>
-      </el-form-item>
+            <!-- Pages Selection -->
+            <el-form-item 
+              label="Select Pages:" 
+              v-show="pluginSettings.enable_deactivation === 'yes' && ['page', 'page_post', 'page_post_cpt'].includes(pluginSettings.uri_type)"
+            >
+              <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
+                <el-option label="All Pages" value="all_pages" />
+                <el-option v-for="page in pages" :key="page.id" :label="page.title" :value="page.id" />
+              </el-select>
+            </el-form-item>
 
-      <el-form-item label="Select Posts:" v-if="form.postTypes.includes('post')">
-        <el-select
-          v-model="form.selectedPosts"
-          multiple
-          filterable
-          remote
-          placeholder="Start typing to search posts..."
-          :remote-method="searchPosts"
-          style="width: 100%"
-        >
-          <el-option
-            v-for="post in posts"
-            :key="post.id"
-            :label="post.title"
-            :value="post.id"
-          />
-        </el-select>
-      </el-form-item>
+            <!-- Custom URI Conditions -->
+            <template v-if="pluginSettings.enable_deactivation === 'yes' && pluginSettings.uri_type === 'custom'">
+              <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
+                <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type">
+                  <el-option label="URI Equals" value="uri_equals" />
+                  <el-option label="URI Contains" value="uri_contains" />
+                  <el-option label="URI Starts With" value="uri_starts_with" />
+                </el-select>
+                <el-input 
+                  v-model="pluginSettings.condition_list.value[index]" 
+                  placeholder="e.g. /contact-us or leave blank for homepage"
+                  class="condition-value"
+                />
+                <div class="condition-actions">
+                  <el-button type="danger" circle @click="removeCondition(index)">
+                    <el-icon><Delete /></el-icon>
+                  </el-button>
+                  <el-button type="primary" circle @click="cloneCondition(index)">
+                    <el-icon><CopyDocument /></el-icon>
+                  </el-button>
+                </div>
+              </div>
+              <el-button type="primary" plain @click="addCondition" class="mt-3">
+                <el-icon><Plus /></el-icon> Add Condition
+              </el-button>
+            </template>
     </el-form>
-
     <template #footer>
-      <span class="dialog-footer">
-        <el-button @click="handleClose">Cancel</el-button>
-        <el-button type="primary" @click="handleSave">Save Changes</el-button>
-      </span>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="saveSettings">Save</el-button>
+      </div>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { ref, reactive, watch } from 'vue'
+import { ref, defineProps, defineEmits, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 
 const props = defineProps({
-  plugin: {
-    type: Object,
-    required: true
-  },
-  visible: {
-    type: Boolean,
-    default: false
-  }
+  visible: Boolean,
+  plugin: Object
 })
 
 const emit = defineEmits(['update:visible', 'save'])
 
-const dialogVisible = ref(props.visible)
-const pages = ref([])
-const posts = ref([])
+const dialogVisible = computed({
+  get: () => props.visible,
+  set: (value) => emit('update:visible', value)
+})
 
-const form = reactive({
-  disabled: false,
-  devices: 'all',
-  action: 'enable',
-  pageType: 'all',
-  postTypes: [],
-  selectedPages: [],
-  selectedPosts: []
+const pluginSettings = ref({
+  enable_deactivation: 'no',
+  device_type: 'all',
+  condition_type: 'disable_on_selected',
+  uri_type: 'page',
+  post_types: ['page', 'post'],
+  posts: [],
+  pages: [],
+  condition_list: {
+    name: ['uri_equals'],
+    value: [''],
+  }
 })
 
 watch(() => props.visible, (newVal) => {
-  dialogVisible.value = newVal
+  if (newVal && props.plugin) {
+    // Load plugin settings when modal opens
+    loadPluginSettings(props.plugin)
+  }
 })
 
-watch(dialogVisible, (newVal) => {
-  emit('update:visible', newVal)
+const customPostTypes = ref([])
+const pages = ref([])
+const posts = ref([])
+
+const showPageSelect = computed(() => {
+  return ['page', 'page_post', 'page_post_cpt'].includes(settings.value.uri_type) &&
+    (settings.value.uri_type !== 'page_post_cpt' || settings.value.post_types.includes('page'))
 })
 
-const searchPages = async (query) => {
-  if (query) {
-    // TODO: Implement API call to search pages
-    // pages.value = await searchPagesAPI(query)
-  }
-}
+const showPostSelect = computed(() => {
+  return ['post', 'page_post', 'page_post_cpt'].includes(settings.value.uri_type) &&
+    (settings.value.uri_type !== 'page_post_cpt' || settings.value.post_types.includes('post'))
+})
 
-const searchPosts = async (query) => {
-  if (query) {
-    // TODO: Implement API call to search posts
-    // posts.value = await searchPostsAPI(query)
-  }
-}
-
-const handleClose = () => {
-  dialogVisible.value = false
-}
-
-const handleSave = async () => {
+const loadPluginSettings = async (plugin) => {
   try {
-    await emit('save', {
+    // TODO: Load actual plugin settings from backend
+    pluginSettings.value = {
+      enable_deactivation: !plugin.active ? 'yes' : 'no',
+      device_type: 'all',
+      condition_type: 'disable_on_selected',
+      uri_type: 'page',
+      post_types: ['page', 'post'],
+      posts: [],
+      pages: [],
+      condition_list: {
+        name: ['uri_equals'],
+        value: [''],
+      }
+    }
+
+    // Load custom post types
+    customPostTypes.value = ['portfolio', 'product'] // TODO: Load from backend
+
+    // Load pages
+    pages.value = [
+      { id: 1, title: 'Home', url: '/home' },
+      { id: 2, title: 'About', url: '/about' },
+      { id: 3, title: 'Contact', url: '/contact' }
+    ] // TODO: Load from backend
+
+    // Load posts
+    posts.value = [
+      { id: 1, title: 'First Post', url: '/posts/1' },
+      { id: 2, title: 'Second Post', url: '/posts/2' },
+      { id: 3, title: 'Third Post', url: '/posts/3' }
+    ] // TODO: Load from backend
+  } catch (error) {
+    ElMessage.error('Failed to load plugin settings')
+  }
+}
+
+const saveSettings = async () => {
+  try {
+    // TODO: Save settings to backend
+    await savePluginSettingsToBackend({
       pluginId: props.plugin.id,
-      settings: { ...form }
+      ...settings.value
     })
     ElMessage.success('Settings saved successfully')
-    handleClose()
+    dialogVisible.value = false
+    emit('save')
   } catch (error) {
     ElMessage.error('Failed to save settings')
   }
 }
+
+const savePluginSettingsToBackend = async (settings) => {
+  // TODO: Implement actual API call
+  console.log('Saving settings:', settings)
+  return new Promise(resolve => setTimeout(resolve, 500))
+}
 </script>
 
 <style lang="scss" scoped>
-.el-form-item-description {
-  font-size: 12px;
-  color: #909399;
-  margin-top: 4px;
+.plugin-settings-modal {
+  :deep(.el-dialog__body) {
+    padding: 0;
+  }
+}
+
+.plugin-settings {
+  padding: 24px;
+
+  .settings-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .settings-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .help-text {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 4px;
+    }
+  }
+}
+
+.w-full {
+  width: 100%;
 }
 
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
 }
 </style>
