@@ -41,9 +41,17 @@
         </el-select>
         <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
       </div>
+    <!-- Post Types Selection -->
+    <div class="form-field" v-show="['page_post_cpt'].includes(pluginSettings.uri_type)">
+        <el-checkbox-group v-model="pluginSettings.post_types">
+          <el-checkbox v-for="type in pluginSettings.post_types" :key="type" :label="type">{{ type }}</el-checkbox>
+        </el-checkbox-group>
+      </div>
+
+
 
       <!-- Posts Selection -->
-      <div class="form-field" v-show="['post'].includes(pluginSettings.uri_type)">
+      <div class="form-field" v-show="['post','page_post','page_post_cpt'].includes(pluginSettings.uri_type)">
         <label>Select Posts:</label>
         <el-select v-model="pluginSettings.posts" multiple filterable class="w-full">
           <el-option label="All Posts" value="all_posts" />
@@ -184,7 +192,7 @@ const pluginSettings = ref({
   device_type: 'all',
   condition_type: 'disable_on_selected',
   uri_type: 'page',
-  post_types: ['page', 'post'],
+  post_types: ['page', 'post','Htmega_theme_builder'],
   posts: [],
   pages: [],
   condition_list: {
@@ -222,7 +230,7 @@ const loadPluginSettings = async (plugin) => {
       device_type: 'all',
       condition_type: 'disable_on_selected',
       uri_type: 'page',
-      post_types: ['page', 'post'],
+      post_types: ['page', 'post','Htmega_theme_builder'],
       posts: [],
       pages: [],
       condition_list: {
@@ -232,7 +240,7 @@ const loadPluginSettings = async (plugin) => {
     }
 
     // Load custom post types
-    customPostTypes.value = ['portfolio', 'product'] // TODO: Load from backend
+    customPostTypes.value = ['customPostTypes', 'product'] // TODO: Load from backend
 
     // Load pages
     pages.value = [

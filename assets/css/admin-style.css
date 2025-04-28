@@ -681,9 +681,12 @@ div#htpm_pro_notice {
     display: flex;
 	gap: 10px;
 }
-.el-input input,.el-input input:focus {
+.el-input input,.el-input input:focus,
+.el-select__input-wrapper input,
+.el-select__input-wrapper input:focus{
     border:none;
     outline: none;
     box-shadow: none;
     padding: 0;
+    border-width: 0 !important;
     }
