@@ -90,9 +90,7 @@ const handleSort = () => {
 
 const togglePlugin = async (plugin) => {
   try {
-    // TODO: Implement API call to toggle plugin
-    // await togglePluginAPI(plugin.id)
-    plugin.active = !plugin.active
+    await emit('toggle', plugin)
   } catch (error) {
     ElMessage.error('Failed to toggle plugin')
   }

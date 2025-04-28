@@ -7,12 +7,8 @@
     destroy-on-close
   >
     <el-form label-position="top">
-      <div class="form-field">
-        <label>Disable This Plugin:</label>
-        <el-switch v-model="pluginSettings.enable_deactivation" active-value="yes" inactive-value="no" />
-      </div>
 
-      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes'">
+      <div class="form-field">
         <label>Disable Plugin on:</label>
         <el-select v-model="pluginSettings.device_type" class="w-full">
           <el-option label="Desktop + Tablet" value="desktop_plus_tablet" />
@@ -25,7 +21,7 @@
         <div class="field-desc">Select the device(s) where this plugin should be disabled.</div>
       </div>
 
-      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes'">
+      <div class="form-field">
         <label>Action:</label>
         <el-select v-model="pluginSettings.condition_type" class="w-full">
           <el-option label="Disable on Selected Pages" value="disable_on_selected" />
@@ -34,7 +30,7 @@
         <div class="field-desc">Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.</div>
       </div>
 
-      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes'">
+      <div class="form-field">
         <label>Page Type:</label>
         <el-select v-model="pluginSettings.uri_type" class="w-full">
           <el-option label="Page" value="page" />
@@ -47,7 +43,7 @@
       </div>
 
       <!-- Posts Selection -->
-      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes' && ['post'].includes(pluginSettings.uri_type)">
+      <div class="form-field" v-show="['post'].includes(pluginSettings.uri_type)">
         <label>Select Posts:</label>
         <el-select v-model="pluginSettings.posts" multiple filterable class="w-full">
           <el-option label="All Posts" value="all_posts" />
@@ -56,7 +52,7 @@
       </div>
 
       <!-- Pages Selection -->
-      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes' && ['page', 'page_post', 'page_post_cpt'].includes(pluginSettings.uri_type)">
+      <div class="form-field" v-show="['page', 'page_post', 'page_post_cpt'].includes(pluginSettings.uri_type)">
         <label>Select Pages:</label>
         <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
           <el-option label="All Pages" value="all_pages" />
@@ -65,7 +61,7 @@
       </div>
 
       <!-- Custom URI Conditions -->
-      <template v-if="pluginSettings.enable_deactivation === 'yes' && pluginSettings.uri_type === 'custom'">
+      <template v-if="pluginSettings.uri_type === 'custom'">
         <div class="form-field">
           <label>URI Conditions:</label>
           <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
