@@ -67,7 +67,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import StatsCards from '../components/StatsCards.vue'
 import PluginList from '../components/PluginList.vue'
 import { usePluginStore } from '../store/plugins'
@@ -83,9 +83,13 @@ const stats = ref({
   inactivePlugins: 6
 })
 
-const plugins = ref([
-  // Add your plugin data here
-])
+// Get plugins from store
+const plugins = computed(() => store.plugins)
+
+// Load plugins when component mounts
+onMounted(async () => {
+  await store.fetchPlugins()
+})
 
 const selectedPlugin = ref(null)
 const settingsDialog = ref({
