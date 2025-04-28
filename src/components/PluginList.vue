@@ -1,3 +1,4 @@
+// PluginList.vue
 <template>
   <div class="htpm-plugins">
     <div class="htpm-plugins-header">
@@ -13,7 +14,8 @@
       </div>
     </div>
     <div class="plugin-list">
-      <div v-for="plugin in filteredPlugins" :key="plugin.id" class="plugin-item">
+      <!-- Only show active plugins based on the new design -->
+      <div v-for="plugin in filteredActivePlugins" :key="plugin.id" class="plugin-item">
         <div class="plugin-info">
           <div class="plugin-icon-image" :class="getPluginIconClass(plugin.name)">
             <el-icon v-if="plugin.name.includes('Query')"><Monitor /></el-icon>
@@ -40,6 +42,7 @@
             :icon="Setting"
             circle
             class="settings-button"
+            :class="{ 'active-settings': plugin.active }"
             @click="openSettings(plugin)"
           />
         </div>
@@ -83,10 +86,12 @@ const emit = defineEmits(['toggle', 'update-settings'])
 const storePlugins = computed(() => store.plugins)
 const activePlugins = computed(() => store.activePlugins)
 
-// Filtered plugins based on search query
-const filteredPlugins = computed(() => {
+// Filter only active plugins (new design requirement)
+const filteredActivePlugins = computed(() => {
   // Use plugins from props if provided, otherwise use from store
-  const pluginsSource = props.plugins.length > 0 ? props.plugins : storePlugins.value
+  const pluginsSource = props.plugins.length > 0 
+    ? props.plugins.filter(plugin => plugin.active) 
+    : activePlugins.value
   
   if (!searchQuery.value) return pluginsSource
   
@@ -109,13 +114,11 @@ onMounted(async () => {
 
 // Filter plugins handling
 const handleFilter = () => {
-  // Implement advanced filter logic - e.g. by status, updates, etc.
   ElMessage.info('Filter functionality will be implemented here')
 }
 
 // Sort plugins handling
 const handleSort = () => {
-  // Implement sort logic - e.g. by name, status, etc.
   ElMessage.info('Sort functionality will be implemented here')
 }
 
@@ -298,6 +301,11 @@ const getPluginIconClass = (name) => {
           border: 1px solid #dcdfe6;
           color: #606266;
 
+          &.active-settings {
+            color: #409eff;
+            border-color: #409eff;
+          }
+
           &:hover {
             color: #409eff;
             border-color: #409eff;
@@ -310,5 +318,74 @@ const getPluginIconClass = (name) => {
   .el-input {
     width: 200px;
   }
+}
+/* Active settings button style */
+.settings-button.active-settings {
+  color: #409eff !important;
+  border-color: #409eff !important;
+  background-color: rgba(64, 158, 255, 0.1) !important;
+}
+
+/* Plugin item active state */
+.plugin-item.active {
+  border-left: 3px solid #409eff;
+  background-color: rgba(64, 158, 255, 0.05);
+}
+
+/* Add hover effect to settings button */
+.settings-button:hover {
+  color: #409eff !important;
+  border-color: #409eff !important;
+  background-color: rgba(64, 158, 255, 0.1) !important;
+}
+
+/* Improved styling for the plugin modal */
+.plugin-settings-modal .el-dialog {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.plugin-settings-modal .el-dialog__header {
+  background-color: #f8f9fa;
+}
+
+.plugin-settings-modal .form-field {
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.plugin-settings-modal .form-field:hover {
+  background-color: #f8f9fa;
+}
+
+/* Improve switch appearance when active */
+.el-switch.is-checked .el-switch__core {
+  border-color: #10b981 !important;
+  background-color: #10b981 !important;
+}
+
+/* Improve page selection dropdowns */
+.plugin-settings-modal .el-select .el-select__tags {
+  max-height: 80px;
+  overflow-y: auto;
+}
+
+/* Add better styling to the dialog buttons */
+.plugin-settings-modal .dialog-footer .el-button--primary {
+  background-color: #409eff;
+  border-color: #409eff;
+}
+
+.plugin-settings-modal .dialog-footer .el-button--primary:hover {
+  background-color: #66b1ff;
+  border-color: #66b1ff;
+}
+
+/* Additional style for the filter and search section */
+.htpm-plugins-actions {
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 20px;
 }
 </style>

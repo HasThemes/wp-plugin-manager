@@ -1,11 +1,12 @@
+// plugins.js (Store)
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
 // Create an axios instance with WordPress REST API base URL and nonce
 const api = axios.create({
-  baseURL: window.htpmData.restUrl,  // Make sure this points to the correct URL
+  baseURL: window.htpmData?.restUrl || '/wp-json',  // Make sure this points to the correct URL
   headers: {
-    'X-WP-Nonce': window.htpmData.nonce,
+    'X-WP-Nonce': window.htpmData?.nonce || '',
     'Content-Type': 'application/json'
   }
 })
@@ -39,12 +40,6 @@ export const usePluginStore = defineStore('plugins', {
       try {
         const response = await api.get('/htpm/v1/plugins')
         this.plugins = response.data
-        
-        // Load initial settings for each plugin
-        this.plugins.forEach(plugin => {
-          this.fetchPluginSettings(plugin.id)
-        })
-        
         return this.plugins
       } catch (error) {
         this.error = error.message || 'Failed to fetch plugins'
@@ -59,7 +54,7 @@ export const usePluginStore = defineStore('plugins', {
       try {
         const response = await api.get(`/htpm/v1/plugins/${pluginId}/settings`)
         
-        // Store settings
+        // Store settings in the store state
         this.settings[pluginId] = response.data
         
         return response.data

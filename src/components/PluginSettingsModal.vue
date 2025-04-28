@@ -1,3 +1,4 @@
+// PluginSettingsModal.vue
 <template>
   <el-dialog
     v-model="dialogVisible"
@@ -67,9 +68,9 @@
         <!-- Post Types Selection -->
         <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
           <label>Select Post Types:</label>
-          <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange"  style="display: flex;gap: 10px;">
-            <el-checkbox v-for="postType in availablePostTypes" :key="postType" :label="postType">
-              {{ formatPostTypeName(postType) }}
+          <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange" style="display: flex;gap: 10px;">
+            <el-checkbox v-for="postType in availablePostTypes" :key="postType.name" :label="postType.name">
+              {{ postType.label }}
             </el-checkbox>
           </el-checkbox-group>
         </div>
@@ -81,18 +82,13 @@
                 (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('page'))"
         >
           <label>Select Pages:</label>
-          <!-- <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
-            <el-option label="All Pages" value="all_pages,all_pages" />
-            <el-option v-for="page in pages" :key="page.id" :label="page.title" :value="page.id + ',' + page.url" />
-          </el-select> -->
-
-          <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
+          <el-select v-model="pluginSettings.pages" multiple filterable class="w-full" :loading="loadingPages">
             <el-option label="All Pages" value="all_pages,all_pages" />
             <el-option 
-              v-for="page in store.pages" 
+              v-for="page in pages" 
               :key="page.id" 
               :label="page.title" 
-              :value="page.id + ',' + page.url" 
+              :value="`${page.id},${page.url}`" 
             />
           </el-select>
         </div>
@@ -104,9 +100,14 @@
                (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('post'))"
         >
           <label>Select Posts:</label>
-          <el-select v-model="pluginSettings.posts" multiple filterable class="w-full">
+          <el-select v-model="pluginSettings.posts" multiple filterable class="w-full" :loading="loadingPosts">
             <el-option label="All Posts" value="all_posts,all_posts" />
-            <el-option v-for="post in posts" :key="post.id" :label="post.title" :value="post.id + ',' + post.url" />
+            <el-option 
+              v-for="post in posts" 
+              :key="post.id" 
+              :label="post.title" 
+              :value="`${post.id},${post.url}`"
+            />
           </el-select>
         </div>
 
@@ -126,14 +127,14 @@
               :loading="loadingCustomPosts[postType]"
             >
               <el-option 
-                :label="'All ' + formatPostTypeName(postType) + 's'" 
-                :value="'all_' + postType + 's,all_' + postType + 's'" 
+                :label="`All ${formatPostTypeName(postType)}s`" 
+                :value="`all_${postType}s,all_${postType}s`"
               />
               <el-option 
                 v-for="item in getCustomPostTypeItems(postType)" 
                 :key="item.id" 
                 :label="item.title" 
-                :value="item.id + ',' + item.url" 
+                :value="`${item.id},${item.url}`"
               />
             </el-select>
           </div>
@@ -191,6 +192,7 @@
 import { ref, defineProps, defineEmits, watch, computed, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
+import { usePluginStore } from '../store/plugins'
 
 const props = defineProps({
   visible: Boolean,
@@ -198,6 +200,7 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:visible', 'save'])
+const store = usePluginStore()
 
 const dialogVisible = computed({
   get: () => props.visible,
@@ -207,6 +210,8 @@ const dialogVisible = computed({
 // Loading states
 const loading = ref(false)
 const saving = ref(false)
+const loadingPages = ref(false)
+const loadingPosts = ref(false)
 const loadingCustomPosts = reactive({})
 
 // Default settings structure matching PHP
@@ -215,26 +220,24 @@ const pluginSettings = ref({
   device_type: 'all',
   condition_type: 'disable_on_selected',
   uri_type: 'page',
-  post_types: ['page', 'post'],
+  post_types: [],
   posts: [],
   pages: [],
-  // These will be set dynamically when loading settings
   condition_list: {
     name: ['uri_equals'],
     value: [''],
   }
 })
 
-// Available post types from the PHP code
-const availablePostTypes = ref(['page', 'post', 'product', 'portfolio', 'testimonial'])
+// Post types from API
+const availablePostTypes = computed(() => store.postTypes)
 const selectedCustomPostTypes = computed(() => {
   return pluginSettings.value.post_types.filter(type => !['page', 'post'].includes(type))
 })
 
-// Pages and posts data
-const pages = ref([])
-const posts = ref([])
-const customPostTypeItems = ref({})
+// Pages and posts data from store
+const pages = computed(() => store.pages)
+const posts = computed(() => store.posts)
 
 // Load data when the component is mounted
 onMounted(async () => {
@@ -261,20 +264,29 @@ watch(() => props.visible, async (newVisible) => {
 const loadData = async () => {
   loading.value = true
   try {
+    // Load plugin settings first
+    await loadPluginSettings()
+    
+    // Load necessary data based on the loaded settings
+    loadingPages.value = true
+    loadingPosts.value = true
+    
     await Promise.all([
-      loadPluginSettings(),
       store.fetchPages(),
       store.fetchPosts(),
       store.fetchPostTypes()
     ])
     
-    // Get post types and load data for custom post types
-    const customTypes = store.customPostTypes
-    customTypes.forEach(async (type) => {
-      await store.fetchCustomPostTypeItems(type)
-    })
+    loadingPages.value = false
+    loadingPosts.value = false
+    
+    // Load custom post type items if needed
+    if (pluginSettings.value.uri_type === 'page_post_cpt') {
+      await loadCustomPostTypeData()
+    }
   } catch (error) {
     console.error('Error loading data:', error)
+    ElMessage.error('Failed to load plugin settings')
   } finally {
     loading.value = false
   }
@@ -283,128 +295,68 @@ const loadData = async () => {
 // Load plugin settings
 const loadPluginSettings = async () => {
   try {
-    // In a real application, this would fetch from an API
-    // For demo purposes, we're using simulated data
-
-    // Reset settings first
-    const defaultSettings = {
-      enable_deactivation: props.plugin.active ? 'no' : 'yes',
-      device_type: 'all',
-      condition_type: 'disable_on_selected',
-      uri_type: 'page',
-      post_types: ['page', 'post'],
-      posts: [],
-      pages: [],
-      condition_list: {
-        name: ['uri_equals'],
-        value: [''],
+    if (!props.plugin) return
+    
+    const settings = await store.fetchPluginSettings(props.plugin.id)
+    
+    if (settings) {
+      // Ensure we have proper structure
+      const defaultSettings = {
+        enable_deactivation: props.plugin.active ? 'no' : 'yes',
+        device_type: 'all',
+        condition_type: 'disable_on_selected',
+        uri_type: 'page',
+        post_types: ['page', 'post'],
+        posts: [],
+        pages: [],
+        condition_list: {
+          name: ['uri_equals'],
+          value: [''],
+        }
+      }
+      
+      // Merge with default settings to ensure all properties exist
+      pluginSettings.value = { ...defaultSettings, ...settings }
+      
+      // Initialize post_types array if it doesn't exist
+      if (!pluginSettings.value.post_types) {
+        pluginSettings.value.post_types = ['page', 'post']
+      }
+      
+      // Initialize condition_list if needed
+      if (!pluginSettings.value.condition_list) {
+        pluginSettings.value.condition_list = {
+          name: ['uri_equals'],
+          value: [''],
+        }
       }
     }
-    
-    // For the demo, add some sample data based on plugin ID
-    if (props.plugin.id === 1) {
-      defaultSettings.enable_deactivation = 'yes'
-      defaultSettings.uri_type = 'page_post'
-      defaultSettings.pages = ['1,/home', '2,/about']
-      defaultSettings.posts = ['all_posts,all_posts']
-    } else if (props.plugin.id === 2) {
-      defaultSettings.enable_deactivation = 'yes'
-      defaultSettings.uri_type = 'custom'
-      defaultSettings.condition_list.name = ['uri_equals', 'uri_contains']
-      defaultSettings.condition_list.value = ['contact', 'product']
-    } else if (props.plugin.id === 3) {
-      defaultSettings.enable_deactivation = 'yes'
-      defaultSettings.uri_type = 'page_post_cpt'
-      defaultSettings.post_types = ['page', 'post', 'product']
-      defaultSettings.pages = ['all_pages,all_pages']
-      defaultSettings.products = ['1,/product/1']
-    }
-    
-    // Initialize custom post type arrays
-    selectedCustomPostTypes.value.forEach(type => {
-      if (!defaultSettings[type + 's']) {
-        defaultSettings[type + 's'] = []
-      }
-    })
-    
-    pluginSettings.value = defaultSettings
-    
   } catch (error) {
     console.error('Error loading plugin settings:', error)
+    ElMessage.error('Failed to load plugin settings')
     throw error
   }
 }
 
-// Load pages data
-const loadPages = async () => {
-  try {
-    // In a real application, this would fetch from an API
-    pages.value = [
-      { id: 1, title: 'Home', url: '/home' },
-      { id: 2, title: 'About', url: '/about' },
-      { id: 3, title: 'Contact', url: '/contact' },
-      { id: 4, title: 'Services', url: '/services' },
-      { id: 5, title: 'Portfolio', url: '/portfolio' }
-    ]
-  } catch (error) {
-    console.error('Error loading pages:', error)
-    throw error
-  }
-}
-
-// Load posts data
-const loadPosts = async () => {
-  try {
-    // In a real application, this would fetch from an API
-    posts.value = [
-      { id: 1, title: 'First Post', url: '/posts/1' },
-      { id: 2, title: 'Second Post', url: '/posts/2' },
-      { id: 3, title: 'Third Post', url: '/posts/3' },
-      { id: 4, title: 'Fourth Post', url: '/posts/4' },
-      { id: 5, title: 'Fifth Post', url: '/posts/5' }
-    ]
-  } catch (error) {
-    console.error('Error loading posts:', error)
-    throw error
-  }
-}
-
-// Load post types
-const loadPostTypes = async () => {
-  try {
-    // In a real application, this would fetch from an API
-    availablePostTypes.value = ['page', 'post', 'product', 'portfolio', 'testimonial']
+// Load custom post type data
+const loadCustomPostTypeData = async () => {
+  const customTypes = selectedCustomPostTypes.value
+  
+  for (const type of customTypes) {
+    loadingCustomPosts[type] = true
     
-    // Load sample data for each custom post type
-    const customTypes = availablePostTypes.value.filter(type => !['page', 'post'].includes(type))
-    customTypes.forEach(async (type) => {
-      await loadCustomPostTypeItems(type)
-    })
-  } catch (error) {
-    console.error('Error loading post types:', error)
-    throw error
-  }
-}
-
-// Load items for a specific custom post type
-const loadCustomPostTypeItems = async (postType) => {
-  loadingCustomPosts[postType] = true
-  try {
-    // Initialize the array if needed
-    if (!pluginSettings.value[postType + 's']) {
-      pluginSettings.value[postType + 's'] = []
+    // Initialize array for this post type if needed
+    if (!pluginSettings.value[type + 's']) {
+      pluginSettings.value[type + 's'] = []
     }
     
-    // In a real application, this would fetch from an API
-    customPostTypeItems.value[postType] = [
-      { id: 1, title: `${formatPostTypeName(postType)} 1`, url: `/${postType}/1` },
-      { id: 2, title: `${formatPostTypeName(postType)} 2`, url: `/${postType}/2` },
-      { id: 3, title: `${formatPostTypeName(postType)} 3`, url: `/${postType}/3` }
-    ]
-  } catch (error) {
-    console.error(`Error loading ${postType} items:`, error)
-  } finally {
-    loadingCustomPosts[postType] = false
+    try {
+      await store.fetchCustomPostTypeItems(type)
+    } catch (error) {
+      console.error(`Error loading ${type} items:`, error)
+    } finally {
+      loadingCustomPosts[type] = false
+    }
   }
 }
 
@@ -420,25 +372,45 @@ const handleUriTypeChange = async (value) => {
       pluginSettings.value.post_types.push('post')
     }
     
-    // Load custom post type items
-    selectedCustomPostTypes.value.forEach(async (type) => {
-      await loadCustomPostTypeItems(type)
-    })
+    // Load custom post type data
+    await loadCustomPostTypeData()
   }
 }
 
 // Handle post types selection change
 const handlePostTypesChange = async (selectedTypes) => {
-  // Ensure we're loading data for newly selected post types
-  selectedCustomPostTypes.value.forEach(async (type) => {
-    if (!customPostTypeItems.value[type]) {
-      await loadCustomPostTypeItems(type)
+  // Load data for newly selected post types
+  const newCustomTypes = selectedCustomPostTypes.value
+  
+  for (const type of newCustomTypes) {
+    if (!store.customPostTypeItems[type]) {
+      loadingCustomPosts[type] = true
+      
+      // Initialize array for this post type if needed
+      if (!pluginSettings.value[type + 's']) {
+        pluginSettings.value[type + 's'] = []
+      }
+      
+      try {
+        await store.fetchCustomPostTypeItems(type)
+      } catch (error) {
+        console.error(`Error loading ${type} items:`, error)
+      } finally {
+        loadingCustomPosts[type] = false
+      }
     }
-  })
+  }
 }
 
 // Format post type name for better display
 const formatPostTypeName = (postType) => {
+  // First try to find in available post types
+  const postTypeObj = availablePostTypes.value.find(pt => pt.name === postType)
+  if (postTypeObj) {
+    return postTypeObj.label
+  }
+  
+  // Fallback to formatting the string
   return postType
     .replace(/_/g, ' ')
     .replace(/\b\w/g, letter => letter.toUpperCase())
@@ -446,7 +418,7 @@ const formatPostTypeName = (postType) => {
 
 // Get custom post type items for a specific post type
 const getCustomPostTypeItems = (postType) => {
-  return customPostTypeItems.value[postType] || []
+  return store.customPostTypeItems[postType] || []
 }
 
 // Add new URI condition
@@ -476,16 +448,20 @@ const cloneCondition = (index) => {
 const saveSettings = async () => {
   saving.value = true
   try {
-    // In a real application, this would send data to the server
-    console.log('Saving settings:', pluginSettings.value)
+    // Prepare data for API
+    const settingsToSave = { ...pluginSettings.value }
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 600))
+    // Save settings via store
+    await store.updatePluginSettings(props.plugin.id, settingsToSave)
+    
+    // Update the plugin's active status in the UI
+    const isActive = settingsToSave.enable_deactivation !== 'yes'
+    props.plugin.active = isActive
     
     // Emit the save event with settings and plugin data
     emit('save', {
       plugin: props.plugin,
-      settings: pluginSettings.value
+      settings: settingsToSave
     })
     
     // Close the dialog
