@@ -62,10 +62,11 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
+        include_once( HTPM_ROOT_DIR . '/includes/admin-dashboard-api.php');
 
 
     }
-        
+
     /**
      * Remove all Notices on admin pages.
      * @return void
@@ -155,18 +156,6 @@ class HTPM_Main {
     function admin_scripts( $hook_suffix ) {
         if( $hook_suffix ==  'toplevel_page_htpm-options' ){
             // Add REST API data for JavaScript
-            wp_localize_script('htpm-admin', 'htpmData', [
-                'restUrl' => rest_url(),  // This will include the wp-json prefix
-                'nonce' => wp_create_nonce('wp_rest'),
-                'pluginUrl' => plugin_dir_url(__FILE__),
-                'ajaxurl' => admin_url('admin-ajax.php')
-            ]);
-            wp_localize_script('htpm-admin', 'HTPMM', [
-                'restUrl' => rest_url(),  // This will include the wp-json prefix
-                'nonce' => wp_create_nonce('wp_rest'),
-                'pluginUrl' => plugin_dir_url(__FILE__),
-                'ajaxurl' => admin_url('admin-ajax.php')
-            ]);
             
             wp_enqueue_style( 'wp-jquery-ui-dialog' );
             wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css', [], HTPM_PLUGIN_VERSION );
@@ -203,6 +192,13 @@ class HTPM_Main {
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
+
+                wp_localize_script('htpm-admin', 'htpmData', [
+                    'restUrl' => rest_url(),  // This will include the wp-json prefix
+                    'nonce' => wp_create_nonce('wp_rest'),
+                    'pluginUrl' => plugin_dir_url(__FILE__),
+                    'ajaxurl' => admin_url('admin-ajax.php')
+                ]);
             }
     
         }

@@ -1,8 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
-console.log(window.htpmData, window.HTPMM);
-
 // Create an axios instance with WordPress REST API base URL and nonce
 const api = axios.create({
   baseURL: window.htpmData.restUrl,  // Make sure this points to the correct URL
@@ -35,7 +33,6 @@ export const usePluginStore = defineStore('plugins', {
 
   actions: {
     async fetchPlugins() {
-      console.log('Fetching plugins...')
       this.loading = true
       this.error = null
       
