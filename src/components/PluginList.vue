@@ -9,13 +9,16 @@
           placeholder="Search plugins..."
           :prefix-icon="Search"
         />
-        <el-button @click="handleFilter" :icon="Filter">Filter</el-button>
-        <el-button @click="handleSort" :icon="Sort">Sort</el-button>
       </div>
     </div>
     <div class="plugin-list">
-      <!-- Only show active plugins based on the new design -->
-      <div v-for="plugin in filteredActivePlugins" :key="plugin.id" class="plugin-item">
+      <!-- Show only WordPress-activated plugins -->
+      <div 
+        v-for="plugin in filteredWpActivePlugins" 
+        :key="plugin.id" 
+        class="plugin-item"
+        :class="{ 'plugin-disabled': plugin.isDisabled }"
+      >
         <div class="plugin-info">
           <div class="plugin-icon-image" :class="getPluginIconClass(plugin.name)">
             <el-icon v-if="plugin.name.includes('Query')"><Monitor /></el-icon>
@@ -26,15 +29,16 @@
           <div class="plugin-details">
             <h3>{{ plugin.name }}</h3>
             <div class="plugin-status">
-              <span class="status-dot" :class="{ active: plugin.active }"></span>
-              <span class="status-text">{{ plugin.active ? 'Active' : 'Inactive' }}</span>
+              <span class="status-dot" :class="{ active: !plugin.isDisabled }"></span>
+              <span class="status-text">{{ plugin.isDisabled ? 'Not Optimized Yet' : 'Optimized' }}</span>
             </div>
           </div>
         </div>
         <div class="plugin-actions">
+          <!-- Toggle whether the plugin is loaded or not -->
           <el-switch
-            v-model="plugin.active"
-            @change="() => togglePlugin(plugin)"
+            :model-value="!plugin.isDisabled"
+            @update:model-value="(value) => togglePluginLoading(plugin)"
             class="plugin-switch"
           />
           <el-button
@@ -42,7 +46,7 @@
             :icon="Setting"
             circle
             class="settings-button"
-            :class="{ 'active-settings': plugin.active }"
+            :class="{ 'active-settings': !plugin.isDisabled }"
             @click="openSettings(plugin)"
           />
         </div>
@@ -83,19 +87,28 @@ const props = defineProps({
 const emit = defineEmits(['toggle', 'update-settings'])
 
 // Use store plugins or prop plugins
-const storePlugins = computed(() => store.plugins)
-const activePlugins = computed(() => store.activePlugins)
+const storePlugins = computed(() => {
+  const plugins = store.plugins.map(plugin => ({
+    ...plugin,
+    isDisabled: plugin.settings?.enable_deactivation === 'yes'
+  }))
+  return plugins
+})
 
-// Filter only active plugins (new design requirement)
-const filteredActivePlugins = computed(() => {
-  // Use plugins from props if provided, otherwise use from store
-  const pluginsSource = props.plugins.length > 0 
-    ? props.plugins.filter(plugin => plugin.active) 
-    : activePlugins.value
+// Filter to only WordPress-active plugins
+const wpActivePlugins = computed(() => {
+  const activePlugins = props.plugins.length > 0 
+    ? props.plugins.filter(plugin => plugin.wpActive)
+    : storePlugins.value.filter(plugin => plugin.wpActive)
   
-  if (!searchQuery.value) return pluginsSource
+  return activePlugins
+})
+
+// Filter based on search query
+const filteredWpActivePlugins = computed(() => {
+  if (!searchQuery.value) return wpActivePlugins.value
   
-  return pluginsSource.filter(plugin => 
+  return wpActivePlugins.value.filter(plugin => 
     plugin.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 })
@@ -105,6 +118,12 @@ onMounted(async () => {
   if (props.plugins.length === 0) {
     try {
       await store.fetchPlugins()
+      // Load settings for each plugin
+      for (const plugin of store.plugins) {
+        if (plugin.wpActive) {
+          await store.fetchPluginSettings(plugin.id)
+        }
+      }
     } catch (error) {
       ElMessage.error('Failed to load plugins')
       console.error('Error loading plugins:', error)
@@ -122,19 +141,39 @@ const handleSort = () => {
   ElMessage.info('Sort functionality will be implemented here')
 }
 
-// Toggle plugin active status
-const togglePlugin = async (plugin) => {
+// Toggle plugin loading status
+const togglePluginLoading = async (plugin) => {
   try {
-    if (props.plugins.length > 0) {
-      // If using props, emit event to parent
-      emit('toggle', plugin)
-    } else {
-      // If using store, update through store
-      await store.togglePlugin(plugin)
+    // Toggle the isDisabled state
+    plugin.isDisabled = !plugin.isDisabled
+    
+    // Update the plugin settings
+    const settings = store.settings[plugin.id] || {
+      enable_deactivation: plugin.isDisabled ? 'yes' : 'no',
+      device_type: 'all',
+      condition_type: 'disable_on_selected',
+      uri_type: 'page',
+      post_types: ['page', 'post'],
+      posts: [],
+      pages: [],
+      condition_list: {
+        name: ['uri_equals'],
+        value: [''],
+      }
     }
+    
+    // Update the enable_deactivation setting
+    settings.enable_deactivation = plugin.isDisabled ? 'yes' : 'no'
+    
+    // Update settings via store
+    await store.updatePluginSettings(plugin.id, settings)
+    
+    ElMessage.success(`Plugin ${plugin.isDisabled ? 'disabled' : 'enabled'} successfully`)
   } catch (error) {
-    ElMessage.error('Failed to toggle plugin status')
-    console.error('Error toggling plugin:', error)
+    // Revert the UI change if the API call fails
+    plugin.isDisabled = !plugin.isDisabled
+    ElMessage.error('Failed to update plugin status')
+    console.error('Error toggling plugin loading:', error)
   }
 }
 
@@ -147,17 +186,18 @@ const openSettings = (plugin) => {
 // Save plugin settings
 const savePluginSettings = async (data) => {
   try {
-    // Update plugin settings
-    if (props.plugins.length > 0) {
-      // If using props, emit event to parent
-      emit('update-settings', data)
-    } else {
-      // If using store, update plugin in store
-      const { plugin, settings } = data
-      await store.updatePluginSettings(plugin.id, settings)
+    const { plugin, settings } = data
+    
+    // Update the plugin's settings in the store
+    await store.updatePluginSettings(plugin.id, settings)
+    
+    // Update the plugin's isDisabled state based on enable_deactivation
+    const pluginIndex = storePlugins.value.findIndex(p => p.id === plugin.id)
+    if (pluginIndex !== -1) {
+      storePlugins.value[pluginIndex].isDisabled = settings.enable_deactivation === 'yes'
     }
     
-    ElMessage.success('Plugin settings saved successfully')
+    ElMessage.success('Settings saved successfully')
   } catch (error) {
     ElMessage.error('Failed to save plugin settings')
     console.error('Error saving plugin settings:', error)
@@ -217,6 +257,11 @@ const getPluginIconClass = (name) => {
 
       &:hover {
         background-color: #f8f9fa;
+      }
+
+      &.plugin-disabled {
+        background-color: #f5f5f5;
+        opacity: 0.85;
       }
 
       .plugin-info {
@@ -297,6 +342,10 @@ const getPluginIconClass = (name) => {
         align-items: center;
         gap: 12px;
 
+        .plugin-switch {
+          margin-right: 5px;
+        }
+
         .settings-button {
           border: 1px solid #dcdfe6;
           color: #606266;
@@ -319,61 +368,143 @@ const getPluginIconClass = (name) => {
     width: 200px;
   }
 }
-/* Active settings button style */
+/* Final CSS for plugin list, switch and modal settings */
+
+/* Plugin list item styling */
+.plugin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #ebeef5;
+  transition: all 0.3s ease;
+}
+
+.plugin-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Disabled plugin style */
+.plugin-item.plugin-disabled {
+  background-color: #f5f5f5;
+  opacity: 0.85;
+}
+
+.plugin-item.plugin-disabled .plugin-details h3 {
+  color: #909399;
+}
+
+.plugin-item.plugin-disabled .settings-button {
+  color: #c0c4cc;
+  border-color: #dcdfe6;
+}
+
+/* Settings button (gear icon) styling */
+.settings-button {
+  color: #909399;
+  border-color: #dcdfe6;
+  transition: all 0.2s ease;
+}
+
 .settings-button.active-settings {
   color: #409eff !important;
   border-color: #409eff !important;
   background-color: rgba(64, 158, 255, 0.1) !important;
 }
 
-/* Plugin item active state */
-.plugin-item.active {
-  border-left: 3px solid #409eff;
-  background-color: rgba(64, 158, 255, 0.05);
-}
-
-/* Add hover effect to settings button */
 .settings-button:hover {
   color: #409eff !important;
   border-color: #409eff !important;
-  background-color: rgba(64, 158, 255, 0.1) !important;
 }
 
-/* Improved styling for the plugin modal */
+/* Switch styling */
+.el-switch__core {
+  border-color: #dcdfe6;
+  background-color: #dcdfe6;
+}
+
+.el-switch.is-checked .el-switch__core {
+  border-color: #10b981 !important;
+  background-color: #10b981 !important;
+}
+
+/* Status indicator styling */
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #909399;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.status-dot.active {
+  background-color: #10b981;
+}
+
+.status-text {
+  font-size: 12px;
+  color: #909399;
+}
+
+/* Plugin actions styling */
+.plugin-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Modal settings dialog improvements */
 .plugin-settings-modal .el-dialog {
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .plugin-settings-modal .el-dialog__header {
   background-color: #f8f9fa;
+  padding: 15px 20px;
+}
+
+.plugin-settings-modal .el-dialog__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.plugin-settings-modal .el-dialog__body {
+  padding: 20px;
 }
 
 .plugin-settings-modal .form-field {
-  background-color: #fff;
+  margin-bottom: 20px;
   transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 6px;
 }
 
 .plugin-settings-modal .form-field:hover {
   background-color: #f8f9fa;
 }
 
-/* Improve switch appearance when active */
-.el-switch.is-checked .el-switch__core {
-  border-color: #10b981 !important;
-  background-color: #10b981 !important;
+.plugin-settings-modal .form-field label {
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #303133;
 }
 
-/* Improve page selection dropdowns */
-.plugin-settings-modal .el-select .el-select__tags {
-  max-height: 80px;
-  overflow-y: auto;
+.plugin-settings-modal .form-field .el-switch {
+  height: 24px;
 }
 
-/* Add better styling to the dialog buttons */
+.plugin-settings-modal .form-field .disable-switch {
+  margin-right: 10px;
+}
+
+/* Modal dialog footer buttons */
 .plugin-settings-modal .dialog-footer .el-button--primary {
   background-color: #409eff;
   border-color: #409eff;
+  font-weight: 500;
 }
 
 .plugin-settings-modal .dialog-footer .el-button--primary:hover {
@@ -381,11 +512,195 @@ const getPluginIconClass = (name) => {
   border-color: #66b1ff;
 }
 
-/* Additional style for the filter and search section */
-.htpm-plugins-actions {
-  background-color: #f8f9fa;
-  padding: 12px;
-  border-radius: 6px;
+/* Dropdown select styling */
+.el-select .el-input__inner {
+  border-radius: 4px;
+}
+
+.el-select .el-input.is-focus .el-input__inner {
+  border-color: #409eff;
+}
+
+.el-select .el-input__inner:hover {
+  border-color: #c0c4cc;
+}
+
+/* Multi-select tag styling */
+.el-select .el-select__tags {
+  padding: 0 6px;
+}
+
+.el-select .el-tag {
+  background-color: #f0f2f5;
+  border-color: #e4e7ed;
+  color: #606266;
+  margin: 2px 4px 2px 0;
+}
+
+.el-select .el-tag .el-tag__close {
+  color: #909399;
+}
+
+.el-select .el-tag .el-tag__close:hover {
+  background-color: #909399;
+  color: #fff;
+}
+
+/* Custom URI conditions styling */
+.uri-condition {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.uri-condition:hover {
+  background-color: #f0f2f5;
+}
+
+.uri-condition .condition-type {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.uri-condition .condition-value {
+  flex-grow: 1;
+}
+
+.uri-condition .condition-actions {
+  display: flex;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.uri-condition .condition-actions .el-button {
+  padding: 6px;
+  height: 32px;
+  width: 32px;
+}
+
+/* Add condition button */
+.mt-3 {
+  margin-top: 12px;
+}
+
+/* Full width elements */
+.w-full {
+  width: 100%;
+}
+
+/* Plugin list header styling */
+.htpm-plugins-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.htpm-plugins-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #303133;
+}
+
+.htpm-plugins-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Search input styling */
+.htpm-plugins-actions .el-input {
+  width: 220px;
+}
+
+.htpm-plugins-actions .el-input__inner {
+  border-radius: 4px;
+  height: 36px;
+}
+
+/* Filter and sort buttons */
+.htpm-plugins-actions .el-button {
+  height: 36px;
+  padding: 0 15px;
+}
+
+/* Plugin icon styling */
+.plugin-icon-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fff;
+  background: #e9ecef;
+  transition: all 0.3s ease;
+}
+
+.plugin-icon-image.query-monitor {
+  background: #4c6ef5;
+}
+
+.plugin-icon-image.elementor {
+  background: #92003b;
+}
+
+.plugin-icon-image.htmega {
+  background: #0073aa;
+}
+
+.plugin-icon-image.woocommerce {
+  background: #7f54b3;
+}
+
+.plugin-icon-image.yoast {
+  background: #a4286a;
+}
+
+/* Plugin details styling */
+.plugin-details h3 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #303133;
+  line-height: 1.4;
+}
+
+/* Switch extra styling for better visual appearance */
+.el-switch.is-checked .el-switch__core .el-switch__action {
+  transform: translate3d(18px, 0, 0);
+}
+
+.el-switch__action {
+  width: 14px;
+  height: 14px;
+}
+
+.el-switch__core {
+  width: 36px !important;
+  height: 20px;
+  border-radius: 10px;
+}
+
+/* Loading indicators */
+.el-loading-mask {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.el-loading-spinner .circular {
+  height: 42px;
+  width: 42px;
+}
+
+.el-loading-spinner .path {
+  stroke: #409eff;
 }
 </style>

@@ -98,7 +98,7 @@ function htpm_get_plugins() {
     foreach ($all_plugins as $plugin_path => $plugin_data) {
         $index++;
         $has_update = false;
-        $is_active = in_array($plugin_path, $active_plugins);
+        $is_wp_active = in_array($plugin_path, $active_plugins);
         
         // Check if plugin has updates available
         if (isset($update_plugins->response[$plugin_path])) {
@@ -110,7 +110,7 @@ function htpm_get_plugins() {
         $is_disabled = !empty($plugin_settings['enable_deactivation']) && $plugin_settings['enable_deactivation'] === 'yes';
         
         // Active status should reflect both WP activation status and our custom settings
-        $actual_active_status = $is_active && !$is_disabled;
+        $actual_active_status = $is_wp_active && !$is_disabled;
         
         $plugins[] = [
             'id' => $index,
@@ -119,7 +119,9 @@ function htpm_get_plugins() {
             'description' => $plugin_data['Description'],
             'author' => $plugin_data['Author'],
             'file' => $plugin_path,
-            'active' => $actual_active_status,
+            'active' => $actual_active_status, // Loaded or not
+            'wpActive' => $is_wp_active, // Activated in WordPress
+            'isDisabled' => $is_disabled, // Disabled by our plugin
             'hasUpdate' => $has_update
         ];
     }
@@ -163,12 +165,12 @@ function htpm_get_plugin_settings($request) {
         : [];
     
     // Check if plugin is active in WordPress
-    $is_active = in_array($plugin_path, $active_plugins);
+    $is_wp_active = in_array($plugin_path, $active_plugins);
     
     // Create default settings if none exist
     if (empty($plugin_settings)) {
         $plugin_settings = [
-            'enable_deactivation' => $is_active ? 'no' : 'yes',
+            'enable_deactivation' => 'no', // Default to not disabled
             'device_type' => 'all',
             'condition_type' => 'disable_on_selected',
             'uri_type' => 'page',
@@ -290,11 +292,14 @@ function htpm_update_plugin_settings($request) {
     $options['htpm_list_plugins'][$plugin_path] = $sanitized_settings;
     update_option('htpm_options', $options);
     
-    return new WP_REST_Response(['success' => true], 200);
+    return new WP_REST_Response([
+        'success' => true,
+        'isDisabled' => $sanitized_settings['enable_deactivation'] === 'yes'
+    ], 200);
 }
 
 /**
- * Toggle plugin activation status
+ * Toggle plugin loading status via the switch in the plugin list
  */
 function htpm_toggle_plugin($request) {
     $plugin_id = $request->get_param('id');
@@ -322,28 +327,44 @@ function htpm_toggle_plugin($request) {
         return new WP_Error('plugin_not_found', 'Plugin not found', ['status' => 404]);
     }
     
-    // Get current plugin state
-    $is_active = is_plugin_active($plugin_path);
-    
-    // Toggle the settings
+    // Get options
     $options = get_option('htpm_options', []);
     if (!isset($options['htpm_list_plugins'])) {
         $options['htpm_list_plugins'] = [];
     }
     
-    if (!isset($options['htpm_list_plugins'][$plugin_path])) {
-        $options['htpm_list_plugins'][$plugin_path] = [];
-    }
+    // Check current disable state
+    $plugin_settings = isset($options['htpm_list_plugins'][$plugin_path]) 
+        ? $options['htpm_list_plugins'][$plugin_path] 
+        : [];
     
-    // Toggle the enable_deactivation setting
-    $options['htpm_list_plugins'][$plugin_path]['enable_deactivation'] = $is_active ? 'yes' : 'no';
+    $is_currently_disabled = !empty($plugin_settings['enable_deactivation']) && $plugin_settings['enable_deactivation'] === 'yes';
+    
+    // Toggle the disabled state
+    if (!isset($options['htpm_list_plugins'][$plugin_path]) || empty($options['htpm_list_plugins'][$plugin_path])) {
+        $options['htpm_list_plugins'][$plugin_path] = [
+            'enable_deactivation' => $is_currently_disabled ? 'no' : 'yes',
+            'device_type' => 'all',
+            'condition_type' => 'disable_on_selected',
+            'uri_type' => 'page',
+            'post_types' => ['page', 'post'],
+            'posts' => [],
+            'pages' => [],
+            'condition_list' => [
+                'name' => ['uri_equals'],
+                'value' => [''],
+            ]
+        ];
+    } else {
+        $options['htpm_list_plugins'][$plugin_path]['enable_deactivation'] = $is_currently_disabled ? 'no' : 'yes';
+    }
     
     // Save settings
     update_option('htpm_options', $options);
     
     return new WP_REST_Response([
         'success' => true,
-        'active' => !$is_active
+        'isDisabled' => !$is_currently_disabled
     ], 200);
 }
 

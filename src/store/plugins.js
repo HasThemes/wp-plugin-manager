@@ -4,7 +4,7 @@ import axios from 'axios'
 
 // Create an axios instance with WordPress REST API base URL and nonce
 const api = axios.create({
-  baseURL: window.htpmData?.restUrl || '/wp-json',  // Make sure this points to the correct URL
+  baseURL: window.htpmData?.restUrl || '/wp-json',
   headers: {
     'X-WP-Nonce': window.htpmData?.nonce || '',
     'Content-Type': 'application/json'
@@ -24,8 +24,18 @@ export const usePluginStore = defineStore('plugins', {
   }),
 
   getters: {
+    // All plugins that are active in WordPress (regardless of our loading settings)
+    wpActivePlugins: (state) => state.plugins.filter(p => p.wpActive),
+    
+    // Plugins that are both active in WordPress and not disabled by our plugin
     activePlugins: (state) => state.plugins.filter(p => p.active),
-    inactivePlugins: (state) => state.plugins.filter(p => !p.active),
+    
+    // Plugins that are disabled by our plugin (but still active in WordPress)
+    disabledPlugins: (state) => state.plugins.filter(p => p.wpActive && !p.active),
+    
+    // Plugins that are inactive in WordPress
+    inactivePlugins: (state) => state.plugins.filter(p => !p.wpActive),
+    
     updateAvailable: (state) => state.plugins.filter(p => p.hasUpdate),
     totalPlugins: (state) => state.plugins.length,
     pluginById: (state) => (id) => state.plugins.find(p => p.id === id),
@@ -40,6 +50,14 @@ export const usePluginStore = defineStore('plugins', {
       try {
         const response = await api.get('/htpm/v1/plugins')
         this.plugins = response.data
+        
+        // Fetch settings for each WordPress-active plugin
+        for (const plugin of this.plugins) {
+          if (plugin.wpActive) {
+            await this.fetchPluginSettings(plugin.id)
+          }
+        }
+        
         return this.plugins
       } catch (error) {
         this.error = error.message || 'Failed to fetch plugins'
@@ -57,6 +75,13 @@ export const usePluginStore = defineStore('plugins', {
         // Store settings in the store state
         this.settings[pluginId] = response.data
         
+        // Update the plugin's isDisabled state
+        const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
+        if (pluginIndex !== -1) {
+          const isDisabled = response.data.enable_deactivation === 'yes'
+          this.plugins[pluginIndex].isDisabled = isDisabled
+        }
+        
         return response.data
       } catch (error) {
         console.error(`Error fetching settings for plugin ${pluginId}:`, error)
@@ -66,22 +91,36 @@ export const usePluginStore = defineStore('plugins', {
 
     async togglePlugin(plugin) {
       try {
-        const response = await api.post(`/htpm/v1/plugins/${plugin.id}/toggle`)
+        // Set the plugin's isDisabled state to the opposite of its current state
+        const isDisabled = !plugin.isDisabled
         
-        if (response.data.success) {
-          // Update the plugin's active state
-          const index = this.plugins.findIndex(p => p.id === plugin.id)
-          if (index !== -1) {
-            this.plugins[index].active = response.data.active
-          }
-          
-          // Update settings to match new state
-          if (this.settings[plugin.id]) {
-            this.settings[plugin.id].enable_deactivation = response.data.active ? 'no' : 'yes'
+        // Update the plugin settings
+        const settings = this.settings[plugin.id] || {
+          enable_deactivation: isDisabled ? 'yes' : 'no',
+          device_type: 'all',
+          condition_type: 'disable_on_selected',
+          uri_type: 'page',
+          post_types: ['page', 'post'],
+          posts: [],
+          pages: [],
+          condition_list: {
+            name: ['uri_equals'],
+            value: [''],
           }
         }
         
-        return response.data
+        // Update the enable_deactivation setting
+        settings.enable_deactivation = isDisabled ? 'yes' : 'no'
+        
+        // Save the updated settings
+        const response = await this.updatePluginSettings(plugin.id, settings)
+        
+        if (response.success) {
+          // Update the plugin's isDisabled state
+          plugin.isDisabled = isDisabled
+        }
+        
+        return response
       } catch (error) {
         this.error = error.message || 'Failed to toggle plugin'
         console.error('Error toggling plugin:', error)
@@ -97,10 +136,10 @@ export const usePluginStore = defineStore('plugins', {
           // Update settings in store
           this.settings[pluginId] = { ...settings }
           
-          // Update plugin active state based on settings
+          // Update plugin isDisabled state based on settings
           const index = this.plugins.findIndex(p => p.id === pluginId)
           if (index !== -1) {
-            this.plugins[index].active = settings.enable_deactivation !== 'yes'
+            this.plugins[index].isDisabled = settings.enable_deactivation === 'yes'
           }
         }
         

@@ -8,18 +8,17 @@
     destroy-on-close
   >
     <el-form label-position="top" v-loading="loading">
-      <!-- Enable/Disable plugin toggle -->
+      <!-- Enable/Disable plugin toggle (moved to plugin list, but still keep it here for config) -->
       <div class="form-field">
         <el-switch
-          v-model="pluginSettings.enable_deactivation"
-          :active-value="'yes'"
-          :inactive-value="'no'"
+          :model-value="pluginSettings.enable_deactivation !== 'yes'"
+          @update:model-value="handleDisableToggle"
           class="disable-switch"
         />
-        <label>Disable This Plugin</label>
+        <label>{{ pluginSettings.enable_deactivation === 'yes' ? 'Plugin is disabled' : 'Plugin is enabled' }}</label>
       </div>
 
-      <!-- Only show these settings if plugin is set to be disabled -->
+      <!-- Configuration settings for the plugin -->
       <template v-if="pluginSettings.enable_deactivation === 'yes'">
         <!-- Device Type Selector -->
         <div class="form-field">
@@ -260,6 +259,11 @@ watch(() => props.visible, async (newVisible) => {
   }
 })
 
+// Handle disable toggle in the modal
+const handleDisableToggle = () => {
+  pluginSettings.value.enable_deactivation = !pluginSettings.value.enable_deactivation ? 'yes' : 'no'
+}
+
 // Load all required data
 const loadData = async () => {
   loading.value = true
@@ -302,7 +306,7 @@ const loadPluginSettings = async () => {
     if (settings) {
       // Ensure we have proper structure
       const defaultSettings = {
-        enable_deactivation: props.plugin.active ? 'no' : 'yes',
+        enable_deactivation: props.plugin.isDisabled ? 'yes' : 'no',
         device_type: 'all',
         condition_type: 'disable_on_selected',
         uri_type: 'page',
@@ -454,9 +458,10 @@ const saveSettings = async () => {
     // Save settings via store
     await store.updatePluginSettings(props.plugin.id, settingsToSave)
     
-    // Update the plugin's active status in the UI
-    const isActive = settingsToSave.enable_deactivation !== 'yes'
-    props.plugin.active = isActive
+    // Update the plugin object with the new isDisabled state
+    if (props.plugin) {
+      props.plugin.isDisabled = settingsToSave.enable_deactivation === 'yes'
+    }
     
     // Emit the save event with settings and plugin data
     emit('save', {
