@@ -67,7 +67,7 @@
         <!-- Post Types Selection -->
         <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
           <label>Select Post Types:</label>
-          <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange">
+          <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange"  style="display: flex;gap: 10px;">
             <el-checkbox v-for="postType in availablePostTypes" :key="postType" :label="postType">
               {{ formatPostTypeName(postType) }}
             </el-checkbox>
@@ -503,7 +503,9 @@ const saveSettings = async () => {
     border-top: 1px solid #eee;
   }
 }
-
+.el-checkbox{
+  margin-right: 0;
+}
 .form-field {
   margin-bottom: 20px;
   position: relative;
