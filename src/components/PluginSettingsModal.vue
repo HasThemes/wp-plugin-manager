@@ -6,89 +6,93 @@
     class="plugin-settings-modal"
     destroy-on-close
   >
-    <el-form>
-      <el-form-item label="Disable This Plugin:">
+    <el-form label-position="top">
+      <div class="form-field">
+        <label>Disable This Plugin:</label>
         <el-switch v-model="pluginSettings.enable_deactivation" active-value="yes" inactive-value="no" />
-      </el-form-item>
+      </div>
 
-        <el-form-item label="Disable Plugin on:" v-show="pluginSettings.enable_deactivation === 'yes'">
-              <el-select v-model="pluginSettings.device_type" class="w-full">
-                <el-option label="Desktop + Tablet" value="desktop_plus_tablet" />
-                <el-option label="Desktop" value="desktop" />
-                <el-option label="Tablet" value="tablet" />
-                <el-option label="Mobile" value="mobile" />
-                <el-option label="Tablet + Mobile" value="tablet_plus_mobile" />
-                <el-option label="All Devices" value="all" />
-              </el-select>
-              <div class="field-desc">Select the device(s) where this plugin should be disabled.</div>
-            </el-form-item>
+      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes'">
+        <label>Disable Plugin on:</label>
+        <el-select v-model="pluginSettings.device_type" class="w-full">
+          <el-option label="Desktop + Tablet" value="desktop_plus_tablet" />
+          <el-option label="Desktop" value="desktop" />
+          <el-option label="Tablet" value="tablet" />
+          <el-option label="Mobile" value="mobile" />
+          <el-option label="Tablet + Mobile" value="tablet_plus_mobile" />
+          <el-option label="All Devices" value="all" />
+        </el-select>
+        <div class="field-desc">Select the device(s) where this plugin should be disabled.</div>
+      </div>
 
-            <el-form-item label="Action:" v-show="pluginSettings.enable_deactivation === 'yes'">
-              <el-select v-model="pluginSettings.condition_type" class="w-full">
-                <el-option label="Disable on Selected Pages" value="disable_on_selected" />
-                <el-option label="Enable on Selected Pages" value="enable_on_selected" />
-              </el-select>
-              <div class="field-desc">Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.</div>
-            </el-form-item>
+      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes'">
+        <label>Action:</label>
+        <el-select v-model="pluginSettings.condition_type" class="w-full">
+          <el-option label="Disable on Selected Pages" value="disable_on_selected" />
+          <el-option label="Enable on Selected Pages" value="enable_on_selected" />
+        </el-select>
+        <div class="field-desc">Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.</div>
+      </div>
 
-            <el-form-item label="Page Type:" v-show="pluginSettings.enable_deactivation === 'yes'">
-              <el-select v-model="pluginSettings.uri_type" class="w-full">
-                <el-option label="Page" value="page" />
-                <el-option label="Post" value="post" />
-                <el-option label="Page & Post" value="page_post" />
-                <el-option label="Post, Pages & Custom Post Type" value="page_post_cpt" />
-                <el-option label="Custom" value="custom" />
-              </el-select>
-              <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
-            </el-form-item>
+      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes'">
+        <label>Page Type:</label>
+        <el-select v-model="pluginSettings.uri_type" class="w-full">
+          <el-option label="Page" value="page" />
+          <el-option label="Post" value="post" />
+          <el-option label="Page & Post" value="page_post" />
+          <el-option label="Post, Pages & Custom Post Type" value="page_post_cpt" />
+          <el-option label="Custom" value="custom" />
+        </el-select>
+        <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
+      </div>
 
-            <!-- Post Types Selection -->
-            <el-form-item 
-              label="Select Post Types:" 
-              v-show="pluginSettings.enable_deactivation === 'yes' && pluginSettings.uri_type === 'page_post_cpt'"
-            >
-              <el-checkbox-group v-model="pluginSettings.post_types">
-                <el-checkbox v-for="type in postTypes" :key="type" :label="type">{{ type }}</el-checkbox>
-              </el-checkbox-group>
-            </el-form-item>
+      <!-- Posts Selection -->
+      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes' && ['post'].includes(pluginSettings.uri_type)">
+        <label>Select Posts:</label>
+        <el-select v-model="pluginSettings.posts" multiple filterable class="w-full">
+          <el-option label="All Posts" value="all_posts" />
+          <el-option v-for="post in posts" :key="post.id" :label="post.title" :value="post.id" />
+        </el-select>
+      </div>
 
-            <!-- Pages Selection -->
-            <el-form-item 
-              label="Select Pages:" 
-              v-show="pluginSettings.enable_deactivation === 'yes' && ['page', 'page_post', 'page_post_cpt'].includes(pluginSettings.uri_type)"
-            >
-              <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
-                <el-option label="All Pages" value="all_pages" />
-                <el-option v-for="page in pages" :key="page.id" :label="page.title" :value="page.id" />
-              </el-select>
-            </el-form-item>
+      <!-- Pages Selection -->
+      <div class="form-field" v-show="pluginSettings.enable_deactivation === 'yes' && ['page', 'page_post', 'page_post_cpt'].includes(pluginSettings.uri_type)">
+        <label>Select Pages:</label>
+        <el-select v-model="pluginSettings.pages" multiple filterable class="w-full">
+          <el-option label="All Pages" value="all_pages" />
+          <el-option v-for="page in pages" :key="page.id" :label="page.title" :value="page.id" />
+        </el-select>
+      </div>
 
-            <!-- Custom URI Conditions -->
-            <template v-if="pluginSettings.enable_deactivation === 'yes' && pluginSettings.uri_type === 'custom'">
-              <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
-                <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type">
-                  <el-option label="URI Equals" value="uri_equals" />
-                  <el-option label="URI Contains" value="uri_contains" />
-                  <el-option label="URI Starts With" value="uri_starts_with" />
-                </el-select>
-                <el-input 
-                  v-model="pluginSettings.condition_list.value[index]" 
-                  placeholder="e.g. /contact-us or leave blank for homepage"
-                  class="condition-value"
-                />
-                <div class="condition-actions">
-                  <el-button type="danger" circle @click="removeCondition(index)">
-                    <el-icon><Delete /></el-icon>
-                  </el-button>
-                  <el-button type="primary" circle @click="cloneCondition(index)">
-                    <el-icon><CopyDocument /></el-icon>
-                  </el-button>
-                </div>
-              </div>
-              <el-button type="primary" plain @click="addCondition" class="mt-3">
-                <el-icon><Plus /></el-icon> Add Condition
+      <!-- Custom URI Conditions -->
+      <template v-if="pluginSettings.enable_deactivation === 'yes' && pluginSettings.uri_type === 'custom'">
+        <div class="form-field">
+          <label>URI Conditions:</label>
+          <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
+            <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type">
+              <el-option label="URI Equals" value="uri_equals" />
+              <el-option label="URI Contains" value="uri_contains" />
+              <el-option label="URI Starts With" value="uri_starts_with" />
+            </el-select>
+            <el-input 
+              v-model="pluginSettings.condition_list.value[index]" 
+              placeholder="e.g. /contact-us or leave blank for homepage"
+              class="condition-value"
+            />
+            <div class="condition-actions">
+              <el-button type="danger" circle size="small" @click="removeCondition(index)">
+                <el-icon><Delete /></el-icon>
               </el-button>
-            </template>
+              <el-button type="primary" circle size="small" @click="cloneCondition(index)">
+                <el-icon><CopyDocument /></el-icon>
+              </el-button>
+            </div>
+          </div>
+          <el-button type="primary" plain size="small" @click="addCondition" class="mt-3">
+            <el-icon><Plus /></el-icon> Add Condition
+          </el-button>
+        </div>
+      </template>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -98,6 +102,70 @@
     </template>
   </el-dialog>
 </template>
+
+<style lang="scss" scoped>
+.plugin-settings-modal {
+  :deep(.el-dialog__header) {
+    margin: 0;
+    padding: 20px 20px 10px;
+    border-bottom: 1px solid #eee;
+  }
+
+  :deep(.el-dialog__body) {
+    padding: 20px;
+  }
+
+  :deep(.el-dialog__footer) {
+    padding: 10px 20px;
+    border-top: 1px solid #eee;
+  }
+}
+
+.form-field {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #606266;
+  }
+
+  .field-desc {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #909399;
+  }
+}
+
+.uri-condition {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+
+  .condition-type {
+    width: 150px;
+  }
+
+  .condition-value {
+    flex: 1;
+  }
+
+  .condition-actions {
+    display: flex;
+    gap: 5px;
+  }
+}
+
+.w-full {
+  width: 100%;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+</style>
 
 <script setup>
 import { ref, defineProps, defineEmits, watch, computed } from 'vue'
