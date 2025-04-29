@@ -224,7 +224,6 @@ const selectedCustomPostTypes = computed(() => {
 // Pages and posts data from store
 const pages = computed(() => store.pages)
 const posts = computed(() => store.posts)
-
 // Load data when the component is mounted
 onMounted(async () => {
   if (props.plugin) {

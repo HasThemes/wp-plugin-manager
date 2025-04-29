@@ -6,7 +6,6 @@ Version: 1.0.8
 if(get_option('htpm_status') != 'active'){
 	return;
 }
-
 // If the request is from cron job
 if( !isset($_SERVER['HTTP_HOST']) ){
 	return;

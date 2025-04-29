@@ -383,7 +383,7 @@ function htpm_get_pages() {
         $result[] = [
             'id' => $page->ID,
             'title' => $page->post_title,
-            'url' => str_replace(home_url(), '', get_permalink($page->ID))
+            'url' => get_permalink($page->ID)
         ];
     }
     

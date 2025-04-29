@@ -199,7 +199,7 @@ export default {
         const { plugin, settings } = data
         
         // Ensure enable_deactivation reflects the current state from the plugin list
-        settings.enable_deactivation = plugin.isDisabled ? 'yes' : 'no'
+        settings.enable_deactivation = plugin.isDisabled ? 'yes' : 'no';
         
         // Update the plugin's settings in the store
         await store.updatePluginSettings(plugin.id, settings)

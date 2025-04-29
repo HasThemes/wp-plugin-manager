@@ -26,8 +26,7 @@ class HTPM_Option_Page {
 		add_action( 'admin_footer', [$this, 'pro_notice_content'] );
 		add_action( 'admin_init', [$this, 'settings_init'] );
 		add_action( 'admin_enqueue_scripts', [$this, 'enqueue_scripts'] );
-		add_action( 'wp_ajax_htpm_get_plugins', [$this, 'ajax_get_plugins'] );
-		add_action( 'wp_ajax_htpm_update_plugin_settings', [$this, 'ajax_update_plugin_settings'] );
+		//var_dump(get_option('htpm_options'));
     }
 
     /**
@@ -58,69 +57,6 @@ class HTPM_Option_Page {
             'nonce' => wp_create_nonce('htpm-nonce'),
             'ajaxUrl' => admin_url('admin-ajax.php')
         ]);
-    }
-
-    /**
-     * AJAX handler for getting plugins list
-     */
-    public function ajax_get_plugins() {
-        check_ajax_referer('htpm-nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Unauthorized');
-        }
-
-        $plugins = get_plugins();
-        $active_plugins = get_option('active_plugins');
-        $plugin_data = [];
-
-        foreach ($plugins as $plugin_file => $plugin) {
-            $plugin_data[] = [
-                'id' => $plugin_file,
-                'name' => $plugin['Name'],
-                'icon' => plugins_url('assets/images/icon.png', $plugin_file),
-                'active' => in_array($plugin_file, $active_plugins),
-                'settings' => get_option('htpm_plugin_' . sanitize_key($plugin_file), [
-                    'disabled' => false,
-                    'deviceType' => 'desktop_tablet',
-                    'action' => 'enable',
-                    'pageType' => 'custom',
-                    'uriCondition' => ''
-                ])
-            ];
-        }
-
-        wp_send_json_success($plugin_data);
-    }
-
-    /**
-     * AJAX handler for updating plugin settings
-     */
-    public function ajax_update_plugin_settings() {
-        check_ajax_referer('htpm-nonce', 'nonce');
-
-        if (!current_user_can('manage_options')) {
-            wp_send_json_error('Unauthorized');
-        }
-
-        $plugin = sanitize_text_field($_POST['plugin']);
-        $settings = json_decode(stripslashes($_POST['settings']), true);
-
-        if (!$plugin || !$settings) {
-            wp_send_json_error('Invalid data');
-        }
-
-        // Sanitize settings
-        $sanitized_settings = [
-            'disabled' => (bool) $settings['disabled'],
-            'deviceType' => sanitize_text_field($settings['deviceType']),
-            'action' => sanitize_text_field($settings['action']),
-            'pageType' => sanitize_text_field($settings['pageType']),
-            'uriCondition' => sanitize_text_field($settings['uriCondition'])
-        ];
-
-        update_option('htpm_plugin_' . sanitize_key($plugin), $sanitized_settings);
-        wp_send_json_success();
     }
 
 	/**
