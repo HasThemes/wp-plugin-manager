@@ -437,15 +437,42 @@ const cloneCondition = (index) => {
 const saveSettings = async () => {
   saving.value = true
   try {
-    // Prepare data for API
-    const settingsToSave = { ...pluginSettings.value }
+    // Debug original settings
+    console.log('Original settings before save:', JSON.parse(JSON.stringify(pluginSettings.value)))
     
-    // Ensure enable_deactivation reflects the plugin's current disabled state from list
-    // This preserves the state controlled by the toggle switch in the plugin list
+    // First make sure all required arrays are properly initialized
+    if (!Array.isArray(pluginSettings.value.pages)) {
+      pluginSettings.value.pages = []
+    }
+    
+    if (!Array.isArray(pluginSettings.value.posts)) {
+      pluginSettings.value.posts = []
+    }
+    
+    if (!Array.isArray(pluginSettings.value.post_types)) {
+      pluginSettings.value.post_types = ['page', 'post']
+    }
+    
+    if (!pluginSettings.value.condition_list) {
+      pluginSettings.value.condition_list = {
+        name: ['uri_equals'],
+        value: [''],
+      }
+    }
+    
+    // Prepare data for API - create a full, deep copy
+    const settingsToSave = JSON.parse(JSON.stringify(pluginSettings.value))
+    
+    // Since we've removed the switch in the modal, ensure enable_deactivation
+    // is set based on the plugin's state in the plugin list
     settingsToSave.enable_deactivation = props.plugin?.isDisabled ? 'yes' : 'no'
     
+    // Debug what we're about to save
+    console.log('About to save settings:', JSON.parse(JSON.stringify(settingsToSave)))
+    
     // Save settings via store
-    await store.updatePluginSettings(props.plugin.id, settingsToSave)
+    const result = await store.updatePluginSettings(props.plugin.id, settingsToSave)
+    console.log('Save result:', result)
     
     // Emit the save event with settings and plugin data
     emit('save', {
