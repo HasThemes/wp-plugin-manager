@@ -200,9 +200,9 @@ const loadingPages = ref(false)
 const loadingPosts = ref(false)
 const loadingCustomPosts = reactive({})
 
-// Default settings structure matching PHP
+// Default settings structure matching PHP - default to disabled
 const pluginSettings = ref({
-  enable_deactivation: 'no',
+  enable_deactivation: 'yes', // Default to 'yes' (disabled)
   device_type: 'all',
   condition_type: 'disable_on_selected',
   uri_type: 'page',
@@ -290,6 +290,7 @@ const loadPluginSettings = async () => {
       const defaultSettings = {
         // We keep the enable_deactivation setting to maintain compatibility
         // but it will be controlled by the plugin list switcher
+        // Default to 'yes' (disabled) unless explicitly set to enabled
         enable_deactivation: props.plugin.isDisabled ? 'yes' : 'no',
         device_type: 'all',
         condition_type: 'disable_on_selected',

@@ -167,10 +167,10 @@ function htpm_get_plugin_settings($request) {
     // Check if plugin is active in WordPress
     $is_wp_active = in_array($plugin_path, $active_plugins);
     
-    // Create default settings if none exist
+    // Create default settings if none exist - DEFAULT TO DISABLED
     if (empty($plugin_settings)) {
         $plugin_settings = [
-            'enable_deactivation' => 'no', // Default to not disabled
+            'enable_deactivation' => 'yes', // Default to disabled
             'device_type' => 'all',
             'condition_type' => 'disable_on_selected',
             'uri_type' => 'page',

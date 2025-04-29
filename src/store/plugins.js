@@ -1,4 +1,4 @@
-// plugins.js (Store)
+// plugins.js - Simplified store with straightforward data loading
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
@@ -24,7 +24,7 @@ export const usePluginStore = defineStore('plugins', {
   }),
 
   getters: {
-    // All plugins that are active in WordPress (regardless of our loading settings)
+    // All plugins that are active in WordPress
     wpActivePlugins: (state) => state.plugins.filter(p => p.wpActive),
     
     // Plugins that are both active in WordPress and not disabled by our plugin
@@ -37,26 +37,24 @@ export const usePluginStore = defineStore('plugins', {
     inactivePlugins: (state) => state.plugins.filter(p => !p.wpActive),
     
     updateAvailable: (state) => state.plugins.filter(p => p.hasUpdate),
-    totalPlugins: (state) => state.plugins.length,
-    pluginById: (state) => (id) => state.plugins.find(p => p.id === id),
-    customPostTypes: (state) => state.postTypes.filter(type => !['page', 'post'].includes(type.name)).map(type => type.name)
+    totalPlugins: (state) => state.plugins.length
   },
 
   actions: {
+    // Fetch all plugins
     async fetchPlugins() {
       this.loading = true
       this.error = null
       
       try {
         const response = await api.get('/htpm/v1/plugins')
-        this.plugins = response.data
         
-        // Fetch settings for each WordPress-active plugin
-        for (const plugin of this.plugins) {
-          if (plugin.wpActive) {
-            await this.fetchPluginSettings(plugin.id)
-          }
-        }
+        // Initialize all plugins with isDisabled=true by default
+        this.plugins = response.data.map(plugin => ({
+          ...plugin,
+          // All plugins start as disabled by default
+          isDisabled: true
+        }))
         
         return this.plugins
       } catch (error) {
@@ -68,6 +66,7 @@ export const usePluginStore = defineStore('plugins', {
       }
     },
 
+    // Fetch settings for a specific plugin
     async fetchPluginSettings(pluginId) {
       try {
         const response = await api.get(`/htpm/v1/plugins/${pluginId}/settings`)
@@ -75,10 +74,12 @@ export const usePluginStore = defineStore('plugins', {
         // Store settings in the store state
         this.settings[pluginId] = response.data
         
-        // Update the plugin's isDisabled state
+        // Update the plugin's isDisabled state based on settings
         const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
+        
         if (pluginIndex !== -1) {
-          const isDisabled = response.data.enable_deactivation === 'yes'
+          // A plugin is only enabled if settings explicitly say 'no' to deactivation
+          const isDisabled = !response.data || response.data.enable_deactivation !== 'no'
           this.plugins[pluginIndex].isDisabled = isDisabled
         }
         
@@ -89,20 +90,20 @@ export const usePluginStore = defineStore('plugins', {
       }
     },
 
+    // Update plugin settings
     async updatePluginSettings(pluginId, settings) {
       try {
-        // Always get the current plugin disabled state from UI
-        const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
-        if (pluginIndex !== -1) {
-          // Ensure settings reflect the current disabled state in the UI
-          settings.enable_deactivation = this.plugins[pluginIndex].isDisabled ? 'yes' : 'no'
-        }
-        
         const response = await api.post(`/htpm/v1/plugins/${pluginId}/settings`, settings)
         
         if (response.data.success) {
           // Update settings in store
           this.settings[pluginId] = { ...settings }
+          
+          // Update the plugin's isDisabled state based on settings
+          const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
+          if (pluginIndex !== -1) {
+            this.plugins[pluginIndex].isDisabled = settings.enable_deactivation === 'yes'
+          }
         }
         
         return response.data
@@ -113,55 +114,7 @@ export const usePluginStore = defineStore('plugins', {
       }
     },
 
-    async togglePlugin(plugin) {
-      try {
-        // Toggle the isDisabled state
-        const isDisabled = !plugin.isDisabled
-        
-        // Update the plugin in the UI immediately
-        const pluginIndex = this.plugins.findIndex(p => p.id === plugin.id)
-        if (pluginIndex !== -1) {
-          this.plugins[pluginIndex].isDisabled = isDisabled
-        }
-        
-        // Update the plugin settings
-        const settings = this.settings[plugin.id] || {
-          enable_deactivation: isDisabled ? 'yes' : 'no',
-          device_type: 'all',
-          condition_type: 'disable_on_selected',
-          uri_type: 'page',
-          post_types: ['page', 'post'],
-          posts: [],
-          pages: [],
-          condition_list: {
-            name: ['uri_equals'],
-            value: [''],
-          }
-        }
-        
-        // Update the enable_deactivation setting
-        settings.enable_deactivation = isDisabled ? 'yes' : 'no'
-        
-        // Save the updated settings
-        const response = await this.updatePluginSettings(plugin.id, settings)
-        
-        // If the update fails, revert the UI change
-        if (!response.success) {
-          const revertIndex = this.plugins.findIndex(p => p.id === plugin.id)
-          if (revertIndex !== -1) {
-            this.plugins[revertIndex].isDisabled = !isDisabled
-          }
-          throw new Error('Failed to toggle plugin')
-        }
-        
-        return response
-      } catch (error) {
-        this.error = error.message || 'Failed to toggle plugin'
-        console.error('Error toggling plugin:', error)
-        throw error
-      }
-    },
-
+    // Fetch pages for settings selector
     async fetchPages() {
       try {
         if (this.pages.length > 0) {
@@ -177,6 +130,7 @@ export const usePluginStore = defineStore('plugins', {
       }
     },
     
+    // Fetch posts for settings selector
     async fetchPosts() {
       try {
         if (this.posts.length > 0) {
@@ -192,6 +146,7 @@ export const usePluginStore = defineStore('plugins', {
       }
     },
     
+    // Fetch available post types
     async fetchPostTypes() {
       try {
         if (this.postTypes.length > 0) {
@@ -207,6 +162,7 @@ export const usePluginStore = defineStore('plugins', {
       }
     },
     
+    // Fetch items for a specific post type
     async fetchCustomPostTypeItems(postType) {
       try {
         if (this.customPostTypeItems[postType]?.length > 0) {

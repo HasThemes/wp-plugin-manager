@@ -1,4 +1,4 @@
-// PluginList.vue with updated toggle handling
+// PluginList.vue - Simplified with stable loading
 <template>
   <div class="htpm-plugins">
     <div class="htpm-plugins-header">
@@ -11,10 +11,17 @@
         />
       </div>
     </div>
-    <div class="plugin-list">
+    
+    <!-- Loading indicator shown until plugins are fully loaded -->
+    <div v-if="loading" class="loading-indicator">
+      <el-skeleton :rows="5" animated />
+    </div>
+    
+    <!-- Only show plugin list when loading is complete -->
+    <div v-else class="plugin-list">
       <!-- Show only WordPress-activated plugins -->
       <div 
-        v-for="plugin in filteredWpActivePlugins" 
+        v-for="plugin in filteredPlugins" 
         :key="plugin.id" 
         class="plugin-item"
         :class="{ 'plugin-disabled': plugin.isDisabled }"
@@ -65,7 +72,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Search, Filter, Sort, Box, Setting, Monitor, Edit, Grid } from '@element-plus/icons-vue'
+import { Search, Box, Setting, Monitor, Edit, Grid } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
@@ -74,61 +81,52 @@ const store = usePluginStore()
 const searchQuery = ref('')
 const showSettings = ref(false)
 const selectedPlugin = ref(null)
+const loading = ref(true)
+const plugins = ref([])
 
-// Props for component flexibility
-const props = defineProps({
-  plugins: {
-    type: Array,
-    default: () => []
+// Load plugins on component mount
+onMounted(async () => {
+  loading.value = true
+  
+  try {
+    // First fetch all plugins
+    await store.fetchPlugins()
+    
+    // Wait for all plugin settings to load
+    const promises = []
+    for (const plugin of store.plugins) {
+      if (plugin.wpActive) {
+        promises.push(store.fetchPluginSettings(plugin.id))
+      }
+    }
+    
+    await Promise.all(promises)
+    
+    // Only after all settings have loaded, prepare the plugins list
+    plugins.value = store.plugins.map(plugin => ({
+      ...plugin,
+      // A plugin is enabled only if settings explicitly set enable_deactivation to 'no'
+      isDisabled: !store.settings[plugin.id] || store.settings[plugin.id].enable_deactivation !== 'no'
+    }))
+  } catch (error) {
+    ElMessage.error('Failed to load plugins')
+    console.error('Error loading plugins:', error)
+  } finally {
+    loading.value = false
   }
 })
 
-// Emits for component events
-const emit = defineEmits(['toggle', 'update-settings'])
-
-// Use store plugins or prop plugins
-const storePlugins = computed(() => {
-  const plugins = store.plugins.map(plugin => ({
-    ...plugin,
-    isDisabled: plugin.settings?.enable_deactivation === 'yes'
-  }))
-  return plugins
-})
-
-// Filter to only WordPress-active plugins
-const wpActivePlugins = computed(() => {
-  const activePlugins = props.plugins.length > 0 
-    ? props.plugins.filter(plugin => plugin.wpActive)
-    : storePlugins.value.filter(plugin => plugin.wpActive)
+// Filter plugins based on search query
+const filteredPlugins = computed(() => {
+  // First filter only active WordPress plugins
+  const activePlugins = plugins.value.filter(plugin => plugin.wpActive)
   
-  return activePlugins
-})
-
-// Filter based on search query
-const filteredWpActivePlugins = computed(() => {
-  if (!searchQuery.value) return wpActivePlugins.value
+  // Then apply search filter if there's a query
+  if (!searchQuery.value) return activePlugins
   
-  return wpActivePlugins.value.filter(plugin => 
+  return activePlugins.filter(plugin => 
     plugin.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
-})
-
-// Load plugins on component mount if using store
-onMounted(async () => {
-  if (props.plugins.length === 0) {
-    try {
-      await store.fetchPlugins()
-      // Load settings for each plugin
-      for (const plugin of store.plugins) {
-        if (plugin.wpActive) {
-          await store.fetchPluginSettings(plugin.id)
-        }
-      }
-    } catch (error) {
-      ElMessage.error('Failed to load plugins')
-      console.error('Error loading plugins:', error)
-    }
-  }
 })
 
 // Toggle plugin loading status
@@ -139,7 +137,7 @@ const togglePluginLoading = async (plugin) => {
     
     // Update the plugin settings
     const settings = store.settings[plugin.id] || {
-      enable_deactivation: 'no',
+      enable_deactivation: plugin.isDisabled ? 'yes' : 'no',
       device_type: 'all',
       condition_type: 'disable_on_selected',
       uri_type: 'page',
@@ -203,7 +201,6 @@ const getPluginIconClass = (name) => {
 </script>
 
 <style lang="scss" scoped>
-/* Styles remain unchanged */
 .htpm-plugins {
   background: #fff;
   border-radius: 8px;
@@ -228,6 +225,10 @@ const getPluginIconClass = (name) => {
       align-items: center;
       gap: 12px;
     }
+  }
+
+  .loading-indicator {
+    padding: 20px 0;
   }
 
   .plugin-list {
@@ -356,6 +357,7 @@ const getPluginIconClass = (name) => {
     width: 200px;
   }
 }
+
 /* Final CSS for plugin list, switch and modal settings */
 
 /* Plugin list item styling */
