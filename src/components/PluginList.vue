@@ -1,4 +1,4 @@
-// PluginList.vue
+// PluginList.vue with updated toggle handling
 <template>
   <div class="htpm-plugins">
     <div class="htpm-plugins-header">
@@ -38,7 +38,7 @@
           <!-- Toggle whether the plugin is loaded or not -->
           <el-switch
             :model-value="!plugin.isDisabled"
-            @update:model-value="(value) => togglePluginLoading(plugin)"
+            @update:model-value="() => togglePluginLoading(plugin)"
             class="plugin-switch"
           />
           <el-button
@@ -131,16 +131,6 @@ onMounted(async () => {
   }
 })
 
-// Filter plugins handling
-const handleFilter = () => {
-  ElMessage.info('Filter functionality will be implemented here')
-}
-
-// Sort plugins handling
-const handleSort = () => {
-  ElMessage.info('Sort functionality will be implemented here')
-}
-
 // Toggle plugin loading status
 const togglePluginLoading = async (plugin) => {
   try {
@@ -149,7 +139,7 @@ const togglePluginLoading = async (plugin) => {
     
     // Update the plugin settings
     const settings = store.settings[plugin.id] || {
-      enable_deactivation: plugin.isDisabled ? 'yes' : 'no',
+      enable_deactivation: 'no',
       device_type: 'all',
       condition_type: 'disable_on_selected',
       uri_type: 'page',
@@ -188,14 +178,11 @@ const savePluginSettings = async (data) => {
   try {
     const { plugin, settings } = data
     
+    // Ensure enable_deactivation reflects the current state from the plugin list
+    settings.enable_deactivation = plugin.isDisabled ? 'yes' : 'no'
+    
     // Update the plugin's settings in the store
     await store.updatePluginSettings(plugin.id, settings)
-    
-    // Update the plugin's isDisabled state based on enable_deactivation
-    const pluginIndex = storePlugins.value.findIndex(p => p.id === plugin.id)
-    if (pluginIndex !== -1) {
-      storePlugins.value[pluginIndex].isDisabled = settings.enable_deactivation === 'yes'
-    }
     
     ElMessage.success('Settings saved successfully')
   } catch (error) {
@@ -216,6 +203,7 @@ const getPluginIconClass = (name) => {
 </script>
 
 <style lang="scss" scoped>
+/* Styles remain unchanged */
 .htpm-plugins {
   background: #fff;
   border-radius: 8px;

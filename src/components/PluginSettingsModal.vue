@@ -8,174 +8,161 @@
     destroy-on-close
   >
     <el-form label-position="top" v-loading="loading">
-      <!-- Enable/Disable plugin toggle (moved to plugin list, but still keep it here for config) -->
+      <!-- Configuration settings for the plugin - Always visible now -->
       <div class="form-field">
-        <el-switch
-          :model-value="pluginSettings.enable_deactivation !== 'yes'"
-          @update:model-value="handleDisableToggle"
-          class="disable-switch"
-        />
-        <label>{{ pluginSettings.enable_deactivation === 'yes' ? 'Plugin is disabled' : 'Plugin is enabled' }}</label>
+        <label>Disable Plugin on:</label>
+        <el-select v-model="pluginSettings.device_type" class="w-full">
+          <el-option label="All Devices" value="all" />
+          <el-option label="Desktop" value="desktop" />
+          <el-option label="Tablet" value="tablet" />
+          <el-option label="Mobile" value="mobile" />
+          <el-option label="Desktop + Tablet" value="desktop_plus_tablet" />
+          <el-option label="Tablet + Mobile" value="tablet_plus_mobile" />
+        </el-select>
+        <div class="field-desc">Select the device(s) where this plugin should be disabled.</div>
       </div>
 
-      <!-- Configuration settings for the plugin -->
-      <template v-if="pluginSettings.enable_deactivation === 'yes'">
-        <!-- Device Type Selector -->
-        <div class="form-field">
-          <label>Disable Plugin on:</label>
-          <el-select v-model="pluginSettings.device_type" class="w-full">
-            <el-option label="All Devices" value="all" />
-            <el-option label="Desktop" value="desktop" />
-            <el-option label="Tablet" value="tablet" />
-            <el-option label="Mobile" value="mobile" />
-            <el-option label="Desktop + Tablet" value="desktop_plus_tablet" />
-            <el-option label="Tablet + Mobile" value="tablet_plus_mobile" />
-          </el-select>
-          <div class="field-desc">Select the device(s) where this plugin should be disabled.</div>
-        </div>
+      <!-- Condition Type Selector -->
+      <div class="form-field">
+        <label>Action:</label>
+        <el-select v-model="pluginSettings.condition_type" class="w-full">
+          <el-option label="Disable on Selected Pages" value="disable_on_selected" />
+          <el-option label="Enable on Selected Pages" value="enable_on_selected" />
+        </el-select>
+        <div class="field-desc">Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.</div>
+      </div>
 
-        <!-- Condition Type Selector -->
-        <div class="form-field">
-          <label>Action:</label>
-          <el-select v-model="pluginSettings.condition_type" class="w-full">
-            <el-option label="Disable on Selected Pages" value="disable_on_selected" />
-            <el-option label="Enable on Selected Pages" value="enable_on_selected" />
-          </el-select>
-          <div class="field-desc">Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.</div>
-        </div>
-
-        <!-- URI Type Selector -->
-        <div class="form-field">
-          <label>Page Type:</label>
-          <el-select v-model="pluginSettings.uri_type" class="w-full" @change="handleUriTypeChange">
-            <el-option label="Page" value="page" />
-            <el-option label="Post" value="post" />
-            <el-option label="Page & Post" value="page_post" />
-            <el-option label="Post, Pages & Custom Post Type" value="page_post_cpt" />
-            <el-option label="Custom" value="custom" />
-          </el-select>
-          <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
-          <el-tooltip
-            v-if="pluginSettings.uri_type === 'page_post_cpt'"
-            content="If you wish to select custom posts, please choose the custom post types below"
-            placement="top"
-          >
-            <el-icon class="info-icon"><InfoFilled /></el-icon>
-          </el-tooltip>
-        </div>
-
-        <!-- Post Types Selection -->
-        <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
-          <label>Select Post Types:</label>
-          <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange" style="display: flex;gap: 10px;">
-            <el-checkbox v-for="postType in availablePostTypes" :key="postType.name" :label="postType.name">
-              {{ postType.label }}
-            </el-checkbox>
-          </el-checkbox-group>
-        </div>
-
-        <!-- Pages Selection -->
-        <div 
-          class="form-field" 
-          v-if="['page', 'page_post'].includes(pluginSettings.uri_type) || 
-                (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('page'))"
+      <!-- URI Type Selector -->
+      <div class="form-field">
+        <label>Page Type:</label>
+        <el-select v-model="pluginSettings.uri_type" class="w-full" @change="handleUriTypeChange">
+          <el-option label="Page" value="page" />
+          <el-option label="Post" value="post" />
+          <el-option label="Page & Post" value="page_post" />
+          <el-option label="Post, Pages & Custom Post Type" value="page_post_cpt" />
+          <el-option label="Custom" value="custom" />
+        </el-select>
+        <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
+        <el-tooltip
+          v-if="pluginSettings.uri_type === 'page_post_cpt'"
+          content="If you wish to select custom posts, please choose the custom post types below"
+          placement="top"
         >
-          <label>Select Pages:</label>
-          <el-select v-model="pluginSettings.pages" multiple filterable class="w-full" :loading="loadingPages">
-            <el-option label="All Pages" value="all_pages,all_pages" />
+          <el-icon class="info-icon"><InfoFilled /></el-icon>
+        </el-tooltip>
+      </div>
+
+      <!-- Post Types Selection -->
+      <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
+        <label>Select Post Types:</label>
+        <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange" style="display: flex;gap: 10px;">
+          <el-checkbox v-for="postType in availablePostTypes" :key="postType.name" :label="postType.name">
+            {{ postType.label }}
+          </el-checkbox>
+        </el-checkbox-group>
+      </div>
+
+      <!-- Pages Selection -->
+      <div 
+        class="form-field" 
+        v-if="['page', 'page_post'].includes(pluginSettings.uri_type) || 
+              (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('page'))"
+      >
+        <label>Select Pages:</label>
+        <el-select v-model="pluginSettings.pages" multiple filterable class="w-full" :loading="loadingPages">
+          <el-option label="All Pages" value="all_pages,all_pages" />
+          <el-option 
+            v-for="page in pages" 
+            :key="page.id" 
+            :label="page.title" 
+            :value="`${page.id},${page.url}`" 
+          />
+        </el-select>
+      </div>
+
+      <!-- Posts Selection -->
+      <div 
+        class="form-field" 
+        v-if="['post', 'page_post'].includes(pluginSettings.uri_type) ||
+             (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('post'))"
+      >
+        <label>Select Posts:</label>
+        <el-select v-model="pluginSettings.posts" multiple filterable class="w-full" :loading="loadingPosts">
+          <el-option label="All Posts" value="all_posts,all_posts" />
+          <el-option 
+            v-for="post in posts" 
+            :key="post.id" 
+            :label="post.title" 
+            :value="`${post.id},${post.url}`"
+          />
+        </el-select>
+      </div>
+
+      <!-- Custom Post Type Selections - Dynamically rendered for each selected post type -->
+      <template v-if="pluginSettings.uri_type === 'page_post_cpt'">
+        <div 
+          v-for="postType in selectedCustomPostTypes" 
+          :key="postType"
+          class="form-field"
+        >
+          <label>Select {{ formatPostTypeName(postType) }}s:</label>
+          <el-select 
+            v-model="pluginSettings[postType + 's']" 
+            multiple 
+            filterable 
+            class="w-full"
+            :loading="loadingCustomPosts[postType]"
+          >
             <el-option 
-              v-for="page in pages" 
-              :key="page.id" 
-              :label="page.title" 
-              :value="`${page.id},${page.url}`" 
+              :label="`All ${formatPostTypeName(postType)}s`" 
+              :value="`all_${postType}s,all_${postType}s`"
+            />
+            <el-option 
+              v-for="item in getCustomPostTypeItems(postType)" 
+              :key="item.id" 
+              :label="item.title" 
+              :value="`${item.id},${item.url}`"
             />
           </el-select>
         </div>
+      </template>
 
-        <!-- Posts Selection -->
-        <div 
-          class="form-field" 
-          v-if="['post', 'page_post'].includes(pluginSettings.uri_type) ||
-               (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('post'))"
-        >
-          <label>Select Posts:</label>
-          <el-select v-model="pluginSettings.posts" multiple filterable class="w-full" :loading="loadingPosts">
-            <el-option label="All Posts" value="all_posts,all_posts" />
-            <el-option 
-              v-for="post in posts" 
-              :key="post.id" 
-              :label="post.title" 
-              :value="`${post.id},${post.url}`"
-            />
-          </el-select>
-        </div>
-
-        <!-- Custom Post Type Selections - Dynamically rendered for each selected post type -->
-        <template v-if="pluginSettings.uri_type === 'page_post_cpt'">
-          <div 
-            v-for="postType in selectedCustomPostTypes" 
-            :key="postType"
-            class="form-field"
-          >
-            <label>Select {{ formatPostTypeName(postType) }}s:</label>
-            <el-select 
-              v-model="pluginSettings[postType + 's']" 
-              multiple 
-              filterable 
-              class="w-full"
-              :loading="loadingCustomPosts[postType]"
-            >
-              <el-option 
-                :label="`All ${formatPostTypeName(postType)}s`" 
-                :value="`all_${postType}s,all_${postType}s`"
-              />
-              <el-option 
-                v-for="item in getCustomPostTypeItems(postType)" 
-                :key="item.id" 
-                :label="item.title" 
-                :value="`${item.id},${item.url}`"
-              />
+      <!-- Custom URI Conditions -->
+      <template v-if="pluginSettings.uri_type === 'custom'">
+        <div class="form-field">
+          <label>URI Conditions:</label>
+          <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
+            <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type">
+              <el-option label="URI Equals" value="uri_equals" />
+              <el-option label="URI Not Equals" value="uri_not_equals" />
+              <el-option label="URI Contains" value="uri_contains" />
+              <el-option label="URI Not Contains" value="uri_not_contains" />
             </el-select>
-          </div>
-        </template>
-
-        <!-- Custom URI Conditions -->
-        <template v-if="pluginSettings.uri_type === 'custom'">
-          <div class="form-field">
-            <label>URI Conditions:</label>
-            <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
-              <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type">
-                <el-option label="URI Equals" value="uri_equals" />
-                <el-option label="URI Not Equals" value="uri_not_equals" />
-                <el-option label="URI Contains" value="uri_contains" />
-                <el-option label="URI Not Contains" value="uri_not_contains" />
-              </el-select>
-              <el-input 
-                v-model="pluginSettings.condition_list.value[index]" 
-                placeholder="e.g: contact-us or leave blank for homepage"
-                class="condition-value"
-              />
-              <div class="condition-actions">
-                <el-button 
-                  type="danger" 
-                  circle 
-                  size="small" 
-                  @click="removeCondition(index)" 
-                  :disabled="pluginSettings.condition_list.name.length <= 1"
-                >
-                  <el-icon><Delete /></el-icon>
-                </el-button>
-                <el-button type="primary" circle size="small" @click="cloneCondition(index)">
-                  <el-icon><CopyDocument /></el-icon>
-                </el-button>
-              </div>
+            <el-input 
+              v-model="pluginSettings.condition_list.value[index]" 
+              placeholder="e.g: contact-us or leave blank for homepage"
+              class="condition-value"
+            />
+            <div class="condition-actions">
+              <el-button 
+                type="danger" 
+                circle 
+                size="small" 
+                @click="removeCondition(index)" 
+                :disabled="pluginSettings.condition_list.name.length <= 1"
+              >
+                <el-icon><Delete /></el-icon>
+              </el-button>
+              <el-button type="primary" circle size="small" @click="cloneCondition(index)">
+                <el-icon><CopyDocument /></el-icon>
+              </el-button>
             </div>
-            <el-button type="primary" plain size="small" @click="addCondition" class="mt-3">
-              <el-icon><Plus /></el-icon> Add Condition
-            </el-button>
-            <div class="field-desc">E.g. You can use 'contact-us' on URLs like https://example.com/contact-us or leave it blank for the homepage.</div>
           </div>
-        </template>
+          <el-button type="primary" plain size="small" @click="addCondition" class="mt-3">
+            <el-icon><Plus /></el-icon> Add Condition
+          </el-button>
+          <div class="field-desc">E.g. You can use 'contact-us' on URLs like https://example.com/contact-us or leave it blank for the homepage.</div>
+        </div>
       </template>
     </el-form>
     <template #footer>
@@ -259,11 +246,6 @@ watch(() => props.visible, async (newVisible) => {
   }
 })
 
-// Handle disable toggle in the modal
-const handleDisableToggle = () => {
-  pluginSettings.value.enable_deactivation = !pluginSettings.value.enable_deactivation ? 'yes' : 'no'
-}
-
 // Load all required data
 const loadData = async () => {
   loading.value = true
@@ -306,6 +288,8 @@ const loadPluginSettings = async () => {
     if (settings) {
       // Ensure we have proper structure
       const defaultSettings = {
+        // We keep the enable_deactivation setting to maintain compatibility
+        // but it will be controlled by the plugin list switcher
         enable_deactivation: props.plugin.isDisabled ? 'yes' : 'no',
         device_type: 'all',
         condition_type: 'disable_on_selected',
@@ -455,13 +439,12 @@ const saveSettings = async () => {
     // Prepare data for API
     const settingsToSave = { ...pluginSettings.value }
     
+    // Ensure enable_deactivation reflects the plugin's current disabled state from list
+    // This preserves the state controlled by the toggle switch in the plugin list
+    settingsToSave.enable_deactivation = props.plugin?.isDisabled ? 'yes' : 'no'
+    
     // Save settings via store
     await store.updatePluginSettings(props.plugin.id, settingsToSave)
-    
-    // Update the plugin object with the new isDisabled state
-    if (props.plugin) {
-      props.plugin.isDisabled = settingsToSave.enable_deactivation === 'yes'
-    }
     
     // Emit the save event with settings and plugin data
     emit('save', {
@@ -526,10 +509,6 @@ const saveSettings = async () => {
     color: #409EFF;
     font-size: 18px;
     cursor: help;
-  }
-  
-  .disable-switch {
-    margin-right: 10px;
   }
 }
 
