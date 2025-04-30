@@ -158,7 +158,7 @@
               </el-button>
             </div>
           </div>
-          <el-button type="primary" plain size="small" @click="addCondition" class="mt-3">
+          <el-button type="primary" plain size="small" @click="addCondition" class="mt-3 add-condition" color="#fff">
             <el-icon><Plus /></el-icon> Add Condition
           </el-button>
           <div class="field-desc">E.g. You can use 'contact-us' on URLs like https://example.com/contact-us or leave it blank for the homepage.</div>
@@ -566,7 +566,10 @@ const saveSettings = async () => {
 .mt-3 {
   margin-top: 12px;
 }
-
+.add-condition:hover{
+  background-color: rgb(121.3,187.1,255);
+  cursor: pointer;
+}
 .dialog-footer {
   display: flex;
   justify-content: flex-end;

@@ -27,11 +27,11 @@
         :class="{ 'plugin-disabled': (plugin.enable_deactivation !== 'yes') }"
       >
         <div class="plugin-info">
-          <div class="plugin-icon-image" :class="getPluginIconClass(plugin.name)">
-            <el-icon v-if="plugin.name.includes('Query')"><Monitor /></el-icon>
-            <el-icon v-else-if="plugin.name.includes('Elementor')"><Edit /></el-icon>
-            <el-icon v-else-if="plugin.name.includes('HT Mega')"><Grid /></el-icon>
-            <el-icon v-else><Box /></el-icon>
+          <div class="plugin-icon-image default">
+            <img v-if="plugin.icon" :src="plugin.icon" :alt="plugin.name + ' icon'" class="plugin-thumbnail">
+            <template v-else>
+                {{plugin.name.charAt(0).toUpperCase()}}
+            </template>
           </div>
           <div class="plugin-details">
             <h3>{{ plugin.name }}</h3>
@@ -80,7 +80,8 @@ import { usePluginStore } from '../store/plugins'
 export default {
   name: 'PluginList',
   components: {
-    PluginSettingsModal
+    PluginSettingsModal,
+    ElMessage
   },
   setup() {
     const store = usePluginStore()
@@ -295,38 +296,28 @@ export default {
         gap: 12px;
 
         .plugin-icon-image {
-          width: 32px;
-          height: 32px;
-          border-radius: 4px;
+          width: 40px;
+          height: 40px;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 16px;
-          color: #fff;
-          background: #e9ecef;
+          border-radius: 8px;
+          background: var(--el-color-primary-light-9);
+          margin-right: 16px;
+          overflow: hidden;
 
-          &.query-monitor {
-            background: #4c6ef5;
+          &.default {
+            background: #f0f2f5;
+            .el-icon {
+              font-size: 24px;
+              color: #909399;
+            }
           }
 
-          &.elementor {
-            background: #92003b;
-          }
-
-          &.htmega {
-            background: #0073aa;
-          }
-
-          &.woocommerce {
-            background: #7f54b3;
-          }
-
-          &.yoast {
-            background: #a4286a;
-          }
-
-          :deep(.el-icon) {
-            font-size: 16px;
+          .plugin-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
           }
         }
 

@@ -105,6 +105,25 @@ function htpm_get_plugins() {
             $has_update = true;
         }
         
+        // Get plugin icon
+        //$icon_url =  HTPM_ROOT_URL .'/assets/images/logo.jpg';
+        $icon_url =  '';
+
+        $plugin_slug = dirname($plugin_path);
+        $base_url = 'https://ps.w.org/' . $plugin_slug . '/assets/';
+        $icon_base = 'icon-128x128';
+        $extensions = ['png', 'jpg','gif', 'svg'];
+        
+        
+        foreach ($extensions as $ext) {
+            $file_url = $base_url . $icon_base . '.' . $ext;
+            $response = wp_remote_head($file_url);
+            if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
+                $icon_url = $file_url;
+                break; // Stop at the first found file
+            }
+        }
+        
         // Check if plugin has custom settings for deactivation
         $plugin_settings = isset($htpm_list_plugins[$plugin_path]) ? $htpm_list_plugins[$plugin_path] : [];
         $is_disabled = !empty($plugin_settings['enable_deactivation']) && $plugin_settings['enable_deactivation'] === 'yes';
@@ -122,7 +141,8 @@ function htpm_get_plugins() {
             'active' => $actual_active_status, // Loaded or not
             'wpActive' => $is_wp_active, // Activated in WordPress
             'enable_deactivation' => $is_disabled, // Disabled by our plugin
-            'hasUpdate' => $has_update
+            'hasUpdate' => $has_update,
+            'icon' => $icon_url // Use found icon URL or empty string if none found
         ];
     }
     
