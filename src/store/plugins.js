@@ -28,10 +28,10 @@ export const usePluginStore = defineStore('plugins', {
     wpActivePlugins: (state) => state.plugins.filter(p => p.wpActive),
     
     // Plugins that are both active in WordPress and not disabled by our plugin
-    activePlugins: (state) => state.plugins.filter(p => p.wpActive && !p.isDisabled),
+    activePlugins: (state) => state.plugins.filter(p => p.wpActive && !p.enable_deactivation),
     
     // Plugins that are disabled by our plugin (but still active in WordPress)
-    disabledPlugins: (state) => state.plugins.filter(p => p.wpActive && p.isDisabled),
+    disabledPlugins: (state) => state.plugins.filter(p => p.wpActive && p.enable_deactivation),
     
     // Plugins that are inactive in WordPress
     inactivePlugins: (state) => state.plugins.filter(p => !p.wpActive),
@@ -49,11 +49,11 @@ export const usePluginStore = defineStore('plugins', {
       try {
         const response = await api.get('/htpm/v1/plugins')
         
-        // Initialize all plugins with isDisabled=true by default
+        // Initialize all plugins with enable_deactivation=true by default
         this.plugins = response.data.map(plugin => ({
           ...plugin,
           // All plugins start as disabled by default
-          isDisabled: true
+          enable_deactivation: 'no'
         }))
         
         return this.plugins
@@ -74,13 +74,13 @@ export const usePluginStore = defineStore('plugins', {
         // Store settings in the store state
         this.settings[pluginId] = response.data
         
-        // Update the plugin's isDisabled state based on settings
+        // Update the plugin's enable_deactivation state based on settings
         const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
         
         if (pluginIndex !== -1) {
           // A plugin is only enabled if settings explicitly say 'no' to deactivation
-          const isDisabled = !response.data || response.data.enable_deactivation !== 'no'
-          this.plugins[pluginIndex].isDisabled = isDisabled
+          const enable_deactivation = !response.data || response.data.enable_deactivation !== 'no'
+          this.plugins[pluginIndex].enable_deactivation = enable_deactivation
         }
         
         return response.data
@@ -135,10 +135,10 @@ async updatePluginSettings(pluginId, settings) {
       // Update settings in store
       this.settings[pluginId] = { ...completeSettings }
       
-      // Update the plugin's isDisabled state based on settings
+      // Update the plugin's enable_deactivation state based on settings
       const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
       if (pluginIndex !== -1) {
-        this.plugins[pluginIndex].isDisabled = completeSettings.enable_deactivation === 'yes'
+        this.plugins[pluginIndex].enable_deactivation = completeSettings.enable_deactivation;
       }
       
       console.log('Settings updated successfully:', this.settings[pluginId])

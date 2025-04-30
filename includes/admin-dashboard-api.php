@@ -121,7 +121,7 @@ function htpm_get_plugins() {
             'file' => $plugin_path,
             'active' => $actual_active_status, // Loaded or not
             'wpActive' => $is_wp_active, // Activated in WordPress
-            'isDisabled' => $is_disabled, // Disabled by our plugin
+            'enable_deactivation' => $is_disabled, // Disabled by our plugin
             'hasUpdate' => $has_update
         ];
     }
@@ -294,7 +294,7 @@ function htpm_update_plugin_settings($request) {
     
     return new WP_REST_Response([
         'success' => true,
-        'isDisabled' => $sanitized_settings['enable_deactivation'] === 'yes'
+        'enable_deactivation' => $sanitized_settings['enable_deactivation'] === 'yes'
     ], 200);
 }
 
@@ -364,7 +364,7 @@ function htpm_toggle_plugin($request) {
     
     return new WP_REST_Response([
         'success' => true,
-        'isDisabled' => !$is_currently_disabled
+        'enable_deactivation' => !$is_currently_disabled
     ], 200);
 }
 

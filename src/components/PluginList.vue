@@ -24,7 +24,7 @@
         v-for="plugin in filteredPlugins" 
         :key="plugin.id" 
         class="plugin-item"
-        :class="{ 'plugin-disabled': plugin.isDisabled }"
+        :class="{ 'plugin-disabled': (plugin.enable_deactivation == 'yes') }"
       >
         <div class="plugin-info">
           <div class="plugin-icon-image" :class="getPluginIconClass(plugin.name)">
@@ -36,15 +36,15 @@
           <div class="plugin-details">
             <h3>{{ plugin.name }}</h3>
             <div class="plugin-status">
-              <span class="status-dot" :class="{ active: !plugin.isDisabled }"></span>
-              <span class="status-text">{{ plugin.isDisabled ? 'Not Optimized Yet' : 'Optimized' }}</span>
+              <span class="status-dot" :class="{ active: (plugin.enable_deactivation == 'yes') }"></span>
+              <span class="status-text">{{ plugin.enable_deactivation == 'yes' ? 'Optimized' : 'Not Optimized Yet' }}</span>
             </div>
           </div>
         </div>
         <div class="plugin-actions">
           <!-- Toggle whether the plugin is loaded or not -->
           <el-switch
-            :model-value="!plugin.isDisabled"
+            :model-value="plugin.enable_deactivation == 'yes'"
             @update:model-value="() => togglePluginLoading(plugin)"
             class="plugin-switch"
           />
@@ -53,7 +53,7 @@
             :icon="Setting"
             circle
             class="settings-button"
-            :class="{ 'active-settings': !plugin.isDisabled }"
+            :class="{ 'active-settings': plugin.enable_deactivation == 'yes' }"
             @click="openSettings(plugin)"
           />
         </div>
@@ -116,7 +116,7 @@ export default {
             ...plugin,
             settings: settings,
             // A plugin is enabled only if settings explicitly set enable_deactivation to 'no'
-            isDisabled: !settings || settings.enable_deactivation !== 'no'
+            enable_deactivation: !settings || settings.enable_deactivation !== 'no'
           };
         })
       } catch (error) {
@@ -143,8 +143,8 @@ export default {
     // Toggle plugin loading status
     const togglePluginLoading = async (plugin) => {
       try {
-        // Toggle the isDisabled state
-        plugin.isDisabled = !plugin.isDisabled
+        // Toggle the enable_deactivation state
+        plugin.enable_deactivation = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
         
         // Get existing settings
         let existingSettings = store.settings[plugin.id];
@@ -170,7 +170,7 @@ export default {
         const settings = JSON.parse(JSON.stringify(existingSettings));
         
         // Update only the enable_deactivation setting
-        settings.enable_deactivation = plugin.isDisabled ? 'yes' : 'no';
+        settings.enable_deactivation = plugin.enable_deactivation;
         
         // Update settings via store
         await store.updatePluginSettings(plugin.id, settings);
@@ -178,10 +178,10 @@ export default {
         // Update the plugin's local settings
         plugin.settings = settings;
         
-        ElMessage.success(`Plugin ${plugin.isDisabled ? 'disabled' : 'enabled'} successfully`);
+        ElMessage.success(`Plugin ${plugin.enable_deactivation ? 'disabled' : 'enabled'} successfully`);
       } catch (error) {
         // Revert the UI change if the API call fails
-        plugin.isDisabled = !plugin.isDisabled;
+        plugin.enable_deactivation = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
         ElMessage.error('Failed to update plugin status');
         console.error('Error toggling plugin loading:', error);
       }
@@ -199,7 +199,7 @@ export default {
         const { plugin, settings } = data
         
         // Ensure enable_deactivation reflects the current state from the plugin list
-        settings.enable_deactivation = plugin.isDisabled ? 'yes' : 'no';
+        settings.enable_deactivation = plugin.enable_deactivation;
         
         // Update the plugin's settings in the store
         await store.updatePluginSettings(plugin.id, settings)

@@ -290,7 +290,7 @@ const loadPluginSettings = async () => {
         // We keep the enable_deactivation setting to maintain compatibility
         // but it will be controlled by the plugin list switcher
         // Default to 'yes' (disabled) unless explicitly set to enabled
-        enable_deactivation: props.plugin.isDisabled ? 'yes' : 'no',
+        enable_deactivation: props.plugin.enable_deactivation ? 'yes' : 'no',
         device_type: 'all',
         condition_type: 'disable_on_selected',
         uri_type: 'page',
@@ -464,7 +464,7 @@ const saveSettings = async () => {
     
     // Since we've removed the switch in the modal, ensure enable_deactivation
     // is set based on the plugin's state in the plugin list
-    settingsToSave.enable_deactivation = props.plugin?.isDisabled ? 'yes' : 'no'
+    settingsToSave.enable_deactivation = props.plugin?.enable_deactivation ? 'yes' : 'no'
     
     // Debug what we're about to save
     console.log('About to save settings:', JSON.parse(JSON.stringify(settingsToSave)))

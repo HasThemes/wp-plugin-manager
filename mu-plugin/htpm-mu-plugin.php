@@ -73,7 +73,7 @@ function htpm_filter_plugins( $plugins ){
 
 	// loop through each active plugin
 	foreach($htpm_options as $plugin => $individual_options){
-		if(isset($individual_options['enable_deactivation'])){
+		if(isset($individual_options['enable_deactivation']) && $individual_options['enable_deactivation'] == 'yes'){
 			$uri_type = $individual_options['uri_type'];
 
 			if($uri_type == 'page'){
