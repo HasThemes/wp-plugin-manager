@@ -170,7 +170,7 @@ function htpm_get_plugin_settings($request) {
     // Create default settings if none exist - DEFAULT TO DISABLED
     if (empty($plugin_settings)) {
         $plugin_settings = [
-            'enable_deactivation' => 'yes', // Default to disabled
+            'enable_deactivation' => 'no', // Default to disabled
             'device_type' => 'all',
             'condition_type' => 'disable_on_selected',
             'uri_type' => 'page',

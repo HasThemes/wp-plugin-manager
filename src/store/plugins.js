@@ -4,9 +4,9 @@ import axios from 'axios'
 
 // Create an axios instance with WordPress REST API base URL and nonce
 const api = axios.create({
-  baseURL: window.htpmData?.restUrl || '/wp-json',
+  baseURL: window.HTPMM?.restUrl || '/wp-json',
   headers: {
-    'X-WP-Nonce': window.htpmData?.nonce || '',
+    'X-WP-Nonce': window.HTPMM?.nonce || '',
     'Content-Type': 'application/json'
   }
 })
@@ -94,9 +94,7 @@ export const usePluginStore = defineStore('plugins', {
 // updatePluginSettings method for the store with fixed settings preservation
 async updatePluginSettings(pluginId, settings) {
   try {
-    // Log what we're about to save for debugging
-    console.log('Store: updatePluginSettings for plugin', pluginId, JSON.parse(JSON.stringify(settings)))
-    
+
     // Make sure we're sending a complete, valid settings object
     const completeSettings = { ...settings }
     
@@ -140,8 +138,6 @@ async updatePluginSettings(pluginId, settings) {
       if (pluginIndex !== -1) {
         this.plugins[pluginIndex].enable_deactivation = completeSettings.enable_deactivation;
       }
-      
-      console.log('Settings updated successfully:', this.settings[pluginId])
     } else {
       console.error('Server returned error:', response.data)
     }

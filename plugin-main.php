@@ -175,6 +175,8 @@ class HTPM_Main {
                     'ajaxurl'          => admin_url( 'admin-ajax.php' ),
                     'adminURL'         => admin_url(),
                     'pluginURL'        => plugin_dir_url( __FILE__ ),
+                    'restUrl' => rest_url(),  // This will include the wp-json prefix
+                    'nonce' => wp_create_nonce('wp_rest'),
                     'message'          =>[
                         'packagedesc'=> esc_html__( 'in this package', 'wp-plugin-manager' ),
                         'allload'    => esc_html__( 'All Items have been Loaded', 'wp-plugin-manager' ),
@@ -190,15 +192,9 @@ class HTPM_Main {
                         'activating' => esc_html__( 'Activating..', 'wp-plugin-manager' ),
                         'active'     => esc_html__( 'Active', 'wp-plugin-manager' ),
                     ],
+                    'existingData' => get_option('htpm_options')
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
-
-                wp_localize_script('htpm-admin', 'htpmData', [
-                    'restUrl' => rest_url(),  // This will include the wp-json prefix
-                    'nonce' => wp_create_nonce('wp_rest'),
-                    'pluginUrl' => plugin_dir_url(__FILE__),
-                    'ajaxurl' => admin_url('admin-ajax.php')
-                ]);
             }
     
         }

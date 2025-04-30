@@ -24,7 +24,7 @@
         v-for="plugin in filteredPlugins" 
         :key="plugin.id" 
         class="plugin-item"
-        :class="{ 'plugin-disabled': (plugin.enable_deactivation == 'yes') }"
+        :class="{ 'plugin-disabled': (plugin.enable_deactivation !== 'yes') }"
       >
         <div class="plugin-info">
           <div class="plugin-icon-image" :class="getPluginIconClass(plugin.name)">
@@ -93,7 +93,6 @@ export default {
     // Load plugins on component mount
     onMounted(async () => {
       loading.value = true
-      
       try {
         // First fetch all plugins
         await store.fetchPlugins()
@@ -116,7 +115,7 @@ export default {
             ...plugin,
             settings: settings,
             // A plugin is enabled only if settings explicitly set enable_deactivation to 'no'
-            enable_deactivation: !settings || settings.enable_deactivation !== 'no'
+            enable_deactivation: (!settings || settings.enable_deactivation !== 'yes')? 'no' : 'yes'
           };
         })
       } catch (error) {
@@ -152,7 +151,7 @@ export default {
         // If no settings exist, create default ones
         if (!existingSettings || Object.keys(existingSettings).length === 0) {
           existingSettings = {
-            enable_deactivation: 'yes',
+            enable_deactivation: 'no',
             device_type: 'all',
             condition_type: 'disable_on_selected',
             uri_type: 'page',
@@ -290,12 +289,6 @@ export default {
       &:hover {
         background-color: #f8f9fa;
       }
-
-      &.plugin-disabled {
-        background-color: #f5f5f5;
-        opacity: 0.85;
-      }
-
       .plugin-info {
         display: flex;
         align-items: center;
@@ -401,339 +394,5 @@ export default {
   }
 }
 
-/* Final CSS for plugin list, switch and modal settings */
 
-/* Plugin list item styling */
-.plugin-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #ebeef5;
-  transition: all 0.3s ease;
-}
-
-.plugin-item:hover {
-  background-color: #f8f9fa;
-}
-
-/* Disabled plugin style */
-.plugin-item.plugin-disabled {
-  background-color: #f5f5f5;
-  opacity: 0.85;
-}
-
-.plugin-item.plugin-disabled .plugin-details h3 {
-  color: #909399;
-}
-
-.plugin-item.plugin-disabled .settings-button {
-  color: #c0c4cc;
-  border-color: #dcdfe6;
-}
-
-/* Settings button (gear icon) styling */
-.settings-button {
-  color: #909399;
-  border-color: #dcdfe6;
-  transition: all 0.2s ease;
-}
-
-.settings-button.active-settings {
-  color: #409eff !important;
-  border-color: #409eff !important;
-  background-color: rgba(64, 158, 255, 0.1) !important;
-}
-
-.settings-button:hover {
-  color: #409eff !important;
-  border-color: #409eff !important;
-}
-
-/* Switch styling */
-.el-switch__core {
-  border-color: #dcdfe6;
-  background-color: #dcdfe6;
-}
-
-.el-switch.is-checked .el-switch__core {
-  border-color: #10b981 !important;
-  background-color: #10b981 !important;
-}
-
-/* Status indicator styling */
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #909399;
-  display: inline-block;
-  margin-right: 5px;
-}
-
-.status-dot.active {
-  background-color: #10b981;
-}
-
-.status-text {
-  font-size: 12px;
-  color: #909399;
-}
-
-/* Plugin actions styling */
-.plugin-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Modal settings dialog improvements */
-.plugin-settings-modal .el-dialog {
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.plugin-settings-modal .el-dialog__header {
-  background-color: #f8f9fa;
-  padding: 15px 20px;
-}
-
-.plugin-settings-modal .el-dialog__title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.plugin-settings-modal .el-dialog__body {
-  padding: 20px;
-}
-
-.plugin-settings-modal .form-field {
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-  padding: 8px;
-  border-radius: 6px;
-}
-
-.plugin-settings-modal .form-field:hover {
-  background-color: #f8f9fa;
-}
-
-.plugin-settings-modal .form-field label {
-  margin-bottom: 10px;
-  font-weight: 500;
-  color: #303133;
-}
-
-.plugin-settings-modal .form-field .el-switch {
-  height: 24px;
-}
-
-.plugin-settings-modal .form-field .disable-switch {
-  margin-right: 10px;
-}
-
-/* Modal dialog footer buttons */
-.plugin-settings-modal .dialog-footer .el-button--primary {
-  background-color: #409eff;
-  border-color: #409eff;
-  font-weight: 500;
-}
-
-.plugin-settings-modal .dialog-footer .el-button--primary:hover {
-  background-color: #66b1ff;
-  border-color: #66b1ff;
-}
-
-/* Dropdown select styling */
-.el-select .el-input__inner {
-  border-radius: 4px;
-}
-
-.el-select .el-input.is-focus .el-input__inner {
-  border-color: #409eff;
-}
-
-.el-select .el-input__inner:hover {
-  border-color: #c0c4cc;
-}
-
-/* Multi-select tag styling */
-.el-select .el-select__tags {
-  padding: 0 6px;
-}
-
-.el-select .el-tag {
-  background-color: #f0f2f5;
-  border-color: #e4e7ed;
-  color: #606266;
-  margin: 2px 4px 2px 0;
-}
-
-.el-select .el-tag .el-tag__close {
-  color: #909399;
-}
-
-.el-select .el-tag .el-tag__close:hover {
-  background-color: #909399;
-  color: #fff;
-}
-
-/* Custom URI conditions styling */
-.uri-condition {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  margin-bottom: 10px;
-  padding: 8px;
-  border-radius: 4px;
-  background-color: #f9f9f9;
-}
-
-.uri-condition:hover {
-  background-color: #f0f2f5;
-}
-
-.uri-condition .condition-type {
-  width: 140px;
-  flex-shrink: 0;
-}
-
-.uri-condition .condition-value {
-  flex-grow: 1;
-}
-
-.uri-condition .condition-actions {
-  display: flex;
-  gap: 5px;
-  flex-shrink: 0;
-}
-
-.uri-condition .condition-actions .el-button {
-  padding: 6px;
-  height: 32px;
-  width: 32px;
-}
-
-/* Add condition button */
-.mt-3 {
-  margin-top: 12px;
-}
-
-/* Full width elements */
-.w-full {
-  width: 100%;
-}
-
-/* Plugin list header styling */
-.htpm-plugins-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #ebeef5;
-}
-
-.htpm-plugins-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #303133;
-}
-
-.htpm-plugins-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Search input styling */
-.htpm-plugins-actions .el-input {
-  width: 220px;
-}
-
-.htpm-plugins-actions .el-input__inner {
-  border-radius: 4px;
-  height: 36px;
-}
-
-/* Filter and sort buttons */
-.htpm-plugins-actions .el-button {
-  height: 36px;
-  padding: 0 15px;
-}
-
-/* Plugin icon styling */
-.plugin-icon-image {
-  width: 36px;
-  height: 36px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  color: #fff;
-  background: #e9ecef;
-  transition: all 0.3s ease;
-}
-
-.plugin-icon-image.query-monitor {
-  background: #4c6ef5;
-}
-
-.plugin-icon-image.elementor {
-  background: #92003b;
-}
-
-.plugin-icon-image.htmega {
-  background: #0073aa;
-}
-
-.plugin-icon-image.woocommerce {
-  background: #7f54b3;
-}
-
-.plugin-icon-image.yoast {
-  background: #a4286a;
-}
-
-/* Plugin details styling */
-.plugin-details h3 {
-  margin: 0 0 4px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #303133;
-  line-height: 1.4;
-}
-
-/* Switch extra styling for better visual appearance */
-.el-switch.is-checked .el-switch__core .el-switch__action {
-  transform: translate3d(18px, 0, 0);
-}
-
-.el-switch__action {
-  width: 14px;
-  height: 14px;
-}
-
-.el-switch__core {
-  width: 36px !important;
-  height: 20px;
-  border-radius: 10px;
-}
-
-/* Loading indicators */
-.el-loading-mask {
-  background-color: rgba(255, 255, 255, 0.8);
-}
-
-.el-loading-spinner .circular {
-  height: 42px;
-  width: 42px;
-}
-
-.el-loading-spinner .path {
-  stroke: #409eff;
-}
 </style>
