@@ -74,6 +74,13 @@ function htpm_register_rest_routes() {
             return current_user_can('edit_posts');
         }
     ]);
+    
+    // Get sidebar content endpoint
+    register_rest_route('htpm/v1', '/sidebar-content', [
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => 'htpm_get_sidebar_content',
+        'permission_callback' => '__return_true',
+    ]);
 }
 add_action('rest_api_init', 'htpm_register_rest_routes');
 
@@ -479,4 +486,44 @@ function htpm_get_post_type_items($request) {
     }
     
     return new WP_REST_Response($result, 200);
+}
+
+/**
+ * Get sidebar content from the template
+ * @return WP_REST_Response|WP_Error
+ */
+function htpm_get_sidebar_content() {
+    try {
+        $template_path = plugin_dir_path(__DIR__) . '/includes/templates/sidebar-banner.php';
+        
+        if (!file_exists($template_path)) {
+            error_log('WP Plugin Manager - Template not found: ' . $template_path);
+            return new WP_Error(
+                'template_not_found',
+                esc_html__('Sidebar template file not found.', 'wp-plugin-manager'),
+                ['status' => 404]
+            );
+        }
+
+        ob_start();
+        include $template_path;
+        $content = ob_get_clean();
+
+        if ($content === false) {
+            throw new Exception('Failed to capture output buffer');
+        }
+
+        return new WP_REST_Response([
+            'success' => true,
+            'content' => $content
+        ], 200);
+
+    } catch (Exception $e) {
+        error_log('WP Plugin Manager - Sidebar Content Error: ' . $e->getMessage());
+        return new WP_Error(
+            'template_error',
+            $e->getMessage(),
+            ['status' => 500]
+        );
+    }
 }

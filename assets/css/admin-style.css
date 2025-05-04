@@ -697,3 +697,167 @@ z-index: 99999!important;
 .el-message{
 top: 32px !important;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+.htoptions-sidebar-adds-area{
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  .htmega-opt-sidebar-item{
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: self-start;
+    font-size: 14px;
+    line-height: 24px;
+    color: #444444;
+    padding: 0;
+    background: #fff;
+    border-radius: 12px;
+    justify-content: left;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .htmega-opt-banner-image{
+    line-height: 0;
+  }
+  .htmega-opt-banner-image img{
+    width: 100%;
+  }
+  .htmega-opt-banner-image a{
+    display: block;
+    width: 100%;
+  }
+  .htmega-opt-get-pro-title {
+    font-size: 18px;
+    line-height: 1.2;
+    margin: 0;
+    text-align: left;
+    font-weight: 500;
+  }
+  .htmega-opt-get-pro-header {
+    text-align: center;
+    background-image: url(../images/sidebar-header-banner.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin: 0;
+    margin-bottom: 8px;
+    padding: 31px 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    background-position: top center;
+  }
+  .htmega-opt-get-pro-header-title {
+    font-size: 30px;
+    line-height: 1.2;
+    margin: 0;
+    color: #000000;
+  }
+  .htmega-opt-get-pro-desc {
+    font-size: 14px;
+    line-height: 22px;
+  }
+  .htmega-opt-get-pro{
+    gap: 10px;
+    justify-content: center;
+  }
+  .htmega-opt-get-pro-content{
+    padding: 0 30px 30px 30px;
+  }
+  .htmega-opt-get-pro ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    font-size: 16px;
+  }
+  .htmega-opt-get-pro ul li {
+    padding-left: 24px;
+    background-image: url(../images/checked.png);
+    background-repeat: no-repeat;
+    background-position: top 4px left;
+    font-size: 15px;
+    color: #000000;
+  }
+  .htmega-opt-get-pro .upgrade-button {
+    margin-top: 20px;
+  }
+  .upgrade-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: #FF6067;
+    padding: 12px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1.5px solid #FF6067;
+    box-shadow: none;
+  }
+  .upgrade-button svg path{
+    fill: #FF6067;
+    transition: all 0.3s ease;
+  }
+  .upgrade-button:hover {
+    background: #3489FE;
+    transform: none;
+    box-shadow: none;
+    border-color: #3489FE;
+    color: #fff;
+  }
+  .htoption-rating-area {
+    padding: 30px;
+    background-image: url(../images/reating-sidebar-bg.png);
+    background-position: top right;
+    background-repeat: no-repeat;
+  }
+  .htmega-admin-pro-rating-bution {
+    margin-top: 20px;
+    padding: 12px 20px;
+    border: 1px solid #000;
+    border-radius: 6px;
+    color: #000000;
+    font-weight: 500;
+    text-decoration: none;
+    width: max-content;
+  }
+  .htoption-rating-area .htoption-rating-icon {
+    border: 1.5px solid #EBDCFF;
+    padding: 7px;
+    border-radius: 8px;
+    display: flex;
+  }
+  .htoption-rating-area .htoption-rating-intro {
+    display: flex;
+    flex-direction: column;
+}
+  .htmega-rating-desc {
+    font-size: 16px;
+    line-height: 24px;
+    color: #434343;
+  }
+
+  .htmega-admin-pro-rating-bution:hover {
+    background: #3489FE;
+    color: #fff;
+    border-color: #3489FE;
+}

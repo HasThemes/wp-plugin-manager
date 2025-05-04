@@ -130,6 +130,3 @@ const saveSettings = () => {
 }
 </script>
 
-<style lang="scss" scoped>
-
-</style>
