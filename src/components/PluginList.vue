@@ -353,7 +353,6 @@ export default {
   border-radius: 8px;
   padding: 20px;
   margin-top: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 
   .htpm-plugins-header {
     display: flex;

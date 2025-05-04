@@ -85,7 +85,6 @@ const stats = computed(() => ({
   display: flex;
   align-items: center;
   gap: 15px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   height: 88px;
 }
 
