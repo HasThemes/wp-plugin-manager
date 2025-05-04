@@ -2,7 +2,7 @@
   <el-row :gutter="30" class="htpm-content">
     <el-col :span="19">
       <!-- Stats Cards -->
-      <stats-cards :stats="stats" />
+      <stats-cards />
 
       <!-- Plugin List -->
       <plugin-list 
@@ -75,14 +75,6 @@ import HelpSection from '../components/HelpSection.vue'
 import Sidebar from '../components/Sidebar.vue'
 
 const store = usePluginStore()
-
-const stats = ref({
-  totalPlugins: 18,
-  activePlugins: 12,
-  updateAvailable: 3,
-  inactivePlugins: 6
-})
-
 // Get plugins from store
 const plugins = computed(() => store.plugins)
 

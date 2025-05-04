@@ -40,7 +40,7 @@
       <el-col :span="6">
         <div class="stat-card inactive">
           <div class="icon-box">
-            <el-icon><Close /></el-icon>
+            <el-icon><CircleClose /></el-icon>
           </div>
           <div class="stat-content">
             <div class="stat-value">{{ stats.inactivePlugins }}</div>
@@ -53,132 +53,87 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { List, CircleCheck, Refresh, Close } from '@element-plus/icons-vue'
+import { computed, onMounted } from 'vue'
 import { usePluginStore } from '../store/plugins'
+import { List, CircleCheck, Refresh, CircleClose } from '@element-plus/icons-vue'
 
-const props = defineProps({
-  stats: {
-    type: Object,
-    default: () => ({
-      totalPlugins: 0,
-      activePlugins: 0,
-      updateAvailable: 0,
-      inactivePlugins: 0
-    })
-  }
+const store = usePluginStore()
+
+// Load plugins when component mounts
+onMounted(async () => {
+  await store.fetchPlugins()
 })
 
-// If we're not getting stats from props, use the store
-const store = usePluginStore()
-const storeStats = computed(() => ({
+// Compute stats from store getters
+const stats = computed(() => ({
   totalPlugins: store.totalPlugins,
-  activePlugins: store.activePlugins.length,
+  activePlugins: store.wpActivePlugins.length,
   updateAvailable: store.updateAvailable.length,
   inactivePlugins: store.inactivePlugins.length
 }))
-
-// Use either props or store stats
-const displayStats = computed(() => {
-  // If any prop stat is 0 and we have store stats available, use store stats
-  if (
-    (props.stats.totalPlugins === 0 || 
-     props.stats.activePlugins === 0) && 
-    store.plugins.length > 0
-  ) {
-    return storeStats.value
-  }
-  return props.stats
-})
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 .stats-cards {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+}
 
-  .stat-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 30px 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.05);
+.stat-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.08);
-    }
+.icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .icon-box {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
+.stat-card.total .icon-box {
+  background: rgba(64, 158, 255, 0.1);
+  color: #409EFF;
+}
 
-      .el-icon {
-        font-size: 24px;
-        color: #fff;
-      }
-    }
+.stat-card.active .icon-box {
+  background: rgba(103, 194, 58, 0.1);
+  color: #67C23A;
+}
 
-    .stat-content {
-      flex: 1;
+.stat-card.updates .icon-box {
+  background: rgba(230, 162, 60, 0.1);
+  color: #E6A23C;
+}
 
-      .stat-value {
-        font-size: 24px;
-        font-weight: 600;
-        color: #303133;
-        line-height: 1.2;
-      }
+.stat-card.inactive .icon-box {
+  background: rgba(245, 108, 108, 0.1);
+  color: #F56C6C;
+}
 
-      .stat-label {
-        font-size: 14px;
-        color: #6b7280;
-        margin-top: 4px;
-        font-weight: 500;
-      }
-    }
+.icon-box .el-icon {
+  font-size: 24px;
+}
 
-    &.total {
-      .icon-box {
-        background: rgba(67, 97, 238, 0.1);
-        & .el-icon {
-          color: #4361ee;
-        }
-      }
-    }
+.stat-content {
+  flex-grow: 1;
+}
 
-    &.active {
-      .icon-box {
-        background: rgba(0, 163, 42, 0.1);
-        & .el-icon {
-          color: #00a32a;
-        }
-      }
-    }
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 8px;
+}
 
-    &.updates {
-      .icon-box {
-        background: rgba(219, 166, 23, 0.1);
-        & .el-icon {
-          color: #dba617;
-        }
-      }
-    }
-
-    &.inactive {
-      .icon-box {
-        background: rgba(214, 54, 56, 0.1);
-        & .el-icon {
-          color: #d63638;
-        }
-      }
-    }
-  }
+.stat-label {
+  color: #909399;
+  font-size: 14px;
 }
 </style>
