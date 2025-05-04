@@ -43,11 +43,28 @@
         </div>
         <div class="plugin-actions">
           <!-- Toggle whether the plugin is loaded or not -->
-          <el-switch
-            :model-value="plugin.enable_deactivation == 'yes'"
-            @update:model-value="() => togglePluginLoading(plugin)"
-            class="plugin-switch"
-          />
+          <el-popconfirm
+            :title="'Would you like to review the plugin settings first? The plugin will be optimized based on your configured settings.'"
+            confirm-button-text="Optimized Now"
+            cancel-button-text="Check Settings"
+            confirm-button-type="info"
+            cancel-button-type="primary"
+            icon="Warning"
+            @confirm="handleOptimizeNow(plugin)"
+            @cancel="openSettings(plugin)"
+            :visible="showPopconfirm === plugin.id"
+            @hide="showPopconfirm = null"
+            width="300"
+            popper-class="plugin-optimize-popconfirm"
+          >
+            <template #reference>
+              <el-switch
+                :model-value="plugin.enable_deactivation == 'yes'"
+                @click="handleToggle(plugin)"
+                class="plugin-switch"
+              />
+            </template>
+          </el-popconfirm>
           <el-button
             type="default"
             :icon="Setting"
@@ -73,7 +90,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { Search, Box, Setting, Monitor, Edit, Grid } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElPopconfirm } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
 
@@ -81,7 +98,8 @@ export default {
   name: 'PluginList',
   components: {
     PluginSettingsModal,
-    ElMessage
+    ElMessage,
+    ElPopconfirm
   },
   setup() {
     const store = usePluginStore()
@@ -90,6 +108,7 @@ export default {
     const selectedPlugin = ref(null)
     const loading = ref(true)
     const plugins = ref([])
+    const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
     const toggleEnabled = ref(false)
 
     // Load plugins on component mount
@@ -141,65 +160,52 @@ export default {
       )
     })
 
-    // Toggle plugin loading status
+    // Handle the toggle click
+    const handleToggle = (plugin) => {
+      const newState = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
+      if (newState === 'yes') {
+        // Show popconfirm for enabling
+        showPopconfirm.value = plugin.id;
+      } else {
+        // Direct disable without confirmation
+        togglePluginLoading(plugin);
+      }
+    };
+
+    // Handle the optimize now action
+    const handleOptimizeNow = async (plugin) => {
+      try {
+        // Set both the plugin state and settings to enabled
+        plugin.enable_deactivation = 'yes';
+        const existingSettings = store.settings[plugin.id] || {
+          enable_deactivation: 'yes',
+          device_type: 'all',
+          condition_type: 'disable_on_selected',
+          uri_type: 'page',
+          post_types: ['page', 'post'],
+          posts: [],
+          pages: [],
+          condition_list: {
+            name: ['uri_equals'],
+            value: [''],
+          }
+        };
+        
+        existingSettings.enable_deactivation = 'yes';
+        await store.updatePluginSettings(plugin.id, existingSettings);
+        ElMessage.success('Plugin optimized successfully');
+      } catch (error) {
+        plugin.enable_deactivation = 'no';
+        ElMessage.error('Failed to optimize plugin');
+        console.error('Error optimizing plugin:', error);
+      }
+    };
+
+    // Toggle plugin loading status (now only handles disable)
     const togglePluginLoading = async (plugin) => {
       try {
-        const newState = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
-        
-        // If we're enabling the plugin, show confirmation dialog
-        if (newState === 'yes') {
-          try {
-            await ElMessageBox.confirm(
-              'Would you like to review the plugin settings first? The plugin will be activated based on your configured settings.',
-              'Optimized Plugin',
-              {
-                distinguishCancelAndClose: true,
-                confirmButtonText: 'Optimized Now',
-                cancelButtonText: 'Check Settings',
-                type: 'warning',
-                showClose: false,
-                customClass: 'optimize-confirm-dialog',
-                showCancelButton: true,
-                dangerouslyUseHTMLString: false,
-                cancelButtonClass: 'el-button--primary',
-                confirmButtonClass: 'el-button--info'
-              }
-            ).then(async () => {
-              // User clicked "Optimized Now"
-              const existingSettings = store.settings[plugin.id] || {
-                enable_deactivation: 'yes',
-                device_type: 'all',
-                condition_type: 'disable_on_selected',
-                uri_type: 'page',
-                post_types: ['page', 'post'],
-                posts: [],
-                pages: [],
-                condition_list: {
-                  name: ['uri_equals'],
-                  value: [''],
-                }
-              };
-              
-              // Set both the plugin state and settings to enabled
-              plugin.enable_deactivation = 'yes';
-              existingSettings.enable_deactivation = 'yes';
-              
-              await store.updatePluginSettings(plugin.id, existingSettings);
-              ElMessage.success('Plugin optimized successfully');
-            }).catch((action) => {
-              if (action === 'cancel') {
-                // User clicked "Check Settings"
-                openSettings(plugin);
-              }
-            });
-            return;
-          } catch (e) {
-            return;
-          }
-        }
-
-        // Continue with normal disable flow
-        plugin.enable_deactivation = newState;
+        // Only handle disabling here
+        plugin.enable_deactivation = 'no';
         
         // Get existing settings
         let existingSettings = store.settings[plugin.id];
@@ -207,7 +213,7 @@ export default {
         // If no settings exist, create default ones
         if (!existingSettings || Object.keys(existingSettings).length === 0) {
           existingSettings = {
-            enable_deactivation: newState,
+            enable_deactivation: 'no',
             device_type: 'all',
             condition_type: 'disable_on_selected',
             uri_type: 'page',
@@ -220,7 +226,7 @@ export default {
             }
           };
         } else {
-          existingSettings.enable_deactivation = newState;
+          existingSettings.enable_deactivation = 'no';
         }
         
         // Update settings via store
@@ -229,10 +235,10 @@ export default {
         // Update the plugin's local settings
         plugin.settings = existingSettings;
         
-        ElMessage.success(`Plugin ${plugin.enable_deactivation ? 'disabled' : 'enabled'} successfully`);
+        ElMessage.success('Plugin optimization disabled successfully');
       } catch (error) {
         // Revert the UI change if the API call fails
-        plugin.enable_deactivation = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
+        plugin.enable_deactivation = 'yes';
         ElMessage.error('Failed to update plugin status');
         console.error('Error toggling plugin loading:', error);
       }
@@ -286,10 +292,13 @@ export default {
       selectedPlugin,
       loading,
       filteredPlugins,
+      handleToggle,
+      handleOptimizeNow,
       togglePluginLoading,
       openSettings,
       savePluginSettings,
       getPluginIconClass,
+      showPopconfirm,
       Search, Box, Setting, Monitor, Edit, Grid
     }
   }
@@ -438,5 +447,142 @@ export default {
   }
 }
 
+.plugin-optimize-popconfirm {
+  .el-popper.is-light {
+    min-width: 320px !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid #e5e7eb !important;
+  }
 
+  .el-popconfirm__main {
+    padding: 0 !important;
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #374151;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .el-popconfirm__icon {
+    color: #f59e0b;
+    font-size: 20px;
+    margin-right: 0;
+  }
+
+  .el-popconfirm__action {
+    margin-top: 0;
+    padding-top: 20px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    border-top: 1px solid #e5e7eb;
+
+    .el-button {
+      margin-left: 0 !important;
+      padding: 8px 20px !important;
+      height: 38px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 6px;
+      min-width: 120px;
+      transition: all 0.2s ease;
+
+      &--info {
+        background: #f3f4f6;
+        border-color: #e5e7eb;
+        color: #4b5563;
+
+        &:hover {
+          background: #e5e7eb;
+          border-color: #d1d5db;
+          color: #374151;
+        }
+
+        &:active {
+          background: #d1d5db;
+        }
+      }
+
+      &--primary {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+
+        &:hover {
+          background: #2563eb;
+          border-color: #2563eb;
+          transform: translateY(-1px);
+        }
+
+        &:active {
+          background: #1d4ed8;
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}
+
+.plugin-list {
+  .plugin-switch {
+    &.el-switch {
+      --el-switch-on-color: #409eff;
+      
+      .el-switch__core {
+        border: 2px solid #e5e7eb;
+        height: 24px;
+        padding: 2px;
+        
+        .el-switch__action {
+          width: 18px;
+          height: 18px;
+          background: white;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .el-switch__inner {
+          transition: all 0.3s ease;
+          
+          .is-icon, .is-text {
+            color: #fff;
+            font-size: 12px;
+          }
+        }
+      }
+
+      &:not(.is-checked) {
+        .el-switch__core {
+          background: white;
+        }
+      }
+
+      &:hover {
+        .el-switch__core {
+          border-color: #d1d5db;
+        }
+      }
+
+      &.is-checked {
+        .el-switch__core {
+          border-color: #10b981;
+          
+          .el-switch__action {
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+          }
+        }
+
+        &:hover {
+          .el-switch__core {
+            border-color: #059669;
+            background: #059669;
+          }
+        }
+      }
+    }
+  }
+}
 </style>
