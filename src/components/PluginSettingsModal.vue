@@ -168,7 +168,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="saveSettings" :loading="saving">Save</el-button>
+        <el-button type="primary" @click="saveSettings" :loading="saving">Save & Enable</el-button>
       </div>
     </template>
   </el-dialog>
@@ -466,13 +466,9 @@ const saveSettings = async () => {
     // is set based on the plugin's state in the plugin list
     settingsToSave.enable_deactivation = props.plugin?.enable_deactivation ? 'yes' : 'no'
     
-    // Debug what we're about to save
-    console.log('About to save settings:', JSON.parse(JSON.stringify(settingsToSave)))
-    
     // Save settings via store
-    const result = await store.updatePluginSettings(props.plugin.id, settingsToSave)
-    console.log('Save result:', result)
-    
+     await store.updatePluginSettings(props.plugin.id, settingsToSave)
+  
     // Emit the save event with settings and plugin data
     emit('save', {
       plugin: props.plugin,
@@ -481,8 +477,7 @@ const saveSettings = async () => {
     
     // Close the dialog
     dialogVisible.value = false
-    
-    ElMessage.success('Settings saved successfully')
+
   } catch (error) {
     console.error('Error saving settings:', error)
     ElMessage.error('Failed to save settings')

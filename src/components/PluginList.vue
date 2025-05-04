@@ -73,7 +73,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { Search, Box, Setting, Monitor, Edit, Grid } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
 
@@ -90,6 +90,7 @@ export default {
     const selectedPlugin = ref(null)
     const loading = ref(true)
     const plugins = ref([])
+    const toggleEnabled = ref(false)
 
     // Load plugins on component mount
     onMounted(async () => {
@@ -143,8 +144,62 @@ export default {
     // Toggle plugin loading status
     const togglePluginLoading = async (plugin) => {
       try {
-        // Toggle the enable_deactivation state
-        plugin.enable_deactivation = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
+        const newState = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
+        
+        // If we're enabling the plugin, show confirmation dialog
+        if (newState === 'yes') {
+          try {
+            await ElMessageBox.confirm(
+              'Would you like to review the plugin settings first? The plugin will be activated based on your configured settings.',
+              'Optimized Plugin',
+              {
+                distinguishCancelAndClose: true,
+                confirmButtonText: 'Optimized Now',
+                cancelButtonText: 'Check Settings',
+                type: 'warning',
+                showClose: false,
+                customClass: 'optimize-confirm-dialog',
+                showCancelButton: true,
+                dangerouslyUseHTMLString: false,
+                cancelButtonClass: 'el-button--primary',
+                confirmButtonClass: 'el-button--info'
+              }
+            ).then(async () => {
+              // User clicked "Optimized Now"
+              const existingSettings = store.settings[plugin.id] || {
+                enable_deactivation: 'yes',
+                device_type: 'all',
+                condition_type: 'disable_on_selected',
+                uri_type: 'page',
+                post_types: ['page', 'post'],
+                posts: [],
+                pages: [],
+                condition_list: {
+                  name: ['uri_equals'],
+                  value: [''],
+                }
+              };
+              
+              // Set both the plugin state and settings to enabled
+              plugin.enable_deactivation = 'yes';
+              existingSettings.enable_deactivation = 'yes';
+              
+              await store.updatePluginSettings(plugin.id, existingSettings);
+              ElMessage.success('Plugin optimized successfully');
+            }).catch((action) => {
+              if (action === 'cancel') {
+                // User clicked "Check Settings"
+                openSettings(plugin);
+              }
+            });
+            return;
+          } catch (e) {
+            return;
+          }
+        }
+
+        // Continue with normal disable flow
+        plugin.enable_deactivation = newState;
         
         // Get existing settings
         let existingSettings = store.settings[plugin.id];
@@ -152,7 +207,7 @@ export default {
         // If no settings exist, create default ones
         if (!existingSettings || Object.keys(existingSettings).length === 0) {
           existingSettings = {
-            enable_deactivation: 'no',
+            enable_deactivation: newState,
             device_type: 'all',
             condition_type: 'disable_on_selected',
             uri_type: 'page',
@@ -164,19 +219,15 @@ export default {
               value: [''],
             }
           };
+        } else {
+          existingSettings.enable_deactivation = newState;
         }
         
-        // Create a complete copy of existing settings
-        const settings = JSON.parse(JSON.stringify(existingSettings));
-        
-        // Update only the enable_deactivation setting
-        settings.enable_deactivation = plugin.enable_deactivation;
-        
         // Update settings via store
-        await store.updatePluginSettings(plugin.id, settings);
+        await store.updatePluginSettings(plugin.id, existingSettings);
         
         // Update the plugin's local settings
-        plugin.settings = settings;
+        plugin.settings = existingSettings;
         
         ElMessage.success(`Plugin ${plugin.enable_deactivation ? 'disabled' : 'enabled'} successfully`);
       } catch (error) {
@@ -198,8 +249,9 @@ export default {
       try {
         const { plugin, settings } = data
         
-        // Ensure enable_deactivation reflects the current state from the plugin list
-        settings.enable_deactivation = plugin.enable_deactivation;
+        // Always enable the plugin when saving settings from modal
+        settings.enable_deactivation = 'yes';
+        plugin.enable_deactivation = 'yes';
         
         // Update the plugin's settings in the store
         await store.updatePluginSettings(plugin.id, settings)
@@ -211,6 +263,7 @@ export default {
         }
         
         ElMessage.success('Settings saved successfully')
+        showSettings.value = false; // Close the modal after saving
       } catch (error) {
         ElMessage.error('Failed to save plugin settings')
         console.error('Error saving plugin settings:', error)
