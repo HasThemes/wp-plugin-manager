@@ -689,4 +689,11 @@ div#htpm_pro_notice {
     box-shadow: none;
     padding: 0;
     border-width: 0 !important;
-    }
+}
+.el-notification{
+top: 35px!important; 
+z-index: 99999!important;
+}
+.el-message{
+top: 32px !important;
+}

@@ -90,7 +90,7 @@
 <script>
 import { ref, computed, onMounted } from 'vue'
 import { Search, Box, Setting, Monitor, Edit, Grid } from '@element-plus/icons-vue'
-import { ElMessage, ElPopconfirm } from 'element-plus'
+import { ElMessage, ElPopconfirm, ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
 
@@ -99,7 +99,8 @@ export default {
   components: {
     PluginSettingsModal,
     ElMessage,
-    ElPopconfirm
+    ElPopconfirm,
+    ElNotification
   },
   setup() {
     const store = usePluginStore()
@@ -109,7 +110,6 @@ export default {
     const loading = ref(true)
     const plugins = ref([])
     const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
-    const toggleEnabled = ref(false)
 
     // Load plugins on component mount
     onMounted(async () => {
@@ -140,7 +140,13 @@ export default {
           };
         })
       } catch (error) {
-        ElMessage.error('Failed to load plugins')
+        ElNotification({
+          title: "Error",
+          message: 'Failed to load plugins',
+          type: 'error',
+          position: 'top-right',
+          duration: 3000
+        });
         console.error('Error loading plugins:', error)
       } finally {
         loading.value = false
@@ -193,10 +199,22 @@ export default {
         
         existingSettings.enable_deactivation = 'yes';
         await store.updatePluginSettings(plugin.id, existingSettings);
-        ElMessage.success('Plugin optimized successfully');
+        ElNotification({
+          title: "Success",
+          message: 'Plugin optimized successfully',
+          type: 'success',
+          position: 'top-right',
+          duration: 3000
+        });
       } catch (error) {
         plugin.enable_deactivation = 'no';
-        ElMessage.error('Failed to optimize plugin');
+        ElNotification({
+          title: "Error",
+          message: 'Failed to optimize plugin',
+          type: 'error',
+          position: 'top-right',
+          duration: 3000
+        });
         console.error('Error optimizing plugin:', error);
       }
     };
@@ -235,11 +253,23 @@ export default {
         // Update the plugin's local settings
         plugin.settings = existingSettings;
         
-        ElMessage.success('Plugin optimization disabled successfully');
+        ElNotification({
+          title: "Success",
+          message: 'Plugin optimization disabled successfully',
+          type: 'success',
+          position: 'top-right',
+          duration: 3000
+        });
       } catch (error) {
         // Revert the UI change if the API call fails
         plugin.enable_deactivation = 'yes';
-        ElMessage.error('Failed to update plugin status');
+        ElNotification({
+          title: "Error",
+          message: 'Failed to update plugin status',
+          type: 'error',
+          position: 'top-right',
+          duration: 3000
+        });
         console.error('Error toggling plugin loading:', error);
       }
     }
@@ -268,10 +298,22 @@ export default {
           plugins.value[pluginIndex].settings = { ...settings }
         }
         
-        ElMessage.success('Settings saved successfully')
+        ElNotification({
+          title: "Success",
+          message: 'Settings saved and plugin optimized successfully',
+          type: 'success',
+          position: 'top-right',
+          duration: 3000
+        });
         showSettings.value = false; // Close the modal after saving
       } catch (error) {
-        ElMessage.error('Failed to save plugin settings')
+        ElNotification({
+          title: "Error",
+          message: 'Failed to save plugin settings',
+          type: 'error',
+          position: 'top-right',
+          duration: 3000
+        });
         console.error('Error saving plugin settings:', error)
       }
     }
