@@ -5,22 +5,26 @@ const routes = [
   {
     path: '/',
     name: 'General',
-    component: General
+    component: General,
+    meta: { keepAlive: true }
   },
   {
     path: '/settings',
     name: 'Settings',
-    component: () => import('../views/Settings.vue')
+    component: () => import('../views/Settings.vue'),
+    meta: { keepAlive: true }
   },
   {
     path: '/tools',
     name: 'Tools',
-    component: () => import('../views/Tools.vue')
+    component: () => import('../views/Tools.vue'),
+    meta: { keepAlive: true }
   },
   {
     path: '/license',
     name: 'License',
-    component: () => import('../views/License.vue')
+    component: () => import('../views/License.vue'),
+    meta: { keepAlive: true }
   }
 ]
 
