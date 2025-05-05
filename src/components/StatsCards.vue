@@ -97,6 +97,7 @@ const statsList = [
   flex-direction: row;
   gap: 20px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .stat-card {
@@ -108,7 +109,7 @@ const statsList = [
   gap: 15px;
   height: 88px;
   flex: 1;
-  min-width: 0;
+  min-width: 150px;
 }
 
 .skeleton-content {
