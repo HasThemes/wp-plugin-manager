@@ -2,28 +2,38 @@
       <!-- Header -->
       <el-row align="middle" justify="space-between" class="htpm-header-row">
         <el-col :span="18">
-          <el-menu mode="horizontal" class="htpm-nav" :ellipsis="true">
-            <el-menu-item index="1">
+          <el-menu 
+            mode="horizontal" 
+            class="htpm-nav" 
+            :ellipsis="true"
+            :default-active="activeIndex"
+            router
+          >
+            <!-- <el-menu-item index="/">
+              <el-icon><HomeFilled /></el-icon>
+              Dashboard
+            </el-menu-item> -->
+            <el-menu-item index="/">
               <el-icon><Grid /></el-icon>
               General
             </el-menu-item>
-            <el-menu-item index="2">
+            <el-menu-item index="/settings">
               <el-icon><Setting /></el-icon>
               Settings
             </el-menu-item>
-            <el-menu-item index="3">
+            <el-menu-item index="/tools">
               <el-icon><Tools /></el-icon>
               Tools
             </el-menu-item>
-            <el-menu-item index="4">
+            <el-menu-item index="/license">
               <el-icon><Key /></el-icon>
               License
             </el-menu-item>
-            <el-menu-item index="5">
+            <el-menu-item index="https://hasthemes.com/docs" @click="openDocs">
               <el-icon><Document /></el-icon>
               Documentation
             </el-menu-item>
-            <el-menu-item index="6">
+            <el-menu-item index="https://hasthemes.com/contact" @click="openSupport">
               <el-icon><Service /></el-icon>
               Support
             </el-menu-item>
@@ -67,7 +77,8 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
+  import { useRoute } from 'vue-router'
   import {
     Grid,
     Setting,
@@ -76,17 +87,30 @@
     Document,
     Service,
     Bell,
-    Top
-  } from '@element-plus/icons-vue'  
+    Top,
+    HomeFilled
+  } from '@element-plus/icons-vue'
+
+  const route = useRoute()
+  const activeIndex = computed(() => route.path)
   const updateCount = ref(3)
   const changelogDialog = ref(false)
-  
+
   const showChangelog = () => {
     changelogDialog.value = true
   }
-  
+
   const upgradeToPro = () => {
     // Implement upgrade logic
+    window.open('https://hasthemes.com/plugins/wp-plugin-manager-pro/', '_blank')
+  }
+
+  const openDocs = () => {
+    window.open('https://hasthemes.com/docs', '_blank')
+  }
+
+  const openSupport = () => {
+    window.open('https://hasthemes.com/contact', '_blank')
   }
   </script>
   

@@ -384,12 +384,8 @@ export default {
       justify-content: space-between;
       align-items: center;
       padding: 16px;
-      border-bottom: 1px solid #ebeef5;
+      border-top: 1px solid #ebeef5;
       transition: background-color 0.3s;
-
-      &:last-child {
-        border-bottom: none;
-      }
 
       &:hover {
         background-color: #f8f9fa;
