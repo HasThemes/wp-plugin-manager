@@ -36,6 +36,10 @@ export const usePluginStore = defineStore('plugins', {
     // Plugins that are inactive in WordPress
     inactivePlugins: (state) => state.plugins.filter(p => !p.wpActive),
     
+    // Plugins that have been optimized
+    optimizedPlugins: (state) => state.plugins.filter(p => p.wpActive && p.enable_deactivation === 'yes'),
+    
+    // Plugins with updates available
     updateAvailable: (state) => state.plugins.filter(p => p.hasUpdate),
     totalPlugins: (state) => state.plugins.length
   },

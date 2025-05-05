@@ -1,7 +1,7 @@
 <template>
   <div class="stats-cards">
-    <el-row :gutter="20">
-      <el-col :span="6" v-for="(stat, index) in statsList" :key="index">
+    <div class="stats-row">
+      <template v-for="(stat, index) in statsList" :key="index">
         <template v-if="!isLoading">
           <div :class="['stat-card', stat.type]">
             <div class="icon-box">
@@ -34,18 +34,39 @@
             </div>
           </div>
         </template>
-      </el-col>
-    </el-row>
+      </template>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { usePluginStore } from '../store/plugins'
-import { List, CircleCheck, Refresh, CircleClose } from '@element-plus/icons-vue'
+import { List, CircleCheck, Refresh, CircleClose, Setting } from '@element-plus/icons-vue'
 
 const store = usePluginStore()
 const isLoading = ref(true)  // Local loading state
+
+// Compute stats from store getters
+const stats = computed(() => ({
+  totalPlugins: store.totalPlugins,
+  activePlugins: store.wpActivePlugins.length,
+  optimizedPlugins: store.optimizedPlugins.length, // Use optimizedPlugins instead of disabledPlugins
+  updateAvailable: store.updateAvailable.length,
+  inactivePlugins: store.inactivePlugins.length
+}))
+
+// Watch for changes in plugins and update stats
+watch(() => store.plugins, () => {
+  // Force stats recomputation when plugins change
+  stats.value = {
+    totalPlugins: store.totalPlugins,
+    activePlugins: store.wpActivePlugins.length,
+    optimizedPlugins: store.optimizedPlugins.length,
+    updateAvailable: store.updateAvailable.length,
+    inactivePlugins: store.inactivePlugins.length
+  }
+}, { deep: true })
 
 // Load plugins when component mounts
 onMounted(async () => {
@@ -60,22 +81,22 @@ onMounted(async () => {
 const statsList = [
   { type: 'total', icon: List, key: 'totalPlugins', label: 'Total Plugins' },
   { type: 'active', icon: CircleCheck, key: 'activePlugins', label: 'Active Plugins' },
+  { type: 'optimized', icon: Setting, key: 'optimizedPlugins', label: 'Optimized Plugins' },
   { type: 'updates', icon: Refresh, key: 'updateAvailable', label: 'Update Available' },
   { type: 'inactive', icon: CircleClose, key: 'inactivePlugins', label: 'Inactive Plugins' }
 ]
-
-// Compute stats from store getters
-const stats = computed(() => ({
-  totalPlugins: store.totalPlugins,
-  activePlugins: store.wpActivePlugins.length,
-  updateAvailable: store.updateAvailable.length,
-  inactivePlugins: store.inactivePlugins.length
-}))
 </script>
 
 <style scoped>
 .stats-cards {
   margin-bottom: 20px;
+}
+
+.stats-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
 }
 
 .stat-card {
@@ -86,6 +107,8 @@ const stats = computed(() => ({
   align-items: center;
   gap: 15px;
   height: 88px;
+  flex: 1;
+  min-width: 0;
 }
 
 .skeleton-content {
@@ -101,18 +124,8 @@ const stats = computed(() => ({
   height: 48px;
 }
 
-.skeleton-icon :deep(.el-skeleton-item) {
-  width: 100%;
-  height: 100%;
-  background: rgba(64, 158, 255, 0.1);
-}
-
 .skeleton-text {
   flex-grow: 1;
-}
-.skeleton-text .el-skeleton {
-    display: flex;
-    flex-direction: column;
 }
 
 .icon-box {
@@ -122,6 +135,34 @@ const stats = computed(() => ({
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+.skeleton-text .el-skeleton {
+    display: flex;
+    flex-direction: column;
+}
+.stat-content {
+  flex-grow: 1;
+  min-width: 0;
+}
+.icon-box .el-icon {
+  font-size: 24px;
+}
+
+.stat-content {
+  flex-grow: 1;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  color: #909399;
+  font-size: 14px;
 }
 
 .stat-card.total .icon-box {
@@ -144,23 +185,8 @@ const stats = computed(() => ({
   color: #F56C6C;
 }
 
-.icon-box .el-icon {
-  font-size: 24px;
-}
-
-.stat-content {
-  flex-grow: 1;
-}
-
-.stat-value {
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
-.stat-label {
-  color: #909399;
-  font-size: 14px;
+.stat-card.optimized .icon-box {
+  background: rgba(85, 110, 255, 0.1);
+  color: #5594FF;
 }
 </style>
