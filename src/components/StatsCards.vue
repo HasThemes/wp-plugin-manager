@@ -51,18 +51,17 @@ const isLoading = ref(true)  // Local loading state
 const stats = computed(() => ({
   totalPlugins: store.totalPlugins,
   activePlugins: store.wpActivePlugins.length,
-  optimizedPlugins: store.optimizedPlugins.length, // Use optimizedPlugins instead of disabledPlugins
+  optimizedPlugins: store.disabledPlugins.length, // Use optimizedPlugins instead of disabledPlugins
   updateAvailable: store.updateAvailable.length,
   inactivePlugins: store.inactivePlugins.length
 }))
-
 // Watch for changes in plugins and update stats
 watch(() => store.plugins, () => {
   // Force stats recomputation when plugins change
   stats.value = {
     totalPlugins: store.totalPlugins,
     activePlugins: store.wpActivePlugins.length,
-    optimizedPlugins: store.optimizedPlugins.length,
+    optimizedPlugins: store.disabledPlugins.length,
     updateAvailable: store.updateAvailable.length,
     inactivePlugins: store.inactivePlugins.length
   }
@@ -76,12 +75,13 @@ onMounted(async () => {
   } finally {
     isLoading.value = false
   }
+  
 })
 
 const statsList = [
   { type: 'total', icon: List, key: 'totalPlugins', label: 'Total Plugins' },
   { type: 'active', icon: CircleCheck, key: 'activePlugins', label: 'Active Plugins' },
-  { type: 'optimized', icon: Setting, key: 'optimizedPlugins', label: 'Optimized Plugins' },
+  // { type: 'optimized', icon: Setting, key: 'optimizedPlugins', label: 'Optimized Plugins' }, // TODO: Add optimized plugins
   { type: 'updates', icon: Refresh, key: 'updateAvailable', label: 'Update Available' },
   { type: 'inactive', icon: CircleClose, key: 'inactivePlugins', label: 'Inactive Plugins' }
 ]
@@ -107,7 +107,7 @@ const statsList = [
   display: flex;
   align-items: center;
   gap: 15px;
-  height: 88px;
+  min-height: 55px;
   flex: 1;
   min-width: 150px;
 }
@@ -162,8 +162,9 @@ const statsList = [
 }
 
 .stat-label {
-  color: #909399;
+  color: #7c7c7c;
   font-size: 14px;
+  font-weight: 500;
 }
 
 .stat-card.total .icon-box {
