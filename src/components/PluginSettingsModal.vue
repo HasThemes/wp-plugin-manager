@@ -504,6 +504,9 @@ const saveSettings = async () => {
     border-top: 1px solid #eee;
   }
 }
+.el-checkbox-group{
+  flex-wrap: wrap;
+}
 .el-checkbox{
   margin-right: 0;
 }

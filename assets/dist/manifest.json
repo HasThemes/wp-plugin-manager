@@ -1,37 +1,8 @@
 {
   "src/main.js": {
-    "dynamicImports": [
-      "src/views/Settings.vue",
-      "src/views/Tools.vue",
-      "src/views/License.vue"
-    ],
     "file": "js/main.js",
     "isEntry": true,
     "src": "src/main.js"
-  },
-  "src/views/License.vue": {
-    "file": "js/License-0291a093.js",
-    "imports": [
-      "src/main.js"
-    ],
-    "isDynamicEntry": true,
-    "src": "src/views/License.vue"
-  },
-  "src/views/Settings.vue": {
-    "file": "js/Settings-fefc7a11.js",
-    "imports": [
-      "src/main.js"
-    ],
-    "isDynamicEntry": true,
-    "src": "src/views/Settings.vue"
-  },
-  "src/views/Tools.vue": {
-    "file": "js/Tools-4ef66f79.js",
-    "imports": [
-      "src/main.js"
-    ],
-    "isDynamicEntry": true,
-    "src": "src/views/Tools.vue"
   },
   "style.css": {
     "file": "css/style.css",
