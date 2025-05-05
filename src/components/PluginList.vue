@@ -44,17 +44,18 @@
         <div class="plugin-actions">
           <!-- Toggle whether the plugin is loaded or not -->
           <el-popconfirm
-            :title="'Would you like to review the plugin settings first? The plugin will be optimized based on your configured settings.'"
-            confirm-button-text="Optimized Now"
-            cancel-button-text="Check Settings"
-            confirm-button-type="info"
-            cancel-button-type="primary"
-            icon="Warning"
+            :title="'This plugin was optimized with specific settings. Review them before enabling to avoid potential issues'"
+            confirm-button-text="Enable Anyway"
+            cancel-button-text="Review Settings"
+            confirm-button-type="primary"
+            cancel-button-type="default"
+            :icon="QuestionFilled"
             @confirm="handleOptimizeNow(plugin)"
             @cancel="openSettings(plugin)"
             :visible="showPopconfirm === plugin.id"
             @hide="showPopconfirm = null"
             width="300"
+            padding="8px 12px 12px"
             popper-class="plugin-optimize-popconfirm"
           >
             <template #reference>
@@ -89,7 +90,7 @@
 
 <script>
 import { ref, computed, onMounted } from 'vue'
-import { Search, Box, Setting, Monitor, Edit, Grid } from '@element-plus/icons-vue'
+import { Search, Box, Setting, Monitor, Edit, Grid, QuestionFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElPopconfirm, ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
@@ -341,7 +342,7 @@ export default {
       savePluginSettings,
       getPluginIconClass,
       showPopconfirm,
-      Search, Box, Setting, Monitor, Edit, Grid
+      Search, Box, Setting, Monitor, Edit, Grid, QuestionFilled
     }
   }
 }
@@ -549,22 +550,37 @@ export default {
       }
 
       &--primary {
-        background: #3b82f6;
-        border-color: #3b82f6;
-        color: white;
-
-        &:hover {
-          background: #2563eb;
-          border-color: #2563eb;
-          transform: translateY(-1px);
-        }
-
-        &:active {
-          background: #1d4ed8;
-          transform: translateY(0);
-        }
+        background-color: #409eff;
       }
     }
+  }
+}
+
+:deep(.plugin-optimize-popconfirm) {
+  .el-popconfirm__main {
+    margin: 12px 0;
+  }
+  
+  .el-popconfirm__title {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  
+  .el-popconfirm__description {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .el-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .el-button--primary {
+    background-color: #409eff;
   }
 }
 

@@ -697,7 +697,9 @@ z-index: 99999!important;
 .el-message{
 top: 32px !important;
 }
-
+.plugin-optimize-popconfirm {
+    padding: 8px 12px 12px !important;
+}
 
 
 
