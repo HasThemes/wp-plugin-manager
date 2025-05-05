@@ -2,9 +2,16 @@
   <div class="htpm-dashboard">
     <!-- Header -->
     <Header />
+    <el-row :gutter="30" class="htpm-content">
+    <el-col :span="19">
+      <slot></slot>
+    </el-col>
+    <el-col :span="5">
+      <!-- Sidebar -->
+      <sidebar />
+    </el-col>
+  </el-row>
 
-    <!-- Main Content -->
-    <slot @show-documentation="documentationDialog = true"></slot>
     <!-- Changelog Drawer -->
     <el-drawer
       v-model="changelogDialog"
@@ -31,8 +38,8 @@
 <script setup>
 import { ref } from 'vue'
 import Header from '../components/Header.vue'
+import Sidebar from '../components/Sidebar.vue'
 
-const documentationDialog = ref(false)
 const changelogDialog = ref(false)
 
 </script>
