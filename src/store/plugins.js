@@ -77,7 +77,8 @@ export const usePluginStore = defineStore('plugins', {
         
         // Store all_settings directly without spreading since it's an object
         this.allSettings = response?.data?.all_settings || {}
-        
+        this.allSettings.htpm_enabled_post_types = [...this.allSettings.htpm_enabled_post_types,'page','post'];
+
         return this.plugins
       } catch (error) {
         this.error = error.message || 'Failed to fetch plugins'

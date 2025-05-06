@@ -116,6 +116,7 @@ const fetchPostTypes = async () => {
       value: type.name,
       label: type.label
     }))
+    availablePostTypes.value = availablePostTypes.value.filter(type => type.value !== 'page' && type.value !== 'post')
   } catch (error) {
     console.error('Error fetching post types:', error)
     ElNotification({
@@ -140,7 +141,7 @@ const loadSavedSettings = async () => {
     const savedSettings = store.allSettings;
     // Safely handle post types array
     settingsPagesSettings.value.postTypes = savedSettings?.htpm_enabled_post_types || ['page', 'post'];
-
+    // settingsPagesSettings.value.postTypes = settingsPagesSettings.value.postTypes.filter(type => type !== 'page' && type !== 'post');
     // Handle other settings with default values
     settingsPagesSettings.value.htpm_load_posts = parseInt(savedSettings?.htpm_load_posts) || 150;
     settingsPagesSettings.value.showThumbnails = savedSettings?.showThumbnails ?? true;
