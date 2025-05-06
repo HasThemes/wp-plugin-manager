@@ -1,5 +1,5 @@
 <template>
-  <div class="settings-page htpm-inner-page-wrapper">
+  <div class="settings-page htpm-inner-page-wrapper" v-loading="isLoading">
     <div class="settings-container">
       <!-- Post Types Settings Section -->
       <div class="settings-section mb-8">
@@ -13,7 +13,7 @@
             <label class="setting-label">Select Post Types</label>
             <div class="setting-control">
               <div class="selected-types">
-                <span v-for="type in selectedPostTypes" :key="type" class="type-tag">
+                <span v-for="type in settingsPagesSettings.postTypes" :key="type" class="type-tag">
                   {{ type }}
                   <el-icon class="remove-tag" @click="removePostType(type)"><Close /></el-icon>
                 </span>
@@ -32,7 +32,7 @@
             <label class="setting-label">Number of Posts to Load</label>
             <div class="setting-control number-input-group">
               <button class="number-btn" @click="decrementPosts">−</button>
-              <input type="number" v-model="numberOfPosts" class="number-input" min="1" max="1000">
+              <input type="number" v-model="settingsPagesSettings.htpm_load_posts" class="number-input" min="1" max="1000">
               <button class="number-btn" @click="incrementPosts">+</button>
             </div>
             <p class="setting-description">Default: 150 posts. Adjust if you have more posts to manage.</p>
@@ -56,7 +56,7 @@
             <label class="setting-label">Show Plugin Thumbnails</label>
             <div class="setting-control">
               <el-switch
-                v-model="showThumbnails"
+                v-model="settingsPagesSettings.showThumbnails"
                 class="custom-switch"
               />
             </div>
@@ -66,7 +66,7 @@
           <div class="form-group">
             <label class="setting-label">Items Per Page in Plugin List</label>
             <div class="setting-control">
-              <select v-model="itemsPerPage" class="form-select">
+              <select v-model="settingsPagesSettings.itemsPerPage" class="form-select">
                 <option value="10">10 items</option>
                 <option value="20">20 items</option>
                 <option value="50">50 items</option>
@@ -90,87 +90,147 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { View, Document, Close, InfoFilled, Check } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
-
+import { ref, computed, onMounted } from 'vue'
+import { View, Document, Close, InfoFilled, Check, Warning } from '@element-plus/icons-vue'
+import { ElMessage, ElNotification } from 'element-plus'
+import { usePluginStore } from '../store/plugins'
+const store = usePluginStore()
 // Display Settings
-const showThumbnails = ref(true)
-const itemsPerPage = ref(50) // Default to 50 items
-
-// Post Types Management
-const postTypes = ref([
-  { value: 'post', label: 'Posts' },
-  { value: 'page', label: 'Pages' },
-  { value: 'product', label: 'Products' },
-  { value: 'portfolio', label: 'Portfolio' },
-  { value: 'attachment', label: 'Media' },
-])
-
-const selectedPostTypes = ref(['post', 'page'])
+const settingsPagesSettings = ref(
+  {
+    postTypes: [],
+    htpm_load_posts: 150,
+    showThumbnails: true,
+    itemsPerPage: 10
+  }
+)
+const isLoading = ref(true)
 const newPostType = ref('')
+const availablePostTypes = ref([])
 
-// Computed property for available post types (excluding selected ones)
-const availablePostTypes = computed(() => {
-  return postTypes.value.filter(type => !selectedPostTypes.value.includes(type.value))
+// Fetch available post types
+const fetchPostTypes = async () => {
+  try {
+    const data = await store.fetchPostTypes()
+    availablePostTypes.value = data.map(type => ({
+      value: type.name,
+      label: type.label
+    }))
+  } catch (error) {
+    console.error('Error fetching post types:', error)
+    ElNotification({
+      title: 'Error',
+      message: 'Failed to load post types. Please refresh the page or contact support.',
+      type: 'error',
+      duration: 5000,
+      icon: Warning
+    })
+  }
+}
+
+// Load saved settings
+const loadSavedSettings = async () => {
+
+  isLoading.value = true
+  try {
+    await store.fetchPlugins()
+    // First fetch post types
+    await fetchPostTypes()
+    
+    // Then fetch saved settings
+    const savedSettings = store.allSettings;    
+    if (savedSettings?.htpm_enabled_post_types) {
+      settingsPagesSettings.value.postTypes = Array.isArray(savedSettings.htpm_enabled_post_types) ? [...savedSettings.htpm_enabled_post_types] : []
+    }
+    if (savedSettings?.htpm_load_posts) {
+      settingsPagesSettings.value.htpm_load_posts = savedSettings?.htpm_load_posts
+    }
+    if (savedSettings?.showThumbnails) {
+      settingsPagesSettings.value.showThumbnails = savedSettings?.showThumbnails
+    }
+    if (savedSettings?.itemsPerPage) {
+      settingsPagesSettings.value.itemsPerPage = savedSettings?.itemsPerPage
+    }
+      
+  } catch (error) {
+    console.error('Error loading settings:', error)
+    ElNotification({
+      title: 'Error',
+      message: 'Failed to load settings. Please try again.',
+      type: 'error',
+      duration: 5000
+    })
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Load data on component mount
+onMounted(async () => {
+  await loadSavedSettings()
 })
 
 // Post type management methods
 const addPostType = () => {
-  if (newPostType.value && !selectedPostTypes.value.includes(newPostType.value)) {
-    selectedPostTypes.value.push(newPostType.value)
+  if (newPostType.value && !settingsPagesSettings.value.postTypes.includes(newPostType.value)) {
+    settingsPagesSettings.value.postTypes.push(newPostType.value)
     newPostType.value = ''
   }
 }
 
 const removePostType = (type) => {
-  const index = selectedPostTypes.value.indexOf(type)
+  const index = settingsPagesSettings.value.postTypes.indexOf(type)
   if (index > -1) {
-    selectedPostTypes.value.splice(index, 1)
+    settingsPagesSettings.value.postTypes.splice(index, 1)
   }
 }
 
-// Number of posts management
-const numberOfPosts = ref(150)
-
+// Number of posts increment/decrement
 const incrementPosts = () => {
-  if (numberOfPosts.value < 1000) {
-    numberOfPosts.value += 10
+  if (settingsPagesSettings.value.htpm_load_posts < 1000) {
+    settingsPagesSettings.value.htpm_load_posts = parseInt(settingsPagesSettings.value.htpm_load_posts) + 10
   }
 }
 
 const decrementPosts = () => {
-  if (numberOfPosts.value > 1) {
-    numberOfPosts.value = Math.max(1, numberOfPosts.value - 10)
+  if (settingsPagesSettings.value.htpm_load_posts > 1) {
+    settingsPagesSettings.value.htpm_load_posts = Math.max(1, parseInt(settingsPagesSettings.value.htpm_load_posts) - 10)
   }
 }
 
-// Watch for number input changes to ensure valid range
 const validateNumberOfPosts = () => {
-  if (numberOfPosts.value < 1) numberOfPosts.value = 1
-  if (numberOfPosts.value > 1000) numberOfPosts.value = 1000
+  settingsPagesSettings.value.htpm_load_posts = Math.max(1, Math.min(1000, parseInt(settingsPagesSettings.value.htpm_load_posts) || 150))
 }
 
 // Save settings
-const saveSettings = () => {
-  // TODO: Implement API call
-  const settings = {
-    display: {
-      showThumbnails: showThumbnails.value,
-      itemsPerPage: itemsPerPage.value
-    },
-    postTypes: {
-      selected: selectedPostTypes.value,
-      numberOfPosts: numberOfPosts.value
+const saveSettings = async () => {
+  try {
+    // Validate values before saving
+    validateNumberOfPosts()
+    
+    // Create settings object
+    const settings = {
+      postTypes: settingsPagesSettings.value.postTypes,
+      htpm_load_posts: settingsPagesSettings.value.htpm_load_posts,
+      showThumbnails: settingsPagesSettings.value.showThumbnails,
+      itemsPerPage: settingsPagesSettings.value.itemsPerPage
     }
+    
+    await store.updateDashboardSettings(settings)
+    ElNotification({
+      title: 'Success',
+      message: 'Settings saved successfully',
+      type: 'success'
+    })
+  } catch (error) {
+    console.error('Error saving settings:', error)
+    ElNotification({
+      title: 'Error',
+      message: 'Failed to save settings. Please try again.',
+      type: 'error',
+      duration: 5000
+    })
   }
-
-  console.log('Settings saved:', settings)
-  
-  ElMessage({
-    message: 'Settings saved successfully!',
-    type: 'success',
-  })
 }
 </script>
 

@@ -65,6 +65,14 @@ function htpm_register_rest_routes() {
             return current_user_can('edit_posts');
         }
     ]);
+    // Get selected post types endpoint
+    register_rest_route('htpm/v1', '/selected-post-types', [
+        'methods' => 'GET',
+        'callback' => 'htpm_get_selected_post_types',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ]);
     
     // Get custom post type items endpoint
     register_rest_route('htpm/v1', '/post-type-items/(?P<type>[a-zA-Z0-9_-]+)', [
@@ -81,8 +89,97 @@ function htpm_register_rest_routes() {
         'callback' => 'htpm_get_sidebar_content',
         'permission_callback' => '__return_true',
     ]);
+    // Get dashboard  Settings endpoint
+    // register_rest_route('htpm/v1', '/get-dashboard-settings', [
+    //     'methods' => 'GET',
+    //     'callback' => 'htpm_get_dashboard_settings',
+    //     'permission_callback' => function() {
+    //         return current_user_can('edit_posts');
+    //     }
+    // ]);
+    // Update dashboard  Settings endpoint
+    register_rest_route('htpm/v1', '/update-dashboard-settings', [
+        'methods' => 'POST',
+        'callback' => 'htpm_update_dashboard_settings',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ]);
+    // Get all settings endpoint
+    register_rest_route('htpm/v1', '/get-all-settings', [
+        'methods' => 'GET',
+        'callback' => 'htpm_get_all_settings',
+        'permission_callback' => function() {
+            return current_user_can('edit_posts');
+        }
+    ]);
+    
 }
 add_action('rest_api_init', 'htpm_register_rest_routes');
+
+/**
+ * Get all settings
+ */
+function htpm_get_all_settings() {
+    $options = get_option('htpm_options', []);
+    return new WP_REST_Response($options, 200);
+}
+
+
+/**
+ * Get selected post types
+ */
+function htpm_get_selected_post_types() {
+    $options = get_option('htpm_dashboard_options', [
+        'htpm_dashboard_settings' => [
+            'selectedPostTypes' => []
+        ]
+    ]);
+    return new WP_REST_Response($options, 200);
+}
+
+/**
+ * Get dashboard  Settings
+ */
+function htpm_get_dashboard_settings() {
+    $options = get_option('htpm_dashboard_options', [
+        'htpm_dashboard_settings' => [
+            'selectedPostTypes' => [],
+            'numberOfPosts' => 150,
+            'showThumbnails' => true,
+            'itemsPerPage' => 10
+        ]
+    ]);
+    return new WP_REST_Response($options, 200);
+}
+
+/**
+ * Update dashboard  Settings
+ */
+function htpm_update_dashboard_settings($request) {
+    $options = get_option('htpm_options', []);
+    $settings = $request->get_params();
+    
+    // Update each setting individually
+    if (isset($settings['postTypes'])) {
+        // Ensure page and post are always included
+        $post_types = array_unique(array_merge(['page', 'post'], $settings['postTypes']));
+        $options['htpm_enabled_post_types'] = $post_types;
+    }
+    if (isset($settings['htpm_load_posts'])) {
+        $options['htpm_load_posts'] = intval($settings['htpm_load_posts']);
+    }
+    if (isset($settings['showThumbnails'])) {
+        $options['showThumbnails'] = (bool) $settings['showThumbnails'];
+    }
+    if (isset($settings['itemsPerPage'])) {
+        $options['itemsPerPage'] = intval($settings['itemsPerPage']);
+    }
+    
+    update_option('htpm_options', $options);
+    return new WP_REST_Response($options, 200);
+}
+
 
 /**
  * Get all plugins with their status
@@ -152,8 +249,10 @@ function htpm_get_plugins() {
             'icon' => $icon_url // Use found icon URL or empty string if none found
         ];
     }
-    
-    return new WP_REST_Response($plugins, 200);
+    $all_settings = [];
+    $all_settings['htpm_list_plugins'] = $plugins;
+    $all_settings['all_settings'] = $htpm_options;
+    return new WP_REST_Response($all_settings, 200);
 }
 
 /**

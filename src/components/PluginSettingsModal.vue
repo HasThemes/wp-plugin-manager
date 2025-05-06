@@ -56,7 +56,7 @@
       <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
         <label>Select Post Types:</label>
         <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange" style="display: flex;gap: 10px;">
-          <el-checkbox v-for="postType in availablePostTypes" :key="postType.name" :label="postType.name">
+          <el-checkbox v-for="postType in filteredPostTypes" :key="postType.name" :label="postType.name">
             {{ postType.label }}
           </el-checkbox>
         </el-checkbox-group>
@@ -217,6 +217,9 @@ const pluginSettings = ref({
 
 // Post types from API
 const availablePostTypes = computed(() => store.postTypes)
+const selectedAllPostTypesKeys = computed(() => store.allSettings.htpm_enabled_post_types);
+const filteredPostTypes = computed(() =>availablePostTypes.value.filter(item => selectedAllPostTypesKeys.value?.includes(item.name))
+);
 const selectedCustomPostTypes = computed(() => {
   return pluginSettings.value.post_types.filter(type => !['page', 'post'].includes(type))
 })
@@ -265,7 +268,7 @@ const loadData = async () => {
     loadingPages.value = false
     loadingPosts.value = false
     
-    // Load custom post type items if needed
+    // Load custom post type data
     if (pluginSettings.value.uri_type === 'page_post_cpt') {
       await loadCustomPostTypeData()
     }

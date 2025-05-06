@@ -2,6 +2,14 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+// Default dashboard settings
+const defaultDashboardSettings = {
+  selectedPostTypes: [],
+  numberOfPosts: 150,
+  showThumbnails: false,
+  itemsPerPage: 10
+}
+
 // Create an axios instance with WordPress REST API base URL and nonce
 const api = axios.create({
   baseURL: window.HTPMM?.restUrl || '/wp-json',
@@ -14,13 +22,18 @@ const api = axios.create({
 export const usePluginStore = defineStore('plugins', {
   state: () => ({
     plugins: [],
+    allSettings:[],
+    dashboardSettings: {
+      htpm_dashboard_settings: { ...defaultDashboardSettings }
+    },
     loading: false,
     error: null,
     settings: {},
     postTypes: [],
     pages: [],
     posts: [],
-    customPostTypeItems: {}
+    customPostTypeItems: {},
+    selectedAllPostTypes:[]
   }),
 
   getters: {
@@ -41,7 +54,9 @@ export const usePluginStore = defineStore('plugins', {
     
     // Plugins with updates available
     updateAvailable: (state) => state.plugins.filter(p => p.hasUpdate),
-    totalPlugins: (state) => state.plugins.length
+    totalPlugins: (state) => state.plugins.length,
+    selectedAllPostTypes: (state) => state.selectedAllPostTypes,
+
   },
 
   actions: {
@@ -54,11 +69,19 @@ export const usePluginStore = defineStore('plugins', {
         const response = await api.get('/htpm/v1/plugins')
         
         // Initialize all plugins with enable_deactivation=true by default
-        this.plugins = response.data.map(plugin => ({
+        this.plugins = response?.data?.htpm_list_plugins.map(plugin => ({
           ...plugin,
           // All plugins start as disabled by default
           enable_deactivation: 'no'
         }))
+        this.allSettings = {
+          ...response?.data?.all_settings,
+          htpm_enabled_post_types: [
+            'page',
+            'post',
+            ...(response?.data?.all_settings?.htpm_enabled_post_types || [])
+          ]
+        }
         
         return this.plugins
       } catch (error) {
@@ -93,7 +116,65 @@ export const usePluginStore = defineStore('plugins', {
         return null
       }
     },
+    // Fetch dashboard settings
+    async fetchDashboardSettings() {
+      try {
+        const response = await api.get('/htpm/v1/get-dashboard-settings')
+        console.log('API Response:', response.data)
+        
+        // Get settings from response or use defaults
+        const settings = response.data?.htpm_dashboard_settings || { ...defaultDashboardSettings }
+        
+        // Create a new settings object with proper type handling
+        const newSettings = {
+          selectedPostTypes: Array.isArray(settings.selectedPostTypes) ? [...settings.selectedPostTypes] : [],
+          numberOfPosts: parseInt(settings.numberOfPosts) || 150,
+          showThumbnails: typeof settings.showThumbnails === 'boolean' ? settings.showThumbnails : true,
+          itemsPerPage: parseInt(settings.itemsPerPage) || 10
+        }
 
+        // Update state
+        this.dashboardSettings = {
+          htpm_dashboard_settings: newSettings
+        }
+
+        console.log('Dashboard Settings:', this.dashboardSettings)
+        return this.dashboardSettings
+      } catch (error) {
+        console.error('Error fetching dashboard settings:', error)
+        // Reset to default settings on error
+        this.dashboardSettings = {
+          htpm_dashboard_settings: { ...defaultDashboardSettings }
+        }
+        return this.dashboardSettings
+      }
+    },
+    // Update dashboard settings
+    async updateDashboardSettings(settings) {
+      try {
+        if (!settings) {
+          throw new Error('Invalid settings format')
+        }
+
+        const response = await api.post('/htpm/v1/update-dashboard-settings', settings)
+        console.log('Update Response:', response.data)
+
+        // Update state with new settings
+        this.allSettings = {
+          ...this.allSettings,
+          htpm_enabled_post_types: settings.postTypes,
+          htpm_load_posts: settings.htpm_load_posts,
+          showThumbnails: settings.showThumbnails,
+          itemsPerPage: settings.itemsPerPage
+        }
+
+        return response.data
+      } catch (error) {
+        console.error('Error updating dashboard settings:', error)
+        throw error
+      }
+    },
+    // selected selected AllPost Types
     // Update plugin settings
 // updatePluginSettings method for the store with fixed settings preservation
 async updatePluginSettings(pluginId, settings) {
@@ -194,7 +275,17 @@ async updatePluginSettings(pluginId, settings) {
         }
         
         const response = await api.get('/htpm/v1/post-types')
-        this.postTypes = response.data
+        // Ensure we're getting the correct data structure
+        this.postTypes = Array.isArray(response.data) ? response.data : []
+        
+        // Map the response to the expected format if needed
+        if (this.postTypes.length > 0 && !this.postTypes[0].name) {
+          this.postTypes = this.postTypes.map(type => ({
+            name: type.name || '',
+            label: type.label || type.name || ''
+          }))
+        }
+        
         return this.postTypes
       } catch (error) {
         console.error('Error fetching post types:', error)
