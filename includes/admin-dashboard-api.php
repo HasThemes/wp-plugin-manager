@@ -158,25 +158,18 @@ function htpm_get_dashboard_settings() {
  */
 function htpm_update_dashboard_settings($request) {
     try {
-        // Get the raw request body
-        $raw_body = $request->get_body();
-        error_log('Raw request body: ' . $raw_body);
-        
-        // Decode JSON data
-        $settings = json_decode($raw_body, true);
-        error_log('Decoded settings: ' . print_r($settings, true));
+        // Get and decode JSON data
+        $settings = json_decode($request->get_body(), true);
         
         if (json_last_error() !== JSON_ERROR_NONE) {
-            error_log('JSON decode error: ' . json_last_error_msg());
             return new WP_REST_Response([
                 'success' => false,
-                'message' => 'Invalid JSON data: ' . json_last_error_msg()
+                'message' => 'Invalid JSON data'
             ], 400);
         }
         
         // Get current options
         $current_options = get_option('htpm_options');
-        error_log('Current options: ' . print_r($current_options, true));
         
         // Initialize options with defaults if not set
         $options = wp_parse_args($current_options, [
@@ -200,14 +193,10 @@ function htpm_update_dashboard_settings($request) {
             $options['itemsPerPage'] = intval($settings['itemsPerPage']);
         }
         
-        error_log('Attempting to update with options: ' . print_r($options, true));
-        
         // Update options
         $update_result = update_option('htpm_options', $options);
-        error_log('Update result: ' . ($update_result ? 'true' : 'false'));
         
         if ($update_result === false && $options !== get_option('htpm_options')) {
-            error_log('Failed to update options in database');
             return new WP_REST_Response([
                 'success' => false,
                 'message' => 'Failed to update settings in database'
@@ -220,11 +209,9 @@ function htpm_update_dashboard_settings($request) {
         ], 200);
         
     } catch (Throwable $e) {
-        error_log('Error in htpm_update_dashboard_settings: ' . $e->getMessage());
-        error_log('Error trace: ' . $e->getTraceAsString());
         return new WP_REST_Response([
             'success' => false,
-            'message' => $e->getMessage()
+            'message' => 'An error occurred while updating settings'
         ], 500);
     }
 }

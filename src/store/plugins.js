@@ -160,7 +160,6 @@ export const usePluginStore = defineStore('plugins', {
         }
 
         const response = await api.post('/htpm/v1/update-dashboard-settings', formattedSettings)
-        console.log('Update Response:', response.data)
 
         if (response.data && response.data.success) {
           // Update state with new settings

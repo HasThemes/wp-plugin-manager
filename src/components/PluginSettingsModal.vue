@@ -220,7 +220,6 @@ const availablePostTypes = computed(() => store.postTypes)
 const selectedAllPostTypesKeys = computed(() => store.allSettings.htpm_enabled_post_types);
 const filteredPostTypes = computed(() =>availablePostTypes.value.filter(item => selectedAllPostTypesKeys.value?.includes(item.name))
 );
-console.log(filteredPostTypes.value,'filteredPostTypes');
 const selectedCustomPostTypes = computed(() => {
   return pluginSettings.value.post_types.filter(type => !['page', 'post'].includes(type))
 })
@@ -440,8 +439,6 @@ const cloneCondition = (index) => {
 const saveSettings = async () => {
   saving.value = true
   try {
-    // Debug original settings
-    console.log('Original settings before save:', JSON.parse(JSON.stringify(pluginSettings.value)))
     
     // First make sure all required arrays are properly initialized
     if (!Array.isArray(pluginSettings.value.pages)) {

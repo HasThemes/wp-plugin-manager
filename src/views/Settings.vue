@@ -138,7 +138,6 @@ const loadSavedSettings = async () => {
     
     // Then fetch saved settings
     const savedSettings = store.allSettings;
-    console.log(savedSettings,'load settins');
     // Safely handle post types array
     settingsPagesSettings.value.postTypes = savedSettings?.htpm_enabled_post_types || ['page', 'post'];
 
@@ -172,10 +171,6 @@ const addPostType = () => {
     settingsPagesSettings.value.postTypes.push(newPostType.value)
     newPostType.value = ''
   }
-  // if (newPostType.value) {
-  //   settingsPagesSettings.value.postTypes = [...settingsPagesSettings.value.postTypes, newPostType.value]
-  //   newPostType.value = ''
-  // }
 }
 
 const removePostType = (type) => {
@@ -222,9 +217,6 @@ const saveSettings = async () => {
       showThumbnails: Boolean(settingsPagesSettings.value.showThumbnails),
       itemsPerPage: parseInt(settingsPagesSettings.value.itemsPerPage) || 10
     }
-
-    // Debug log
-    console.log('Saving settings:', settings)
     
     const response = await store.updateDashboardSettings(settings)
     
