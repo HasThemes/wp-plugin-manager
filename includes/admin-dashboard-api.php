@@ -102,7 +102,7 @@ function htpm_register_rest_routes() {
         'methods' => 'POST',
         'callback' => 'htpm_update_dashboard_settings',
         'permission_callback' => function() {
-            return current_user_can('edit_posts');
+            return current_user_can('manage_options');
         }
     ]);
     // Get all settings endpoint
@@ -157,27 +157,76 @@ function htpm_get_dashboard_settings() {
  * Update dashboard  Settings
  */
 function htpm_update_dashboard_settings($request) {
-    $options = get_option('htpm_options', []);
-    $settings = $request->get_params();
-    
-    // Update each setting individually
-    if (isset($settings['postTypes'])) {
-        // Ensure page and post are always included
-        $post_types = array_unique(array_merge(['page', 'post'], $settings['postTypes']));
-        $options['htpm_enabled_post_types'] = $post_types;
+    try {
+        // Get the raw request body
+        $raw_body = $request->get_body();
+        error_log('Raw request body: ' . $raw_body);
+        
+        // Decode JSON data
+        $settings = json_decode($raw_body, true);
+        error_log('Decoded settings: ' . print_r($settings, true));
+        
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON decode error: ' . json_last_error_msg());
+            return new WP_REST_Response([
+                'success' => false,
+                'message' => 'Invalid JSON data: ' . json_last_error_msg()
+            ], 400);
+        }
+        
+        // Get current options
+        $current_options = get_option('htpm_options');
+        error_log('Current options: ' . print_r($current_options, true));
+        
+        // Initialize options with defaults if not set
+        $options = wp_parse_args($current_options, [
+            'htpm_enabled_post_types' => ['page', 'post'],
+            'htpm_load_posts' => 150,
+            'showThumbnails' => true,
+            'itemsPerPage' => 10
+        ]);
+        
+        // Update settings
+        if (isset($settings['postTypes']) && is_array($settings['postTypes'])) {
+            $options['htpm_enabled_post_types'] = array_values(array_filter($settings['postTypes']));
+        }
+        if (isset($settings['htpm_load_posts'])) {
+            $options['htpm_load_posts'] = intval($settings['htpm_load_posts']);
+        }
+        if (isset($settings['showThumbnails'])) {
+            $options['showThumbnails'] = (bool) $settings['showThumbnails'];
+        }
+        if (isset($settings['itemsPerPage'])) {
+            $options['itemsPerPage'] = intval($settings['itemsPerPage']);
+        }
+        
+        error_log('Attempting to update with options: ' . print_r($options, true));
+        
+        // Update options
+        $update_result = update_option('htpm_options', $options);
+        error_log('Update result: ' . ($update_result ? 'true' : 'false'));
+        
+        if ($update_result === false && $options !== get_option('htpm_options')) {
+            error_log('Failed to update options in database');
+            return new WP_REST_Response([
+                'success' => false,
+                'message' => 'Failed to update settings in database'
+            ], 500);
+        }
+        
+        return new WP_REST_Response([
+            'success' => true,
+            'data' => $options
+        ], 200);
+        
+    } catch (Throwable $e) {
+        error_log('Error in htpm_update_dashboard_settings: ' . $e->getMessage());
+        error_log('Error trace: ' . $e->getTraceAsString());
+        return new WP_REST_Response([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
     }
-    if (isset($settings['htpm_load_posts'])) {
-        $options['htpm_load_posts'] = intval($settings['htpm_load_posts']);
-    }
-    if (isset($settings['showThumbnails'])) {
-        $options['showThumbnails'] = (bool) $settings['showThumbnails'];
-    }
-    if (isset($settings['itemsPerPage'])) {
-        $options['itemsPerPage'] = intval($settings['itemsPerPage']);
-    }
-    
-    update_option('htpm_options', $options);
-    return new WP_REST_Response($options, 200);
 }
 
 

@@ -69,19 +69,14 @@ export const usePluginStore = defineStore('plugins', {
         const response = await api.get('/htpm/v1/plugins')
         
         // Initialize all plugins with enable_deactivation=true by default
-        this.plugins = response?.data?.htpm_list_plugins.map(plugin => ({
+        this.plugins = response?.data?.htpm_list_plugins?.map(plugin => ({
           ...plugin,
           // All plugins start as disabled by default
           enable_deactivation: 'no'
-        }))
-        this.allSettings = {
-          ...response?.data?.all_settings,
-          htpm_enabled_post_types: [
-            'page',
-            'post',
-            ...(response?.data?.all_settings?.htpm_enabled_post_types || [])
-          ]
-        }
+        })) || []
+        
+        // Store all_settings directly without spreading since it's an object
+        this.allSettings = response?.data?.all_settings || {}
         
         return this.plugins
       } catch (error) {
@@ -156,19 +151,30 @@ export const usePluginStore = defineStore('plugins', {
           throw new Error('Invalid settings format')
         }
 
-        const response = await api.post('/htpm/v1/update-dashboard-settings', settings)
-        console.log('Update Response:', response.data)
-
-        // Update state with new settings
-        this.allSettings = {
-          ...this.allSettings,
-          htpm_enabled_post_types: settings.postTypes,
-          htpm_load_posts: settings.htpm_load_posts,
-          showThumbnails: settings.showThumbnails,
-          itemsPerPage: settings.itemsPerPage
+        // Ensure settings are properly formatted
+        const formattedSettings = {
+          postTypes: Array.isArray(settings.postTypes) ? settings.postTypes : ['page', 'post'],
+          htpm_load_posts: parseInt(settings.htpm_load_posts) || 150,
+          showThumbnails: Boolean(settings.showThumbnails),
+          itemsPerPage: parseInt(settings.itemsPerPage) || 10
         }
 
-        return response.data
+        const response = await api.post('/htpm/v1/update-dashboard-settings', formattedSettings)
+        console.log('Update Response:', response.data)
+
+        if (response.data && response.data.success) {
+          // Update state with new settings
+          this.allSettings = {
+            ...this.allSettings,
+            htpm_enabled_post_types: formattedSettings.postTypes,
+            htpm_load_posts: formattedSettings.htpm_load_posts,
+            showThumbnails: formattedSettings.showThumbnails,
+            itemsPerPage: formattedSettings.itemsPerPage
+          }
+          return response.data
+        } else {
+          throw new Error(response.data?.message || 'Failed to update settings')
+        }
       } catch (error) {
         console.error('Error updating dashboard settings:', error)
         throw error

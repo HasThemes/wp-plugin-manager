@@ -130,7 +130,6 @@ const fetchPostTypes = async () => {
 
 // Load saved settings
 const loadSavedSettings = async () => {
-
   isLoading.value = true
   try {
     await store.fetchPlugins()
@@ -138,19 +137,15 @@ const loadSavedSettings = async () => {
     await fetchPostTypes()
     
     // Then fetch saved settings
-    const savedSettings = store.allSettings;    
-    if (savedSettings?.htpm_enabled_post_types) {
-      settingsPagesSettings.value.postTypes = Array.isArray(savedSettings.htpm_enabled_post_types) ? [...savedSettings.htpm_enabled_post_types] : []
-    }
-    if (savedSettings?.htpm_load_posts) {
-      settingsPagesSettings.value.htpm_load_posts = savedSettings?.htpm_load_posts
-    }
-    if (savedSettings?.showThumbnails) {
-      settingsPagesSettings.value.showThumbnails = savedSettings?.showThumbnails
-    }
-    if (savedSettings?.itemsPerPage) {
-      settingsPagesSettings.value.itemsPerPage = savedSettings?.itemsPerPage
-    }
+    const savedSettings = store.allSettings;
+    console.log(savedSettings,'load settins');
+    // Safely handle post types array
+    settingsPagesSettings.value.postTypes = savedSettings?.htpm_enabled_post_types || ['page', 'post'];
+
+    // Handle other settings with default values
+    settingsPagesSettings.value.htpm_load_posts = parseInt(savedSettings?.htpm_load_posts) || 150;
+    settingsPagesSettings.value.showThumbnails = savedSettings?.showThumbnails ?? true;
+    settingsPagesSettings.value.itemsPerPage = parseInt(savedSettings?.itemsPerPage) || 10;
       
   } catch (error) {
     console.error('Error loading settings:', error)
@@ -172,16 +167,26 @@ onMounted(async () => {
 
 // Post type management methods
 const addPostType = () => {
+
   if (newPostType.value && !settingsPagesSettings.value.postTypes.includes(newPostType.value)) {
     settingsPagesSettings.value.postTypes.push(newPostType.value)
     newPostType.value = ''
   }
+  // if (newPostType.value) {
+  //   settingsPagesSettings.value.postTypes = [...settingsPagesSettings.value.postTypes, newPostType.value]
+  //   newPostType.value = ''
+  // }
 }
 
 const removePostType = (type) => {
+  // Don't allow removing page or post
+  if (type === 'page' || type === 'post') return
+  
   const index = settingsPagesSettings.value.postTypes.indexOf(type)
   if (index > -1) {
-    settingsPagesSettings.value.postTypes.splice(index, 1)
+    const newPostTypes = [...settingsPagesSettings.value.postTypes]
+    newPostTypes.splice(index, 1)
+    settingsPagesSettings.value.postTypes = newPostTypes
   }
 }
 
@@ -210,23 +215,33 @@ const saveSettings = async () => {
     
     // Create settings object
     const settings = {
-      postTypes: settingsPagesSettings.value.postTypes,
-      htpm_load_posts: settingsPagesSettings.value.htpm_load_posts,
-      showThumbnails: settingsPagesSettings.value.showThumbnails,
-      itemsPerPage: settingsPagesSettings.value.itemsPerPage
+      postTypes: Array.isArray(settingsPagesSettings.value.postTypes) 
+        ? settingsPagesSettings.value.postTypes.filter(type => type && typeof type === 'string')
+        : ['page', 'post'],
+      htpm_load_posts: parseInt(settingsPagesSettings.value.htpm_load_posts) || 150,
+      showThumbnails: Boolean(settingsPagesSettings.value.showThumbnails),
+      itemsPerPage: parseInt(settingsPagesSettings.value.itemsPerPage) || 10
     }
+
+    // Debug log
+    console.log('Saving settings:', settings)
     
-    await store.updateDashboardSettings(settings)
-    ElNotification({
-      title: 'Success',
-      message: 'Settings saved successfully',
-      type: 'success'
-    })
+    const response = await store.updateDashboardSettings(settings)
+    
+    if (response?.success) {
+      ElNotification({
+        title: 'Success',
+        message: 'Settings saved successfully',
+        type: 'success'
+      })
+    } else {
+      throw new Error(response?.message || 'Failed to save settings')
+    }
   } catch (error) {
     console.error('Error saving settings:', error)
     ElNotification({
       title: 'Error',
-      message: 'Failed to save settings. Please try again.',
+      message: error.message || 'Failed to save settings. Please try again.',
       type: 'error',
       duration: 5000
     })
