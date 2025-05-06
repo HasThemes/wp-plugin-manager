@@ -217,7 +217,9 @@ const pluginSettings = ref({
 
 // Post types from API
 const availablePostTypes = computed(() => store.postTypes)
-const selectedAllPostTypesKeys = computed(() => store.allSettings.htpm_enabled_post_types);
+const selectedAllPostTypesKeys = computed(() => {
+  return ['page', 'post'].concat(store.allSettings.htpm_enabled_post_types);
+});
 const filteredPostTypes = computed(() =>availablePostTypes.value.filter(item => selectedAllPostTypesKeys.value?.includes(item.name))
 );
 const selectedCustomPostTypes = computed(() => {
