@@ -33,7 +33,11 @@ export const usePluginStore = defineStore('plugins', {
     pages: [],
     posts: [],
     customPostTypeItems: {},
-    selectedAllPostTypes:[]
+    selectedAllPostTypes:[],
+    changelog: [],
+    changelogLoading: false,
+    changelogRead: false,
+    notificationStatus: false
   }),
 
   getters: {
@@ -240,6 +244,62 @@ async updatePluginSettings(pluginId, settings) {
   }
 },
 
+    /**
+     * Fetch Changelog Data
+     */
+    async FETCH_CHANGELOG() {
+      this.changelogLoading = true;
+      try {
+        const response = await api.get('/htpm/v1/changelog');
+        if (response?.data?.success) {
+          this.changelog = response.data.data;
+          return response.data.data;
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error('Error fetching changelog:', error);
+        throw error;
+      } finally {
+        this.changelogLoading = false;
+      }
+    },
+
+    /**
+     * Mark Changelog as Read
+     */
+    async MARK_CHANGELOG_READ() {
+      try {
+        const response = await api.post('/htpm/v1/changelog/mark-read');
+        if (response?.data?.success) {
+          this.changelogRead = true;
+          return response.data;
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error('Error marking changelog as read:', error);
+        throw error;
+      }
+    },
+
+    /**
+     * Check Notification Status
+     */
+    async CHECK_NOTIFICATION_STATUS() {
+      try {
+        const response = await api.get('/htpm/v1/changelog/status');
+        if (response?.data?.success) {
+          this.notificationStatus = response.data.data;
+          return response.data.data;
+        } else {
+          throw new Error('Invalid response format');
+        }
+      } catch (error) {
+        console.error('Error checking notification status:', error);
+        throw error;
+      }
+    },
     // Fetch pages for settings selector
     async fetchPages() {
       try {

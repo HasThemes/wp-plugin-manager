@@ -63,7 +63,7 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
         include_once( HTPM_ROOT_DIR . '/includes/admin-dashboard-api.php');
-
+        include_once( HTPM_ROOT_DIR . '/includes/changelog-api.php');
 
     }
 
@@ -79,10 +79,10 @@ class HTPM_Main {
             remove_all_actions('all_admin_notices');
         }
     }
-    
+
     /**
      * Plugin activation hook
-    */
+     */
     function activation(){
         if ( ! get_option( 'htpm_installed' ) ) {
             update_option( 'htpm_installed', time() );

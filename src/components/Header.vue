@@ -55,30 +55,14 @@
       <documentation v-model="documentationDialog" />
   
       <!-- Changelog Drawer -->
-      <el-drawer
-        v-model="changelogDialog"
-        title="Plugin Updates"
-        direction="rtl"
-        size="400px"
-        custom-class="changelog-drawer" style="top: 32px !important; height: calc(100vh - 32px) !important;"
-      >
-        <div class="changelog-wrapper">
-          <div v-for="update in updates" :key="update.id" class="changelog-item">
-            <div class="update-header">
-              <h3>{{ update.plugin }}</h3>
-              <span class="version">v{{ update.version }}</span>
-            </div>
-            <div class="changelog-content">
-              <p>{{ update.changelog }}</p>
-            </div>
-          </div>
-        </div>
-      </el-drawer>
+      <notification-drawer v-model="changelogDialog" />
   </template>
   
   <script setup>
   import { ref, computed } from 'vue'
   import { useRoute } from 'vue-router'
+  import { usePluginStore } from '../store/plugins'
+  import NotificationDrawer from './NotificationDrawer.vue'
   import {
     Grid,
     Setting,
@@ -93,10 +77,14 @@
 
   const route = useRoute()
   const activeIndex = computed(() => route.path)
-  const updateCount = ref(3)
+  const store = usePluginStore()
   const changelogDialog = ref(false)
 
-  const showChangelog = () => {
+  // Computed property for notification count
+  const updateCount = computed(() => store.changelog?.length || 0)
+
+  const showChangelog = async () => {
+    await store.CHECK_NOTIFICATION_STATUS()
     changelogDialog.value = true
   }
 
