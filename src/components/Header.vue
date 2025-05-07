@@ -59,7 +59,7 @@
   </template>
   
   <script setup>
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
   import { usePluginStore } from '../store/plugins'
   import NotificationDrawer from './NotificationDrawer.vue'
@@ -81,7 +81,12 @@
   const changelogDialog = ref(false)
 
   // Computed property for notification count
-  const updateCount = computed(() => store.changelog?.length || 0)
+  const updateCount = computed(() => store.notificationStatus?.has_unread || false)
+
+  // Check notification status on mount
+  onMounted(async () => {
+    await store.CHECK_NOTIFICATION_STATUS()
+  })
 
   const showChangelog = async () => {
     await store.CHECK_NOTIFICATION_STATUS()
