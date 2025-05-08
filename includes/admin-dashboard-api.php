@@ -3,6 +3,15 @@
  * Register custom REST API endpoints for plugin management
  */
 function htpm_register_rest_routes() {
+    // Bulk settings endpoint
+    register_rest_route('htpm/v1', '/plugins/settings', [
+        'methods' => WP_REST_Server::READABLE,
+        'callback' => 'htpm_get_all_plugin_settings',
+        'permission_callback' => function() {
+            return current_user_can('manage_options');
+        }
+    ]);
+
     // Get all plugins endpoint
     register_rest_route('htpm/v1', '/plugins', [
         'methods' => 'GET',
@@ -115,6 +124,48 @@ function htpm_register_rest_routes() {
     ]);
     
 }
+/**
+ * Get settings for all active plugins at once
+ */
+function htpm_get_all_plugin_settings($request) {
+    if (!function_exists('get_plugins')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+    
+    $all_plugins = get_plugins();
+    $active_plugins = get_option('active_plugins', []);
+    $options = get_option('htpm_options', []);
+    $all_settings = [];
+    
+    $index = 0;
+    foreach ($all_plugins as $plugin_path => $plugin_data) {
+        $index++;
+        if (in_array($plugin_path, $active_plugins)) {
+            $plugin_settings = isset($options['htpm_list_plugins'][$plugin_path]) 
+                ? $options['htpm_list_plugins'][$plugin_path] 
+                : [
+                    'enable_deactivation' => 'no',
+                    'device_type' => 'all',
+                    'condition_type' => 'disable_on_selected',
+                    'uri_type' => 'page',
+                    'post_types' => ['page', 'post'],
+                    'posts' => [],
+                    'pages' => [],
+                    'condition_list' => [
+                        'name' => ['uri_equals'],
+                        'value' => [''],
+                    ]
+                ];
+            $all_settings[$index] = $plugin_settings;
+        }
+    }
+    
+    return new WP_REST_Response([
+        'success' => true,
+        'data' => $all_settings
+    ], 200);
+}
+
 add_action('rest_api_init', 'htpm_register_rest_routes');
 
 /**

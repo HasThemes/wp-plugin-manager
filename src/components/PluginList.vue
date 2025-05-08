@@ -119,15 +119,8 @@ export default {
         // First fetch all plugins
         await store.fetchPlugins()
         
-        // Wait for all plugin settings to load
-        const promises = []
-        for (const plugin of store.plugins) {
-          if (plugin.wpActive) {
-            promises.push(store.fetchPluginSettings(plugin.id))
-          }
-        }
-        
-        await Promise.all(promises)
+        // Fetch settings for all active plugins at once
+        await store.fetchAllPluginSettings()
         
         // Only after all settings have loaded, prepare the plugins list
         plugins.value = store.plugins.map(plugin => {

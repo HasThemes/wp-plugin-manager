@@ -21,6 +21,7 @@ const api = axios.create({
 
 export const usePluginStore = defineStore('plugins', {
   state: () => ({
+    apiBase: (window.HTPMM?.restUrl || '/wp-json').replace(/\/$/, '') + '/htpm/v1',
     plugins: [],
     allSettings:[],
     dashboardSettings: {
@@ -89,6 +90,30 @@ export const usePluginStore = defineStore('plugins', {
         throw error
       } finally {
         this.loading = false
+      }
+    },
+
+    // Fetch all plugin settings
+    async fetchAllPluginSettings() {
+      const apiUrl = `${this.apiBase}/plugins/settings`;
+      try {
+        const response = await fetch(apiUrl, {
+          headers: {
+            'X-WP-Nonce': window.HTPMM?.nonce || '',
+            'Content-Type': 'application/json'
+          }
+        });
+        const result = await response.json();
+        
+        if (result.success) {
+          // Update all settings at once
+          this.settings = result.data;
+        }
+        
+        return result.data;
+      } catch (error) {
+        console.error('Error fetching all plugin settings:', error);
+        throw error;
       }
     },
 
