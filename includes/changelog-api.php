@@ -182,7 +182,7 @@ class ChangeLog extends WP_REST_Controller {
     private function get_changelog_data() {
         return [
             [
-                'version' => '1.3.4',
+                'version' => '1.3.5',
                 'date'    => '2025-05-07',
                 'changes' => [
                     'Improvements' => [

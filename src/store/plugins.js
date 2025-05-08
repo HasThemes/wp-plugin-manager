@@ -273,6 +273,7 @@ async updatePluginSettings(pluginId, settings) {
         const response = await api.post('/htpm/v1/changelog/mark-read');
         if (response?.data?.success) {
           this.changelogRead = true;
+          this.notificationStatus = false;
           return response.data;
         } else {
           throw new Error('Invalid response format');

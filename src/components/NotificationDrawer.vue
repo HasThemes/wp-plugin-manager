@@ -64,23 +64,18 @@ const visible = computed({
 // Watch for drawer opening
 watch(visible, async (newValue) => {
     if (newValue) {
-        // Load data in background if needed
+        // Only fetch if we don't have changelog data
         if (!store.changelog?.length) {
             await store.fetchChangelog()
-        }
-        // After loading changelog, mark as read and update status
-        if (!store.changelogRead) {
-            store.markChangelogRead()
-            // Update notification status after marking as read
-            store.checkNotificationStatus()
+            // Only mark as read if we just loaded new data
+            if (!store.changelogRead) {
+                store.markChangelogRead()
+            }
         }
     }
 })
 
-const handleClose = async (done) => {
-    if (!store.changelogRead) {
-        store.markChangelogRead()
-    }
+const handleClose = (done) => {
     done()
 }
 </script>
