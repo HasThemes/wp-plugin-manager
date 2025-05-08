@@ -66,12 +66,12 @@ watch(visible, (newValue) => {
     if (newValue) {
         // Load data in background
         if (!store.changelog?.length) {
-            store.FETCH_CHANGELOG()
+            store.fetchChangelog()
         }
         // Mark as read after a short delay to ensure smooth animation
         if (!store.changelogRead) {
             setTimeout(() => {
-                store.MARK_CHANGELOG_READ()
+                store.markChangelogRead()
             }, 500)
         }
     }
@@ -79,7 +79,7 @@ watch(visible, (newValue) => {
 
 const handleClose = async (done) => {
     if (!store.changelogRead) {
-        await store.MARK_CHANGELOG_READ()
+        store.markChangelogRead()
     }
     done()
 }

@@ -247,7 +247,7 @@ async updatePluginSettings(pluginId, settings) {
     /**
      * Fetch Changelog Data
      */
-    async FETCH_CHANGELOG() {
+    async fetchChangelog() {
       this.changelogLoading = true;
       try {
         const response = await api.get('/htpm/v1/changelog');
@@ -268,7 +268,7 @@ async updatePluginSettings(pluginId, settings) {
     /**
      * Mark Changelog as Read
      */
-    async MARK_CHANGELOG_READ() {
+    async markChangelogRead() {
       try {
         const response = await api.post('/htpm/v1/changelog/mark-read');
         if (response?.data?.success) {
@@ -286,7 +286,7 @@ async updatePluginSettings(pluginId, settings) {
     /**
      * Check Notification Status
      */
-    async CHECK_NOTIFICATION_STATUS() {
+    async checkNotificationStatus() {
       try {
         const response = await api.get('/htpm/v1/changelog/status');
         if (response?.data?.success) {

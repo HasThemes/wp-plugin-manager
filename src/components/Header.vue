@@ -1,7 +1,7 @@
 <template>
       <!-- Header -->
       <el-row align="middle" justify="space-between" class="htpm-header-row">
-        <el-col :span="18">
+        <el-col :xs="16" :sm="16" :md="18" :lg="18" :xl="18">
           <el-menu 
             mode="horizontal" 
             class="htpm-nav" 
@@ -39,7 +39,7 @@
             </el-menu-item>
           </el-menu>
         </el-col>
-        <el-col :span="6" class="htpm-header-actions">
+        <el-col :xs="8" :sm="8" :md="6" :lg="6" :xl="6" class="htpm-header-actions">
             <el-button type="primary" @click="upgradeToPro">
               <el-icon><Top /></el-icon>
               Upgrade to Pro
@@ -84,14 +84,14 @@
 
   // Check notification status on mount
   onMounted(async () => {
-    await store.CHECK_NOTIFICATION_STATUS()
+    await store.checkNotificationStatus()
   })
 
   const showChangelog = () => {
     // Open drawer immediately
     changelogDialog.value = true
     // Check status in background
-    store.CHECK_NOTIFICATION_STATUS()
+    store.checkNotificationStatus()
   }
 
   const upgradeToPro = () => {
@@ -236,7 +236,18 @@
       justify-content: flex-end;
       align-items: center;
       height: 60px;
-      gap:15px;
+      gap: 15px;
+
+      @media screen and (max-width: 768px) {
+        gap: 8px;
+        .el-button {
+          padding: 8px 12px;
+          font-size: 12px;
+          .el-icon {
+            font-size: 14px;
+          }
+        }
+      }
     }
   }
   </style>
