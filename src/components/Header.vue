@@ -40,15 +40,14 @@
           </el-menu>
         </el-col>
         <el-col :span="6" class="htpm-header-actions">
-          <el-space>
             <el-button type="primary" @click="upgradeToPro">
               <el-icon><Top /></el-icon>
               Upgrade to Pro
             </el-button>
-            <el-badge :value="updateCount" :hidden="!updateCount" class="notification-badge">
-              <el-button :icon="Bell" circle @click="showChangelog" />
-            </el-badge>
-          </el-space>
+            <div class="notification-btn-wrapper">
+              <el-button :class="{'has-notification': updateCount}" :icon="Bell" circle @click="showChangelog" />
+              <span v-if="updateCount" class="notification-indicator"></span>
+            </div>
         </el-col>
       </el-row>
       <!-- Documentation Modal -->
@@ -88,9 +87,11 @@
     await store.CHECK_NOTIFICATION_STATUS()
   })
 
-  const showChangelog = async () => {
-    await store.CHECK_NOTIFICATION_STATUS()
+  const showChangelog = () => {
+    // Open drawer immediately
     changelogDialog.value = true
+    // Check status in background
+    store.CHECK_NOTIFICATION_STATUS()
   }
 
   const upgradeToPro = () => {
@@ -108,6 +109,39 @@
   </script>
   
   <style lang="scss">
+  .notification-btn-wrapper {
+    position: relative;
+    display: inline-block;
+
+    .notification-indicator {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 10px;
+      height: 10px;
+      background: #f56c6c;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      animation: pulse 2s infinite;
+    }
+
+    .has-notification {
+      color: #409eff;
+    }
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(245, 108, 108, 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(245, 108, 108, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(245, 108, 108, 0);
+    }
+  }
+
   div#htpm-app {
     width: 100%;
     display: flex;
@@ -202,13 +236,7 @@
       justify-content: flex-end;
       align-items: center;
       height: 60px;
-      padding-right: 16px;
-  
-      .el-button {
-        &.is-circle {
-          margin-right: 8px;
-        }
-      }
+      gap:15px;
     }
   }
   </style>
