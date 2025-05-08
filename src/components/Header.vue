@@ -88,10 +88,8 @@
   })
 
   const showChangelog = () => {
-    // Open drawer immediately
+    // Just open drawer immediately
     changelogDialog.value = true
-    // Check status in background
-    store.checkNotificationStatus()
   }
 
   const upgradeToPro = () => {

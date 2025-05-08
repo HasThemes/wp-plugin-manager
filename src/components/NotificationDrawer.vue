@@ -62,17 +62,17 @@ const visible = computed({
 })
 
 // Watch for drawer opening
-watch(visible, (newValue) => {
+watch(visible, async (newValue) => {
     if (newValue) {
-        // Load data in background
+        // Load data in background if needed
         if (!store.changelog?.length) {
-            store.fetchChangelog()
+            await store.fetchChangelog()
         }
-        // Mark as read after a short delay to ensure smooth animation
+        // After loading changelog, mark as read and update status
         if (!store.changelogRead) {
-            setTimeout(() => {
-                store.markChangelogRead()
-            }, 500)
+            store.markChangelogRead()
+            // Update notification status after marking as read
+            store.checkNotificationStatus()
         }
     }
 })
