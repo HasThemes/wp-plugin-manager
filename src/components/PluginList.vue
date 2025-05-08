@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { Search, Box, Setting, Monitor, Edit, Grid, QuestionFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElPopconfirm, ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
@@ -112,18 +112,17 @@ export default {
     const plugins = ref([])
     const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
 
-    // Load plugins on component mount
-    onMounted(async () => {
+    // Watch for plugins and update local list
+    watch(() => store.plugins, async (newPlugins) => {
+      if (!newPlugins || newPlugins.length === 0) return
+      
       loading.value = true
       try {
-        // First fetch all plugins
-        await store.fetchPlugins()
-        
         // Fetch settings for all active plugins at once
         await store.fetchAllPluginSettings()
         
-        // Only after all settings have loaded, prepare the plugins list
-        plugins.value = store.plugins.map(plugin => {
+        // Prepare the plugins list
+        plugins.value = newPlugins.map(plugin => {
           const settings = store.settings[plugin.id] || null;
           
           return {
@@ -136,16 +135,16 @@ export default {
       } catch (error) {
         ElNotification({
           title: "Error",
-          message: 'Failed to load plugins',
+          message: 'Failed to load plugin settings',
           type: 'error',
           position: 'top-right',
           duration: 3000
         });
-        console.error('Error loading plugins:', error)
+        console.error('Error loading plugin settings:', error)
       } finally {
         loading.value = false
       }
-    })
+    }, { immediate: true })
 
     // Filter plugins based on search query
     const filteredPlugins = computed(() => {

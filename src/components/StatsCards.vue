@@ -40,7 +40,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { usePluginStore } from '../store/plugins'
 import { List, CircleCheck, Refresh, CircleClose, Setting } from '@element-plus/icons-vue'
 
@@ -51,32 +51,15 @@ const isLoading = ref(true)  // Local loading state
 const stats = computed(() => ({
   totalPlugins: store.totalPlugins,
   activePlugins: store.wpActivePlugins.length,
-  optimizedPlugins: store.disabledPlugins.length, // Use optimizedPlugins instead of disabledPlugins
+  optimizedPlugins: store.disabledPlugins.length, 
   updateAvailable: store.updateAvailable.length,
   inactivePlugins: store.inactivePlugins.length
 }))
-// Watch for changes in plugins and update stats
-watch(() => store.plugins, () => {
-  // Force stats recomputation when plugins change
-  stats.value = {
-    totalPlugins: store.totalPlugins,
-    activePlugins: store.wpActivePlugins.length,
-    optimizedPlugins: store.disabledPlugins.length,
-    updateAvailable: store.updateAvailable.length,
-    inactivePlugins: store.inactivePlugins.length
-  }
-}, { deep: true })
 
-// Load plugins when component mounts
-onMounted(async () => {
-  try {
-    isLoading.value = true
-    await store.fetchPlugins()
-  } finally {
-    isLoading.value = false
-  }
-  
-})
+// Watch for changes in plugins store and update loading state
+watch(() => store.plugins, (newPlugins) => {
+  isLoading.value = !newPlugins || newPlugins.length === 0
+}, { immediate: true })
 
 const statsList = [
   { type: 'total', icon: List, key: 'totalPlugins', label: 'Total Plugins' },
