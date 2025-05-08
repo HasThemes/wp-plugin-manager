@@ -256,19 +256,21 @@ async updatePluginSettings(pluginId, settings) {
     const response = await api.post(`/htpm/v1/plugins/${pluginId}/settings`, completeSettings)
     
     if (response.data.success) {
-      // Update settings in store
-      this.settings[pluginId] = { ...completeSettings }
-      
-      // Update the plugin's enable_deactivation state based on settings
+      // Update the plugin's enable_deactivation state in the plugins list
       const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
       if (pluginIndex !== -1) {
-        this.plugins[pluginIndex].enable_deactivation = completeSettings.enable_deactivation;
+        this.plugins[pluginIndex].enable_deactivation = completeSettings.enable_deactivation === 'yes'
       }
+      
+      // Store settings in the store state
+      this.settings[pluginId] = completeSettings
+      
+      // Return the updated settings
+      return completeSettings
     } else {
       console.error('Server returned error:', response.data)
+      throw new Error(response.data?.message || 'Failed to update settings')
     }
-    
-    return response.data
   } catch (error) {
     this.error = error.message || 'Failed to update plugin settings'
     console.error('Error updating plugin settings:', error)

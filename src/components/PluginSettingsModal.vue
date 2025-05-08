@@ -466,13 +466,13 @@ const saveSettings = async () => {
     // is set based on the plugin's state in the plugin list
     settingsToSave.enable_deactivation = props.plugin?.enable_deactivation ? 'yes' : 'no'
     
-    // Save settings via store
-     await store.updatePluginSettings(props.plugin.id, settingsToSave)
+    // Save settings via store and get updated settings
+    const updatedSettings = await store.updatePluginSettings(props.plugin.id, settingsToSave)
   
     // Emit the save event with settings and plugin data
     emit('save', {
       plugin: props.plugin,
-      settings: settingsToSave
+      settings: updatedSettings || settingsToSave
     })
     
     // Close the dialog

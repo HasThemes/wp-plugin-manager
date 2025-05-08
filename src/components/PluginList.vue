@@ -283,9 +283,6 @@ export default {
         settings.enable_deactivation = 'yes';
         plugin.enable_deactivation = 'yes';
         
-        // Update the plugin's settings in the store
-        await store.updatePluginSettings(plugin.id, settings)
-        
         // Important: Update the settings in our local plugin object
         const pluginIndex = plugins.value.findIndex(p => p.id === plugin.id)
         if (pluginIndex !== -1) {
@@ -312,16 +309,6 @@ export default {
       }
     }
 
-    // Get plugin icon class based on plugin name
-    const getPluginIconClass = (name) => {
-      if (name.includes('Query Monitor')) return 'query-monitor'
-      if (name.includes('Elementor')) return 'elementor'
-      if (name.includes('HT Mega')) return 'htmega'
-      if (name.includes('WooCommerce')) return 'woocommerce'
-      if (name.includes('Yoast SEO')) return 'yoast'
-      return 'default'
-    }
-
     return {
       searchQuery,
       showSettings,
@@ -333,7 +320,6 @@ export default {
       togglePluginLoading,
       openSettings,
       savePluginSettings,
-      getPluginIconClass,
       showPopconfirm,
       Search, Box, Setting, Monitor, Edit, Grid, QuestionFilled
     }
