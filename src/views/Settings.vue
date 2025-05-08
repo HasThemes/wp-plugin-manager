@@ -13,7 +13,7 @@
             <label class="setting-label">Select Post Types</label>
             <div class="setting-control">
               <div class="selected-types">
-                <span v-for="type in settingsPagesSettings.postTypes" :key="type" class="type-tag">
+                <span v-for="type in filteredPostTypes" :key="type" class="type-tag">
                   {{ type }}
                   <el-icon class="remove-tag" @click="removePostType(type)"><Close /></el-icon>
                 </span>
@@ -104,6 +104,9 @@ const settingsPagesSettings = ref(
     itemsPerPage: 10
   }
 )
+const filteredPostTypes = computed(() => {
+  return settingsPagesSettings.value.postTypes.filter(type => !['page', 'post'].includes(type))
+})
 const isLoading = ref(true)
 const newPostType = ref('')
 const availablePostTypes = ref([])
@@ -133,7 +136,10 @@ const fetchPostTypes = async () => {
 const loadSavedSettings = async () => {
   isLoading.value = true
   try {
-    await store.fetchPlugins()
+    if(store.plugins.length <=0){
+      await store.fetchPlugins()
+      }
+   
     // First fetch post types
     await fetchPostTypes()
     

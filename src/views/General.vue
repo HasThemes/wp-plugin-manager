@@ -21,6 +21,11 @@ const isLoading = ref(false)
 // Load plugins when component mounts
 onMounted(async () => {
     try {
+        //here need to chec if fetchPlugins are fetch then not need to fetch
+        if(store.plugins.length > 0){
+            return
+        }
+
         await store.fetchPlugins()
     } finally {
         isLoading.value = false
