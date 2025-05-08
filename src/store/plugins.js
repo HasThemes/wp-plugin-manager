@@ -120,6 +120,11 @@ export const usePluginStore = defineStore('plugins', {
     // Fetch settings for a specific plugin
     async fetchPluginSettings(pluginId) {
       try {
+        // Return cached settings if available
+        if (this.settings[pluginId]) {
+          return this.settings[pluginId];
+        }
+
         const response = await api.get(`/htpm/v1/plugins/${pluginId}/settings`)
         
         // Store settings in the store state
@@ -213,6 +218,8 @@ export const usePluginStore = defineStore('plugins', {
 // updatePluginSettings method for the store with fixed settings preservation
 async updatePluginSettings(pluginId, settings) {
   try {
+    // Invalidate cache for this plugin
+    delete this.settings[pluginId];
 
     // Make sure we're sending a complete, valid settings object
     const completeSettings = { ...settings }

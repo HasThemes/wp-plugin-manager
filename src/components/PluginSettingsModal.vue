@@ -236,19 +236,16 @@ onMounted(async () => {
   }
 })
 
-// Watch for changes in the plugin prop
-watch(() => props.plugin, async (newPlugin) => {
-  if (newPlugin) {
-    await loadData()
-  }
-}, { immediate: true })
-
-// Watch for changes in the visible prop
-watch(() => props.visible, async (newVisible) => {
-  if (newVisible && props.plugin) {
-    await loadData()
-  }
-})
+// Watch for changes in either plugin or visibility
+watch(
+  () => ({ plugin: props.plugin, visible: props.visible }),
+  async (newVal) => {
+    if (newVal.plugin && newVal.visible) {
+      await loadData()
+    }
+  },
+  { immediate: true }
+)
 
 // Load all required data
 const loadData = async () => {
