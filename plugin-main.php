@@ -192,7 +192,14 @@ class HTPM_Main {
                         'activating' => esc_html__( 'Activating..', 'wp-plugin-manager' ),
                         'active'     => esc_html__( 'Active', 'wp-plugin-manager' ),
                     ],
-                    'existingData' => get_option('htpm_options')
+                    'existingData' => get_option('htpm_options'),
+                    'helpSection' => [
+                        'title' => esc_html__('Need Help with Plugin Manager?', 'wp-plugin-manager'),
+                        'description' => esc_html__('Our comprehensive documentation provides detailed information on how to use Plugin Manager effectively to improve your websites performance.', 'wp-plugin-manager'),
+                        'documentation' => esc_html__('Documentation', 'wp-plugin-manager'),
+                        'videoTutorial' => esc_html__('Video Tutorial', 'wp-plugin-manager'),
+                        'support' => esc_html__('Support', 'wp-plugin-manager')
+                    ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
             }

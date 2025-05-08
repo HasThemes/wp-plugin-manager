@@ -51,12 +51,6 @@ class HTPM_Option_Page {
                 esc_url(HTPM_ROOT_URL . '/assets/dist/js/main.js')
             );
         });
-
-        // Add plugin data to JavaScript
-        wp_localize_script('jquery', 'htpmData', [
-            'nonce' => wp_create_nonce('htpm-nonce'),
-            'ajaxUrl' => admin_url('admin-ajax.php')
-        ]);
     }
 
 	/**

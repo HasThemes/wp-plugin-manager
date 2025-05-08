@@ -38,7 +38,7 @@ export const usePluginStore = defineStore('plugins', {
     changelog: [],
     changelogLoading: false,
     changelogRead: false,
-    notificationStatus: false
+    notificationStatus: false,
   }),
 
   getters: {

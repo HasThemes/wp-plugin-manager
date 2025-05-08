@@ -5,20 +5,20 @@
         <el-icon><QuestionFilled /></el-icon>
       </div>
       <div class="help-content">
-        <h3>Need Help with Plugin Manager?</h3>
-        <p>Our comprehensive documentation provides detailed information on how to use Plugin Manager effectively to improve your website's performance.</p>
+        <h3>{{ helpSection.title }}</h3>
+        <p>{{ helpSection.description }}</p>
         <div class="help-actions">
-          <el-button class="help-btn" @click="$emit('show-documentation')">
+          <el-button class="help-btn" @click="openDocumentation">
             <el-icon><Document /></el-icon>
-            <span>Documentation</span>
+            <span>{{ helpSection.documentation }}</span>
           </el-button>
-          <el-button class="help-btn">
+          <el-button class="help-btn"  @click="openVideoTutorial">
             <el-icon><VideoPlay /></el-icon>
-            <span>Video Tutorial</span>
+            <span>{{ helpSection.videoTutorial }}</span>
           </el-button>
-          <el-button class="help-btn">
+          <el-button class="help-btn" @click="openSupport">
             <el-icon><Service /></el-icon>
-            <span>Support</span>
+            <span>{{ helpSection.support }}</span>
           </el-button>
         </div>
       </div>
@@ -28,7 +28,23 @@
 <script setup>
 import { ref } from 'vue'
 import { QuestionFilled, Document, VideoPlay, Service } from '@element-plus/icons-vue'
+const helpSection = ref({
+      title: window.HTPMM?.helpSection?.title ?? '',
+      description: window.HTPMM?.helpSection?.description ?? '',
+      documentation: window.HTPMM?.helpSection?.documentation ?? '',
+      videoTutorial: window.HTPMM?.helpSection?.videoTutorial ?? '',
+      support: window.HTPMM?.helpSection?.support ?? '',
+    });
 
+    const openSupport = () => {
+      window.open('https://hasthemes.com/support/', '_blank');
+    }
+    const openDocumentation = () => {
+      window.open('https://hasthemes.com/support/', '_blank');
+    }
+    const openVideoTutorial = () => {
+      window.open('https://hasthemes.com/support/', '_blank');
+    }
 </script>
 
 <style lang="scss" scoped>
