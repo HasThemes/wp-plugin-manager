@@ -46,7 +46,7 @@
       <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
         <label>Select Post Types:</label>
         <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange" style="display: flex;gap: 10px;">
-          <el-checkbox v-for="postType in filteredPostTypes" :key="postType.name" :label="postType.name">
+          <el-checkbox v-for="postType in filteredPostTypes" :key="postType.name" :label="postType.name" :disabled="!isPro" @click="openProModal">
             {{ postType.label }}
           </el-checkbox>
         </el-checkbox-group>
@@ -59,7 +59,7 @@
               (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('page'))"
       >
         <label>Select Pages:</label>
-        <el-select v-model="pluginSettings.pages" multiple filterable class="w-full" :loading="loadingPages">
+        <el-select v-model="pluginSettings.pages" multiple filterable class="w-full" :loading="loadingPages" :disabled="pluginSettings.uri_type === 'page_post_cpt' && !isPro" @click="pluginSettings.uri_type === 'page_post_cpt' && !isPro && openProModal()">
           <el-option label="All Pages" value="all_pages,all_pages" />
           <el-option 
             v-for="page in pages" 
@@ -77,7 +77,7 @@
              (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('post'))"
       >
         <label>Select Posts:</label>
-        <el-select v-model="pluginSettings.posts" multiple filterable class="w-full" :loading="loadingPosts">
+        <el-select v-model="pluginSettings.posts" multiple filterable class="w-full" :loading="loadingPosts" :disabled="pluginSettings.uri_type === 'page_post_cpt' && !isPro" @click="pluginSettings.uri_type === 'page_post_cpt' && !isPro && openProModal()">
           <el-option label="All Posts" value="all_posts,all_posts" />
           <el-option 
             v-for="post in posts" 
@@ -122,7 +122,7 @@
         <div class="form-field">
           <label>URI Conditions:</label>
           <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
-            <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type">
+            <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type" :disabled="!isPro" @click="openProModal">
               <el-option label="URI Equals" value="uri_equals" />
               <el-option label="URI Not Equals" value="uri_not_equals" />
               <el-option label="URI Contains" value="uri_contains" />
@@ -132,6 +132,8 @@
               v-model="pluginSettings.condition_list.value[index]" 
               placeholder="e.g: contact-us or leave blank for homepage"
               class="condition-value"
+              :disabled="!isPro"
+              @click="openProModal"
             />
             <div class="condition-actions">
               <el-button 
@@ -143,12 +145,12 @@
               >
                 <el-icon><Delete /></el-icon>
               </el-button>
-              <el-button type="primary" circle size="small" @click="cloneCondition(index)">
+              <el-button type="primary" circle size="small" @click="cloneCondition(index)" :disabled="!isPro">
                 <el-icon><CopyDocument /></el-icon>
               </el-button>
             </div>
           </div>
-          <el-button type="primary" plain size="small" @click="addCondition" class="mt-3 add-condition" color="#fff">
+          <el-button type="primary" plain size="small" @click="addCondition" class="mt-3 add-condition" color="#fff" :disabled="!isPro">
             <el-icon><Plus /></el-icon> Add Condition
           </el-button>
           <div class="field-desc">E.g. You can use 'contact-us' on URLs like https://example.com/contact-us or leave it blank for the homepage.</div>
@@ -216,6 +218,9 @@ const handleProFeatureSelect = (field, value) => {
     // Show pro modal
     proModal.value?.show();
   }
+}
+const openProModal = () => {
+  proModal.value?.show();
 }
 
 const modalSettingsFields = HTPMM.adminSettings.modal_settings_fields
@@ -434,6 +439,10 @@ const getCustomPostTypeItems = (postType) => {
 
 // Add new URI condition
 const addCondition = () => {
+  if (!isPro.value) {
+    proModal.value?.show();
+    return;
+  }
   pluginSettings.value.condition_list.name.push('uri_equals')
   pluginSettings.value.condition_list.value.push('')
 }
