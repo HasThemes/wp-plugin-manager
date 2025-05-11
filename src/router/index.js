@@ -17,17 +17,21 @@ const routes = [
     component: Settings,
     meta: { keepAlive: true }
   },
+  // {
+  //   path: '/tools',
+  //   name: 'Tools',
+  //   component: Tools,
+  //   meta: { keepAlive: true }
+  // },
+  // {
+  //   path: '/license',
+  //   name: 'License',
+  //   component: License,
+  //   meta: { keepAlive: true }
+  // },
   {
-    path: '/tools',
-    name: 'Tools',
-    component: Tools,
-    meta: { keepAlive: true }
-  },
-  {
-    path: '/license',
-    name: 'License',
-    component: License,
-    meta: { keepAlive: true }
+    path: '/:pathMatch(.*)*',
+    redirect: '/settings'
   }
 ]
 

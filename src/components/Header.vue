@@ -21,21 +21,25 @@
               <el-icon><Setting /></el-icon>
               Settings
             </el-menu-item>
-            <el-menu-item index="/tools">
+            <!-- <el-menu-item index="/tools">
               <el-icon><Tools /></el-icon>
               Tools
-            </el-menu-item>
-            <el-menu-item index="/license">
+            </el-menu-item> -->
+            <el-menu-item @click="openLicense">
               <el-icon><Key /></el-icon>
               License
             </el-menu-item>
-            <el-menu-item index="https://hasthemes.com/docs" @click="openDocs">
+            <el-menu-item @click="openDocs">
               <el-icon><Document /></el-icon>
               Documentation
             </el-menu-item>
-            <el-menu-item index="https://hasthemes.com/contact" @click="openSupport">
+            <el-menu-item @click="openSupport">
               <el-icon><Service /></el-icon>
               Support
+            </el-menu-item>
+            <el-menu-item @click="openRecommendedPlugins">
+              <el-icon><List /></el-icon>
+              Recommended Plugins
             </el-menu-item>
           </el-menu>
         </el-col>
@@ -67,6 +71,7 @@
     Setting,
     Tools,
     Key,
+    List,
     Document,
     Service,
     Bell,
@@ -94,15 +99,23 @@
 
   const upgradeToPro = () => {
     // Implement upgrade logic
-    window.open('https://hasthemes.com/plugins/wp-plugin-manager-pro/', '_blank')
+    window.open(window.HTPMM?.helpSection?.upgradeLink, '_blank')
   }
 
   const openDocs = () => {
-    window.open('https://hasthemes.com/docs', '_blank')
+    window.open(window.HTPMM?.helpSection?.docLink, '_blank')
   }
 
   const openSupport = () => {
-    window.open('https://hasthemes.com/contact', '_blank')
+    window.open(window.HTPMM?.helpSection?.supportLink, '_blank')
+  }
+
+  const openLicense = () => {
+    window.location.href = window.HTPMM?.helpSection?.licenseLink
+  }
+
+  const openRecommendedPlugins = () => {
+    window.location.href = window.HTPMM?.helpSection?.recommendedPluginsLink
   }
   </script>
   

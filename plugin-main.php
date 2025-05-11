@@ -198,7 +198,13 @@ class HTPM_Main {
                         'description' => esc_html__('Our comprehensive documentation provides detailed information on how to use Plugin Manager effectively to improve your websites performance.', 'wp-plugin-manager'),
                         'documentation' => esc_html__('Documentation', 'wp-plugin-manager'),
                         'videoTutorial' => esc_html__('Video Tutorial', 'wp-plugin-manager'),
-                        'support' => esc_html__('Support', 'wp-plugin-manager')
+                        'support' => esc_html__('Support', 'wp-plugin-manager'),
+                        'docLink' => 'https://hasthemes.com/docs/wp-plugin-manager/',
+                        'videoLink' => 'https://www.youtube.com/watch?v=u94hkbTzKFU',
+                        'supportLink' => 'https://hasthemes.com/contact-us/',
+                        'upgradeLink' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
+                        'licenseLink' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
+                        'recommendedPluginsLink' => 'https://hasthemes.com/plugins/',
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );

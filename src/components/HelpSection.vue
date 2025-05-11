@@ -37,13 +37,13 @@ const helpSection = ref({
     });
 
     const openSupport = () => {
-      window.open('https://hasthemes.com/support/', '_blank');
+      window.open(window.HTPMM?.helpSection?.supportLink, '_blank');
     }
     const openDocumentation = () => {
-      window.open('https://hasthemes.com/support/', '_blank');
+      window.open(window.HTPMM?.helpSection?.docLink, '_blank');
     }
     const openVideoTutorial = () => {
-      window.open('https://hasthemes.com/support/', '_blank');
+      window.open(window.HTPMM?.helpSection?.videoLink, '_blank');
     }
 </script>
 
