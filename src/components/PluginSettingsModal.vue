@@ -34,8 +34,8 @@
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.page_types?.description }}</div>
         <el-tooltip
-          v-if="pluginSettings.uri_type === 'page_post_cpt' && modalSettingsFields?.page_types?.tooltip?.page_post_cpt"
-          :content="modalSettingsFields?.page_types?.tooltip?.page_post_cpt?.note"
+          v-if="pluginSettings.uri_type === 'page_post_cpt' && modalSettingsFields?.page_types?.toopTip?.page_post_cpt?.note"
+          :content="modalSettingsFields?.page_types?.toopTip?.page_post_cpt?.note"
           placement="top"
         >
           <el-icon class="info-icon"><InfoFilled /></el-icon>
