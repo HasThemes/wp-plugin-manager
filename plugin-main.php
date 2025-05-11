@@ -62,8 +62,12 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
+
         include_once( HTPM_ROOT_DIR . '/includes/admin-dashboard-api.php');
         include_once( HTPM_ROOT_DIR . '/includes/changelog-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/admin-settings.php');
+        // Initialize settings
+        add_action('admin_enqueue_scripts', [$this, 'localize_settings']);
 
     }
 
@@ -153,6 +157,16 @@ class HTPM_Main {
     /**
      * Enqueue admin scripts and styles.
      */
+    function localize_settings() {
+        $settings = WP_Plugin_Manager_Settings::get_instance();
+        wp_localize_script('htpm-admin', 'wpPluginManagerSettings', array(
+            'is_pro' => $settings->is_pro(),
+            'is_pro_feature' => array($settings, 'is_pro_feature'),
+            'get_available_features' => array($settings, 'get_available_features'),
+            'get_pro_features' => array($settings, 'get_pro_features')
+        ));
+    }
+
     function admin_scripts( $hook_suffix ) {
         if( $hook_suffix ==  'toplevel_page_htpm-options' ){
             // Add REST API data for JavaScript

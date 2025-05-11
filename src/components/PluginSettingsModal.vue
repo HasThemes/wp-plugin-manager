@@ -10,37 +10,102 @@
     <el-form label-position="top" v-loading="loading">
       <!-- Configuration settings for the plugin - Always visible now -->
       <div class="form-field">
-        <label>Disable Plugin on:</label>
-        <el-select v-model="pluginSettings.device_type" class="w-full">
+        <label class="d-flex align-items-center">
+          Disable Plugin on:
+          <span v-if="!isPro" class="pro-badge ml-2" @click="showProPopup('device_types')">PRO</span>
+        </label>
+        <el-select v-model="pluginSettings.device_type" class="w-full" @change="handleProFeature('device_types', $event)">
           <el-option label="All Devices" value="all" />
-          <el-option label="Desktop" value="desktop" />
-          <el-option label="Tablet" value="tablet" />
-          <el-option label="Mobile" value="mobile" />
-          <el-option label="Desktop + Tablet" value="desktop_plus_tablet" />
-          <el-option label="Tablet + Mobile" value="tablet_plus_mobile" />
+          <el-option>
+            <template #default>
+              <div class="d-flex align-items-center justify-content-between w-100" @click="!isPro && showProPopup('device_types')">
+                <span>Desktop</span>
+                <span v-if="!isPro" class="pro-badge-small">PRO</span>
+              </div>
+            </template>
+          </el-option>
+          <el-option>
+            <template #default>
+              <div class="d-flex align-items-center justify-content-between w-100" @click="!isPro && showProPopup('device_types')">
+                <span>Tablet</span>
+                <span v-if="!isPro" class="pro-badge-small">PRO</span>
+              </div>
+            </template>
+          </el-option>
+          <el-option>
+            <template #default>
+              <div class="d-flex align-items-center justify-content-between w-100" @click="!isPro && showProPopup('device_types')">
+                <span>Mobile</span>
+                <span v-if="!isPro" class="pro-badge-small">PRO</span>
+              </div>
+            </template>
+          </el-option>
+          <el-option>
+            <template #default>
+              <div class="d-flex align-items-center justify-content-between w-100" @click="!isPro && showProPopup('device_types')">
+                <span>Desktop + Tablet</span>
+                <span v-if="!isPro" class="pro-badge-small">PRO</span>
+              </div>
+            </template>
+          </el-option>
+          <el-option>
+            <template #default>
+              <div class="d-flex align-items-center justify-content-between w-100" @click="!isPro && showProPopup('device_types')">
+                <span>Tablet + Mobile</span>
+                <span v-if="!isPro" class="pro-badge-small">PRO</span>
+              </div>
+            </template>
+          </el-option>
         </el-select>
         <div class="field-desc">Select the device(s) where this plugin should be disabled.</div>
       </div>
 
       <!-- Condition Type Selector -->
       <div class="form-field">
-        <label>Action:</label>
-        <el-select v-model="pluginSettings.condition_type" class="w-full">
+        <label class="d-flex align-items-center">
+          Action:
+          <span v-if="!isPro" class="pro-badge ml-2" @click="showProPopup('condition_types')">PRO</span>
+        </label>
+        <el-select v-model="pluginSettings.condition_type" class="w-full" @change="handleProFeature('condition_types', $event)">
           <el-option label="Disable on Selected Pages" value="disable_on_selected" />
-          <el-option label="Enable on Selected Pages" value="enable_on_selected" />
+          <el-option>
+            <template #default>
+              <div class="d-flex align-items-center justify-content-between w-100" @click="!isPro && showProPopup('condition_types')">
+                <span>Enable on Selected Pages</span>
+                <span v-if="!isPro" class="pro-badge-small">PRO</span>
+              </div>
+            </template>
+          </el-option>
         </el-select>
         <div class="field-desc">Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.</div>
       </div>
 
       <!-- URI Type Selector -->
       <div class="form-field">
-        <label>Page Type:</label>
+        <label class="d-flex align-items-center">
+          Page Type:
+          <span v-if="!isPro" class="pro-badge ml-2" @click="showProPopup('uri_types')">PRO</span>
+        </label>
         <el-select v-model="pluginSettings.uri_type" class="w-full" @change="handleUriTypeChange">
           <el-option label="Page" value="page" />
           <el-option label="Post" value="post" />
           <el-option label="Page & Post" value="page_post" />
-          <el-option label="Post, Pages & Custom Post Type" value="page_post_cpt" />
-          <el-option label="Custom" value="custom" />
+          <el-option>
+            <template #default>
+              <div class="d-flex align-items-center justify-content-between w-100" @click="!isPro && showProPopup('uri_types')">
+                <span>Post, Pages & Custom Post Type</span>
+                <span v-if="!isPro" class="pro-badge-small">PRO</span>
+              </div>
+            </template>
+          </el-option>
+          <el-option>
+            <template #default>
+              <div class="d-flex align-items-center justify-content-between w-100" @click="!isPro && showProPopup('uri_types')">
+                <span>Custom</span>
+                <span v-if="!isPro" class="pro-badge-small">PRO</span>
+              </div>
+            </template>
+          </el-option>
         </el-select>
         <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
         <el-tooltip
@@ -176,7 +241,7 @@
 
 <script setup>
 import { ref, defineProps, defineEmits, watch, computed, reactive, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
 import { usePluginStore } from '../store/plugins'
 
@@ -196,6 +261,40 @@ const dialogVisible = computed({
 // Loading states
 const loading = ref(false)
 const saving = ref(false)
+const isPro = ref(false)
+
+// Pro feature popup
+const showProPopup = (feature) => {
+  ElMessageBox.alert(
+    'Our free version is great, but it doesn\'t have all our advanced features. The best way to unlock all of the features in our plugin is by purchasing the pro version.',
+    'BUY PRO',
+    {
+      confirmButtonText: 'More details',
+      callback: () => {
+        window.open('https://your-pro-version-url.com', '_blank')
+      }
+    }
+  )
+}
+
+// Handle pro feature selection
+const handleProFeature = (featureType, value) => {
+  if (!isPro.value && window.wpPluginManagerSettings.is_pro_feature(featureType, value)) {
+    showProPopup(featureType)
+    // Reset to default free value
+    switch(featureType) {
+      case 'device_types':
+        pluginSettings.device_type = 'all'
+        break
+      case 'condition_types':
+        pluginSettings.condition_type = 'disable_on_selected'
+        break
+      case 'uri_types':
+        pluginSettings.uri_type = 'page'
+        break
+    }
+  }
+}
 const loadingPages = ref(false)
 const loadingPosts = ref(false)
 const loadingCustomPosts = reactive({})
@@ -351,7 +450,13 @@ const loadCustomPostTypeData = async () => {
 }
 
 // Handle URI type change
-const handleUriTypeChange = async (value) => {
+const handleUriTypeChange = (value) => {
+  // Check if pro feature
+  if (!isPro.value && window.wpPluginManagerSettings.is_pro_feature('uri_types', value)) {
+    showProPopup('uri_types')
+    pluginSettings.value.uri_type = 'page'
+    return
+  }
   // If changing to page_post_cpt, ensure post_types are properly set
   if (value === 'page_post_cpt') {
     // Make sure we have at least page and post selected
@@ -363,12 +468,14 @@ const handleUriTypeChange = async (value) => {
     }
     
     // Load custom post type data
-    await loadCustomPostTypeData()
+    loadCustomPostTypeData().catch(error => {
+      console.error('Error loading custom post types:', error)
+    })
   }
 }
 
 // Handle post types selection change
-const handlePostTypesChange = async (selectedTypes) => {
+const handlePostTypesChange = (selectedTypes) => {
   // Load data for newly selected post types
   const newCustomTypes = selectedCustomPostTypes.value
   
@@ -381,13 +488,14 @@ const handlePostTypesChange = async (selectedTypes) => {
         pluginSettings.value[type + 's'] = []
       }
       
-      try {
-        await store.fetchCustomPostTypeItems(type)
-      } catch (error) {
-        console.error(`Error loading ${type} items:`, error)
-      } finally {
-        loadingCustomPosts[type] = false
-      }
+      store.fetchCustomPostTypeItems(type)
+        .then(() => {
+          loadingCustomPosts[type] = false
+        })
+        .catch(error => {
+          console.error(`Error loading ${type} items:`, error)
+          loadingCustomPosts[type] = false
+        })
     }
   }
 }
@@ -489,6 +597,46 @@ const saveSettings = async () => {
 
 <style lang="scss" scoped>
 .plugin-settings-modal {
+  .d-flex {
+    display: flex;
+  }
+  
+  .align-items-center {
+    align-items: center;
+  }
+  
+  .justify-content-between {
+    justify-content: space-between;
+  }
+  
+  .w-100 {
+    width: 100%;
+  }
+  
+  .ml-2 {
+    margin-left: 8px;
+  }
+  
+  .pro-badge {
+    background: #4318FF;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    &:hover {
+      background: #2D00FF;
+    }
+  }
+  
+  .pro-badge-small {
+    background: #4318FF;
+    color: white;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+
   :deep(.el-dialog__header) {
     margin: 0;
     padding: 20px 20px 10px;
