@@ -10,18 +10,18 @@
     <el-form label-position="top" v-loading="loading">
       <!-- Configuration settings for the plugin - Always visible now -->
       <div class="form-field">
-        <label>Disable Plugin on:</label>
+        <label>{{ modalSettingsFields?.device_types?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">PRO</span></label>
         <el-select v-model="pluginSettings.device_type" class="w-full">
-          <el-option v-for="(label, value) in modalSettingsFields?.device_types?.options" :key="value" :label="label" :value="value" />
+          <el-option v-for="(label, value) in modalSettingsFields?.device_types?.options" :key="value" :label="label" :value="value" :disabled="modalSettingsFields?.device_types?.pro?.includes(value)" />
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.device_types?.description }}</div>
       </div>
 
       <!-- Condition Type Selector -->
       <div class="form-field">
-        <label>{{ modalSettingsFields?.action?.label }}</label>
+        <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">PRO</span></label>
         <el-select v-model="pluginSettings.condition_type" class="w-full">
-          <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label" :value="value" />
+          <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
       </div>
@@ -169,6 +169,7 @@ import { ref, defineProps, defineEmits, watch, computed, reactive, onMounted } f
 import { ElMessage } from 'element-plus'
 import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
 import { usePluginStore } from '../store/plugins'
+import ProModal from './ProModal.vue'
 
 const props = defineProps({
   visible: Boolean,
@@ -497,6 +498,17 @@ const saveSettings = async () => {
     padding: 10px 20px;
     border-top: 1px solid #eee;
   }
+}
+.pro-badge {
+  background-color: rgba(214, 54, 56, 0.1);
+  border: 1px solid #d636386b;
+  color: #d63638;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
 }
 .el-checkbox-group{
   flex-wrap: wrap;

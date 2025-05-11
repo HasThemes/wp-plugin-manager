@@ -29,7 +29,8 @@ class WP_Plugin_Manager_Settings {
                     'mobile' => __('Mobile', 'wp-plugin-manager'),
                     'desktop_plus_tablet' => __('Desktop + Tablet', 'wp-plugin-manager'),
                     'tablet_plus_mobile' => __('Tablet + Mobile', 'wp-plugin-manager')
-                ]
+                ],
+                'proBadge' => true
             ],
             'action' => [
                 'label' => __('Action:', 'wp-plugin-manager'),
@@ -38,14 +39,15 @@ class WP_Plugin_Manager_Settings {
                 'options' => [
                     'disable_on_selected' => __('Disable on Selected Pages', 'wp-plugin-manager'),
                     'enable_on_selected' => __('Enable on Selected Pages', 'wp-plugin-manager'),
-                ]
+                ],
+                'proBadge' => true
             ],
             'page_types' => [
                 'label' => __('Page Type:', 'wp-plugin-manager'),
                 'description' => __('Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.', 'wp-plugin-manager'),
                 'pro' => ['page_post_cpt', 'custom'],
                 'options' => [
-                    'page' => __('Pages', 'wp-plugin-manager'),
+                    'post' => __('Posts', 'wp-plugin-manager'),
                     'page' => __('Pages', 'wp-plugin-manager'),
                     'page_post' => __('Page & Post', 'wp-plugin-manager'),
                     'page_post_cpt' => __('Post, Pages & Custom Post Type', 'wp-plugin-manager'),

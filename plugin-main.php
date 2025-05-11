@@ -192,6 +192,11 @@ class HTPM_Main {
                         'installing' => esc_html__( 'Installing..', 'wp-plugin-manager' ),
                         'activating' => esc_html__( 'Activating..', 'wp-plugin-manager' ),
                         'active'     => esc_html__( 'Active', 'wp-plugin-manager' ),
+                        'pro' => __( 'Pro', 'wp-plugin-manager' ),
+                        'modal' => [
+                            'title' => __( 'BUY PRO', 'wp-plugin-manager' ),
+                            'desc' => __( 'Our free version is great, but it doesn\'t have all our advanced features. The best way to unlock all of the features in our plugin is by purchasing the pro version.', 'wp-plugin-manager' )
+                        ],
                     ],
                     'existingData' => get_option('htpm_options'),
                     'helpSection' => [
