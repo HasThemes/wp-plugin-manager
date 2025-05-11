@@ -147,6 +147,7 @@ class HTPM_Main {
             include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
             include_once( HTPM_ROOT_DIR . '/includes/HTPM_Trial.php');
             include_once( HTPM_ROOT_DIR . '/includes/admin-dashboard-api.php');
+            include_once( HTPM_ROOT_DIR . '/includes/admin-settings.php');
         }
     }
 
@@ -169,7 +170,7 @@ class HTPM_Main {
             wp_enqueue_script( 'select2', HTPM_ROOT_URL . '/assets/js/select2.min.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
             wp_enqueue_script( 'htpm-admin', HTPM_ROOT_URL . '/assets/js/admin.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
             // wp_enqueue_script( 'install-manager', HTPM_ROOT_URL . '/assets/js/install_manager.js', array('jquery', 'wp-util', 'updates'), HTPM_PLUGIN_VERSION, true );
-    
+            $admin_settings = WP_Plugin_Manager_Settings::get_instance();
             if( is_admin() ){
                 $localize_data = [
                     'ajaxurl'          => admin_url( 'admin-ajax.php' ),
@@ -205,6 +206,10 @@ class HTPM_Main {
                         'upgradeLink' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
                         'licenseLink' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
                         'recommendedPluginsLink' => 'https://hasthemes.com/plugins/',
+                    ],
+                    'adminSettings' => [
+                        'modal_settings_fields' => $admin_settings->get_modal_settings_fields(),
+                        'is_pro' => $admin_settings->is_pro(),
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );

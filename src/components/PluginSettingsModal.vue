@@ -12,40 +12,30 @@
       <div class="form-field">
         <label>Disable Plugin on:</label>
         <el-select v-model="pluginSettings.device_type" class="w-full">
-          <el-option label="All Devices" value="all" />
-          <el-option label="Desktop" value="desktop" />
-          <el-option label="Tablet" value="tablet" />
-          <el-option label="Mobile" value="mobile" />
-          <el-option label="Desktop + Tablet" value="desktop_plus_tablet" />
-          <el-option label="Tablet + Mobile" value="tablet_plus_mobile" />
+          <el-option v-for="(label, value) in modalSettingsFields?.device_types?.options" :key="value" :label="label" :value="value" />
         </el-select>
-        <div class="field-desc">Select the device(s) where this plugin should be disabled.</div>
+        <div class="field-desc">{{ modalSettingsFields?.device_types?.description }}</div>
       </div>
 
       <!-- Condition Type Selector -->
       <div class="form-field">
-        <label>Action:</label>
+        <label>{{ modalSettingsFields?.action?.label }}</label>
         <el-select v-model="pluginSettings.condition_type" class="w-full">
-          <el-option label="Disable on Selected Pages" value="disable_on_selected" />
-          <el-option label="Enable on Selected Pages" value="enable_on_selected" />
+          <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label" :value="value" />
         </el-select>
-        <div class="field-desc">Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.</div>
+        <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
       </div>
 
       <!-- URI Type Selector -->
       <div class="form-field">
-        <label>Page Type:</label>
+        <label>{{ modalSettingsFields?.page_types?.label }}</label>
         <el-select v-model="pluginSettings.uri_type" class="w-full" @change="handleUriTypeChange">
-          <el-option label="Page" value="page" />
-          <el-option label="Post" value="post" />
-          <el-option label="Page & Post" value="page_post" />
-          <el-option label="Post, Pages & Custom Post Type" value="page_post_cpt" />
-          <el-option label="Custom" value="custom" />
+          <el-option v-for="(label, value) in modalSettingsFields?.page_types?.options" :key="value" :label="label" :value="value" />
         </el-select>
-        <div class="field-desc">Choose the types of pages. "Custom" allows you to specify pages matching a particular URI pattern.</div>
+        <div class="field-desc">{{ modalSettingsFields?.page_types?.description }}</div>
         <el-tooltip
-          v-if="pluginSettings.uri_type === 'page_post_cpt'"
-          content="If you wish to select custom posts, please choose the custom post types below"
+          v-if="pluginSettings.uri_type === 'page_post_cpt' && modalSettingsFields?.page_types?.tooltip?.page_post_cpt"
+          :content="modalSettingsFields?.page_types?.tooltip?.page_post_cpt?.note"
           placement="top"
         >
           <el-icon class="info-icon"><InfoFilled /></el-icon>
@@ -200,6 +190,10 @@ const loadingPages = ref(false)
 const loadingPosts = ref(false)
 const loadingCustomPosts = reactive({})
 
+
+const modalSettingsFields = HTPMM.adminSettings.modal_settings_fields
+const isPro = HTPMM.adminSettings.is_pro
+console.log(modalSettingsFields?.device_types?.options);
 // Default settings structure matching PHP - default to disabled
 const pluginSettings = ref({
   enable_deactivation: 'yes', // Default to 'yes' (disabled)
