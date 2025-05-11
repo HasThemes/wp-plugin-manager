@@ -8,7 +8,7 @@
     @close="handleClose"
     style="padding: 26px 30px 40px 30px; width: 95%; max-width: 500px; border: none; text-align: center;"
     :show-header="false"
-    >     
+    > 
     <button class="htpm-admin-popup-close" @click="handleClose">
         <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M9.08366 1.73916L8.26116 0.916656L5.00033 4.17749L1.73949 0.916656L0.916992 1.73916L4.17783 4.99999L0.916992 8.26082L1.73949 9.08332L5.00033 5.82249L8.26116 9.08332L9.08366 8.26082L5.82283 4.99999L9.08366 1.73916Z" fill="currentColor"></path>
@@ -17,9 +17,9 @@
     <div class="htpm-admin-popup-icon">
         <img :src="proBadgeImg" alt="pro">
     </div>
-    <h3 class="htpm-admin-popup-title">{{ HTPMM.i18n.pro.modal.title }}</h3>
-    <p class="htpm-admin-popup-text">{{ HTPMM.i18n.pro.modal.desc }}</p>
-    <a :href="HTPMM.upgradeLink" class="htpm-admin-btn htpm-opt-submit htpm-admin-btn-primary" target="_blank">{{ HTPMM.i18n.pro.modal.buynow || 'Buy Now' }}</a>
+    <h3 class="htpm-admin-popup-title">{{ proModalContent?.title }}</h3>
+    <p class="htpm-admin-popup-text">{{ proModalContent?.description }}</p>
+    <a :href="proModalContent?.button?.link" class="htpm-admin-btn htpm-opt-submit htpm-admin-btn-primary" target="_blank">{{ proModalContent?.button?.text }}</a>
 </el-dialog>
 </template>
 
@@ -27,12 +27,20 @@
 import proBadgeImg from '../assets/images/pro-badge.png'
 import { ref } from 'vue'
 
-const dialogVisible = ref(true)
+const dialogVisible = ref(false)
 
 const show = () => {
   dialogVisible.value = true
 }
 
+const proModalContent = ref({
+    title: HTPMM?.buttontxt?.modal?.title,
+    description: HTPMM?.buttontxt?.modal?.desc,
+    button: {
+        text: HTPMM?.buttontxt?.buynow,
+        link: HTPMM?.buttontxt?.buynow_link
+    }
+});
 const handleClose = () => {
   dialogVisible.value = false
 }
@@ -49,10 +57,9 @@ defineExpose({
     box-shadow: none !important;
 }
 
-.el-dialog__header {
+header.el-dialog__header {
     display: none !important;
 }
-
 :deep(.el-dialog__body) {
     padding: 0 !important;
     margin: 0 !important;

@@ -11,8 +11,8 @@
       <!-- Configuration settings for the plugin - Always visible now -->
       <div class="form-field">
         <label>{{ modalSettingsFields?.device_types?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">PRO</span></label>
-        <el-select v-model="pluginSettings.device_type" class="w-full">
-          <el-option v-for="(label, value) in modalSettingsFields?.device_types?.options" :key="value" :label="label" :value="value" :disabled="modalSettingsFields?.device_types?.pro?.includes(value)" />
+        <el-select v-model="pluginSettings.device_type" class="w-full" @change="(value) => handleProFeatureSelect('device_types', value)">
+          <el-option v-for="(label, value) in modalSettingsFields?.device_types?.options" :key="value" :label="label" :value="value" />
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.device_types?.description }}</div>
       </div>
@@ -20,8 +20,8 @@
       <!-- Condition Type Selector -->
       <div class="form-field">
         <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">PRO</span></label>
-        <el-select v-model="pluginSettings.condition_type" class="w-full">
-          <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
+        <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
+          <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label" :value="value" />
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
       </div>
@@ -29,7 +29,7 @@
       <!-- URI Type Selector -->
       <div class="form-field">
         <label>{{ modalSettingsFields?.page_types?.label }}</label>
-        <el-select v-model="pluginSettings.uri_type" class="w-full" @change="handleUriTypeChange">
+        <el-select v-model="pluginSettings.uri_type" class="w-full" @change="(value) => { handleUriTypeChange(); handleProFeatureSelect('page_types', value); }">
           <el-option v-for="(label, value) in modalSettingsFields?.page_types?.options" :key="value" :label="label" :value="value" />
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.page_types?.description }}</div>
@@ -162,6 +162,9 @@
       </div>
     </template>
   </el-dialog>
+
+  <!-- Pro Modal -->
+  <ProModal ref="proModal" />
 </template>
 
 <script setup>
@@ -191,6 +194,29 @@ const loadingPages = ref(false)
 const loadingPosts = ref(false)
 const loadingCustomPosts = reactive({})
 
+const proModal = ref(null);
+
+const handleProFeatureSelect = (field, value) => {
+  const fieldSettings = modalSettingsFields[field];
+  
+  if (!isPro && fieldSettings?.pro?.includes(value)) {
+    // Reset to default value based on field type
+    switch(field) {
+      case 'device_types':
+        pluginSettings.device_type = 'all';
+        break;
+      case 'action':
+        pluginSettings.condition_type = 'disable_on_selected';
+        break;
+      case 'page_types':
+        pluginSettings.uri_type = 'page';
+        break;
+    }
+    
+    // Show pro modal
+    proModal.value?.show();
+  }
+}
 
 const modalSettingsFields = HTPMM.adminSettings.modal_settings_fields
 const isPro = HTPMM.adminSettings.is_pro

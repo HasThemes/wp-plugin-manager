@@ -700,6 +700,9 @@ top: 32px !important;
 .el-button>span {
     gap: 5px;
 }
+.htpm-admin-popup-inner .el-dialog__header {
+    display: none !important;
+}
 .plugin-optimize-popconfirm {
     padding: 8px 12px 12px !important;
 }

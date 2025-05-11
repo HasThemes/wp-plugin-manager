@@ -188,6 +188,7 @@ class HTPM_Main {
                         'tmppage'    => esc_html__( 'Import to Page', 'wp-plugin-manager' ),
                         'import'     => esc_html__( 'Import', 'wp-plugin-manager' ),
                         'buynow'     => esc_html__( 'Buy Now', 'wp-plugin-manager' ),
+                        'buynow_link' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
                         'preview'    => esc_html__( 'Preview', 'wp-plugin-manager' ),
                         'installing' => esc_html__( 'Installing..', 'wp-plugin-manager' ),
                         'activating' => esc_html__( 'Activating..', 'wp-plugin-manager' ),
