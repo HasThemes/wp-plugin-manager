@@ -216,6 +216,7 @@ class HTPM_Main {
                     'adminSettings' => [
                         'modal_settings_fields' => $admin_settings->get_modal_settings_fields(),
                         'is_pro' => $admin_settings->is_pro(),
+                        'labels_texts' => $admin_settings->get_labels_texts(),
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );

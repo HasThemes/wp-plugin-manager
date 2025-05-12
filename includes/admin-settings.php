@@ -57,8 +57,23 @@ class WP_Plugin_Manager_Settings {
                     'page_post_cpt' => [
                         'note' => __('If you wish to select custom posts, please choose the custom post types below', 'wp-plugin-manager'),
                     ]
-                ]
+                ],
             ],
+        ];
+    }
+
+    public function get_labels_texts() {
+        return [
+            'select_pages' => __('Select Pages:', 'wp-plugin-manager'),
+            'select_posts' => __('Select Posts:', 'wp-plugin-manager'),
+            'page_types' => __('Page Type', 'wp-plugin-manager'),
+            'select' => __('Select', 'wp-plugin-manager'),
+            'uri_conditions' => __('URI Conditions:', 'wp-plugin-manager'),
+            'add_condition' => __('Add Condition:', 'wp-plugin-manager'),
+            'field_desc_uri' => __("E.g. You can use 'contact-us' on URLs like https://example.com/contact-us or leave it lank for the homepage.", "wp-plugin-manager"),
+            'save_enable' => __('Save & Enable', 'wp-plugin-manager'),
+            'cancel' => __('Cancel', 'wp-plugin-manager'),
+
         ];
     }
 
@@ -70,36 +85,6 @@ class WP_Plugin_Manager_Settings {
         $settings = $this->get_modal_settings_fields();
         return isset($settings[$field]) ? $settings[$field] : null;
     }
-
-    // public function is_pro_feature($feature_type, $value) {
-    //     $settings = $this->get_feature_settings();
-        
-    //     if (!isset($settings[$feature_type])) {
-    //         return false;
-    //     }
-
-    //     return in_array($value, $settings[$feature_type]['pro']);
-    // }
-
-    // public function get_available_features($feature_type) {
-    //     $settings = $this->get_feature_settings();
-        
-    //     if (!isset($settings[$feature_type])) {
-    //         return [];
-    //     }
-
-    //     if ($this->is_pro) {
-    //         return array_merge($settings[$feature_type]['free'], $settings[$feature_type]['pro']);
-    //     }
-
-    //     return $settings[$feature_type]['free'];
-    // }
-
-    // public function get_pro_features($feature_type) {
-    //     $settings = $this->get_feature_settings();
-    //     return isset($settings[$feature_type]['pro']) ? $settings[$feature_type]['pro'] : [];
-    // }
-
     public function is_pro() {
         return $this->is_pro;
     }
