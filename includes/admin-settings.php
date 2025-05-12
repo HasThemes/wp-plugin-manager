@@ -70,10 +70,23 @@ class WP_Plugin_Manager_Settings {
             'select' => __('Select', 'wp-plugin-manager'),
             'uri_conditions' => __('URI Conditions:', 'wp-plugin-manager'),
             'add_condition' => __('Add Condition:', 'wp-plugin-manager'),
-            'field_desc_uri' => __("E.g. You can use 'contact-us' on URLs like https://example.com/contact-us or leave it lank for the homepage.", "wp-plugin-manager"),
+            'field_desc_uri' => __('E.g. You can use \'contact-us\' on URLs like https://example.com/contact-us or leave it blank for the homepage.', 'wp-plugin-manager'),
             'save_enable' => __('Save & Enable', 'wp-plugin-manager'),
             'cancel' => __('Cancel', 'wp-plugin-manager'),
-
+            'post_types_settings' => __('Post Types Settings', 'wp-plugin-manager'),
+            'display_settings' => __('Display Settings', 'wp-plugin-manager'),
+            'show_thumbnails' => __('Show Plugin Thumbnails', 'wp-plugin-manager'),
+            'show_thumbnails_desc' => __('Enable this option to display plugin thumbnails in the plugin list.', 'wp-plugin-manager'),
+            'items_per_page' => __('Items Per Page in Plugin List', 'wp-plugin-manager'),
+            'items_per_page_desc' => __('Select how many plugins to display per page in the manage plugin list.', 'wp-plugin-manager'),
+            'items' => __('items', 'wp-plugin-manager'),
+            'save_settings' => __('Save Settings', 'wp-plugin-manager'),
+            'select_post_types_label' => __('Select Post Types', 'wp-plugin-manager'),
+            'select_post_types_desc' => __('Select the custom post types where you want to disable plugins.', 'wp-plugin-manager'),
+            'add_post_type' => __('Add post type...', 'wp-plugin-manager'),
+            'number_of_posts' => __('Number of Posts to Load', 'wp-plugin-manager'),
+            'number_of_posts_desc' => __('Default: 150 posts. Adjust if you have more posts to manage.', 'wp-plugin-manager'),
+            'save_settings_note' => __('Note: Make sure to save settings to see options for each plugin for the selected post types.', 'wp-plugin-manager'),
         ];
     }
 

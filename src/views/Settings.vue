@@ -5,12 +5,12 @@
       <div class="settings-section mb-8">
         <h2 class="section-title">
           <el-icon><Document /></el-icon>
-          Post Types Settings
+          {{ labels_texts?.post_types_settings }}
         </h2>
         
         <div class="section-content">
           <div class="form-group">
-            <label class="setting-label">Select Post Types</label>
+            <label class="setting-label">{{ labels_texts?.select_post_types_label }}</label>
             <div class="setting-control">
               <div class="selected-types">
                 <span v-for="type in filteredPostTypes" :key="type" class="type-tag">
@@ -19,28 +19,28 @@
                 </span>
               </div>
               <select v-model="newPostType" class="form-select" @change="addPostType">
-                <option value="">Add post type...</option>
+                <option value="">{{ labels_texts?.add_post_type }}</option>
                 <option v-for="type in availablePostTypes" :key="type.value" :value="type.value">
                   {{ type.label }}
                 </option>
               </select>
             </div>
-            <p class="setting-description">Select the custom post types where you want to disable plugins.</p>
+            <p class="setting-description">{{ labels_texts?.select_post_types_desc }}</p>
           </div>
 
           <div class="form-group">
-            <label class="setting-label">Number of Posts to Load</label>
+            <label class="setting-label">{{ labels_texts?.number_of_posts }}</label>
             <div class="setting-control number-input-group">
               <button class="number-btn" @click="decrementPosts">−</button>
               <input type="number" v-model="settingsPagesSettings.htpm_load_posts" class="number-input" min="1" max="1000">
               <button class="number-btn" @click="incrementPosts">+</button>
             </div>
-            <p class="setting-description">Default: 150 posts. Adjust if you have more posts to manage.</p>
+            <p class="setting-description">{{ labels_texts?.number_of_posts_desc }}</p>
           </div>
 
           <div class="info-note">
             <el-icon><InfoFilled /></el-icon>
-            Note: Make sure to save settings to see options for each plugin for the selected post types.
+            {{ labels_texts?.save_settings_note }}
           </div>
         </div>
       </div>
@@ -48,32 +48,32 @@
       <div class="settings-section">
         <h2 class="section-title">
           <el-icon><View /></el-icon>
-          Display Settings
+          {{ labels_texts?.display_settings }}
         </h2>
         
         <div class="section-content">
           <div class="form-group">
-            <label class="setting-label">Show Plugin Thumbnails</label>
+            <label class="setting-label">{{ labels_texts?.show_thumbnails }}</label>
             <div class="setting-control">
               <el-switch
                 v-model="settingsPagesSettings.showThumbnails"
                 class="custom-switch"
               />
             </div>
-            <p class="setting-description">Enable this option to display plugin thumbnails in the plugin list.</p>
+            <p class="setting-description">{{ labels_texts?.show_thumbnails_desc }}</p>
           </div>
 
           <div class="form-group">
-            <label class="setting-label">Items Per Page in Plugin List</label>
+            <label class="setting-label">{{ labels_texts?.items_per_page }}</label>
             <div class="setting-control">
               <select v-model="settingsPagesSettings.itemsPerPage" class="form-select">
-                <option value="10">10 items</option>
-                <option value="20">20 items</option>
-                <option value="50">50 items</option>
-                <option value="100">100 items</option>
+                <option value="10">10 {{ labels_texts?.items }}</option>
+                <option value="20">20 {{ labels_texts?.items }}</option>
+                <option value="50">50 {{ labels_texts?.items }}</option>
+                <option value="100">100 {{ labels_texts?.items }}</option>
               </select>
             </div>
-            <p class="setting-description">Select how many plugins to display per page in the manage plugin list.</p>
+            <p class="setting-description">{{ labels_texts?.items_per_page_desc }}</p>
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@
       <div class="save-button-container">
         <el-button type="primary" @click="saveSettings" size="large" class="save-button">
           <el-icon><Check /></el-icon>
-          Save Settings
+          {{ labels_texts?.save_settings }}
         </el-button>
       </div>
     </div>
@@ -95,6 +95,12 @@ import { View, Document, Close, InfoFilled, Check, Warning } from '@element-plus
 import { ElMessage, ElNotification } from 'element-plus'
 import { usePluginStore } from '../store/plugins'
 const store = usePluginStore()
+const labels_texts = HTPMM.adminSettings.labels_texts
+
+// Helper function for string formatting
+const sprintf = (str, ...args) => {
+  return str.replace(/%d/g, () => args.shift())
+}
 // Display Settings
 const settingsPagesSettings = ref(
   {
