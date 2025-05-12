@@ -142,6 +142,7 @@ const handlePluginAction = async (plugin) => {
   overflow: hidden;
   background: white;
   transition: transform 0.2s;
+  width:100%;
 }
 
 .plugin-card:hover {

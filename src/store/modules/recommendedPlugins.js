@@ -41,11 +41,12 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
       try {
         const formData = new FormData()
         formData.append('action', 'htpm_ajax_plugin_activation')
-        formData.append('plugin', plugin.location)
+        formData.append('location', plugin.location)
         formData.append('slug', plugin.slug)
-        formData.append('nonce', window.htpm.nonce)
+        formData.append('nonce', window.HTPMM.nonce)
 
-        const response = await axios.post(window.htpm.ajaxUrl, formData)
+        const response = await axios.post(window.HTPMM.ajaxUrl, formData)
+        console.log(response.data);
         if (response.data.success) {
           this.installedPlugins.push(plugin.slug)
         }
