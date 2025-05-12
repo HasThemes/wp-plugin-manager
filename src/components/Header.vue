@@ -1,125 +1,122 @@
 <template>
-      <!-- Header -->
-      <el-row align="middle" justify="space-between" class="htpm-header-row">
-        <el-col :xs="16" :sm="16" :md="18" :lg="18" :xl="18">
-          <el-menu 
-            mode="horizontal" 
-            class="htpm-nav" 
-            :ellipsis="true"
-            :default-active="activeIndex"
-            router
+  <!-- Header -->
+  <el-row align="middle" justify="space-between" class="htpm-header-row">
+    <el-col :xs="16" :sm="16" :md="18" :lg="18" :xl="18">
+      <el-menu 
+        mode="horizontal" 
+        class="htpm-nav" 
+        :ellipsis="true"
+        :default-active="activeIndex"
+        router
+      >
+        <template v-for="(menu, key) in sortedMenuItems" :key="key">
+          <el-menu-item 
+            v-if="menu.visible" 
+            :index="menu.isRouter ? menu.link : key"
+            @click="handleMenuClick(menu)"
           >
-            <!-- <el-menu-item index="/">
-              <el-icon><HomeFilled /></el-icon>
-              Dashboard
-            </el-menu-item> -->
-            <el-menu-item index="/">
-              <el-icon><Grid /></el-icon>
-              General
-            </el-menu-item>
-            <el-menu-item index="/settings">
-              <el-icon><Setting /></el-icon>
-              Settings
-            </el-menu-item>
-            <!-- <el-menu-item index="/tools">
-              <el-icon><Tools /></el-icon>
-              Tools
-            </el-menu-item> -->
-            <el-menu-item @click="openLicense">
-              <el-icon><Key /></el-icon>
-              License
-            </el-menu-item>
-            <el-menu-item @click="openDocs">
-              <el-icon><Document /></el-icon>
-              Documentation
-            </el-menu-item>
-            <el-menu-item @click="openSupport">
-              <el-icon><Service /></el-icon>
-              Support
-            </el-menu-item>
-            <el-menu-item @click="openRecommendedPlugins">
-              <el-icon><List /></el-icon>
-              Recommended Plugins
-            </el-menu-item>
-          </el-menu>
-        </el-col>
-        <el-col :xs="8" :sm="8" :md="6" :lg="6" :xl="6" class="htpm-header-actions">
-            <el-button type="primary" @click="upgradeToPro">
-              <el-icon><Top /></el-icon>
-              Upgrade to Pro
-            </el-button>
-            <div class="notification-btn-wrapper">
-              <el-button :class="{'has-notification': updateCount}" :icon="Bell" circle @click="showChangelog" />
-              <span v-if="updateCount" class="notification-indicator"></span>
-            </div>
-        </el-col>
-      </el-row>
-      <!-- Documentation Modal -->
-      <documentation v-model="documentationDialog" />
+            <el-icon><component :is="icons[menu.icon]" /></el-icon>
+            {{ menu.label }}
+          </el-menu-item>
+        </template>
+      </el-menu>
+    </el-col>
+    <el-col :xs="8" :sm="8" :md="6" :lg="6" :xl="6" class="text-right">
+      <el-button type="primary" @click="openProModal" v-if="!isPro">
+        <el-icon><Key /></el-icon>
+        {{ labels_texts?.upgrade_to_pro }}
+      </el-button>
+    </el-col>
+  </el-row>
+</template>
+
+<script setup>
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import { Key, Grid, Setting, Document, Service, Promotion } from '@element-plus/icons-vue'
+
+const route = useRoute()
+const activeIndex = computed(() => route.path)
+const labels_texts = HTPMM.adminSettings.labels_texts
+
+// Register Element Plus icons
+const icons = {
+  Grid,
+  Setting,
+  Document,
+  Service,
+  Key,
+  Promotion
+}
+
+// Handle menu clicks
+const handleMenuClick = (menu) => {
+  if (menu.isRouter) return // Let Vue Router handle it
   
-      <!-- Changelog Drawer -->
-      <notification-drawer v-model="changelogDialog" />
-  </template>
+  // For external links
+  if (menu.link) {
+    if (menu.target === '_blank') {
+      window.open(menu.link, '_blank')
+    } else {
+      window.location.href = menu.link
+    }
+  }
+}
+const menuSettings = HTPMM.adminSettings.menu_settings
+const isPro = HTPMM.adminSettings.is_pro
+
+// Sort menu items by order
+const sortedMenuItems = computed(() => {
+  return Object.entries(menuSettings)
+    .sort(([,a], [,b]) => a.order - b.order)
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+})
+
+// Handle menu actions
+const handleMenuAction = (action) => {
+  if (typeof window[action] === 'function') {
+    window[action]()
+  }
+}
+
+const openProModal = () => {
+  if (typeof window.openProModal === 'function') {
+    window.openProModal()
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.htpm-header-row {
+  padding: 0 20px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
   
-  <script setup>
-  import { ref, computed, onMounted } from 'vue'
-  import { useRoute } from 'vue-router'
-  import { usePluginStore } from '../store/plugins'
-  import NotificationDrawer from './NotificationDrawer.vue'
-  import {
-    Grid,
-    Setting,
-    Tools,
-    Key,
-    List,
-    Document,
-    Service,
-    Bell,
-    Top,
-    HomeFilled
-  } from '@element-plus/icons-vue'
-
-  const route = useRoute()
-  const activeIndex = computed(() => route.path)
-  const store = usePluginStore()
-  const changelogDialog = ref(false)
-
-  // Computed property for notification count
-  const updateCount = computed(() => store.notificationStatus?.has_unread || false)
-
-  // Check notification status on mount
-  onMounted(async () => {
-    await store.checkNotificationStatus()
-  })
-
-  const showChangelog = () => {
-    // Just open drawer immediately
-    changelogDialog.value = true
+  .htpm-nav {
+    border: none;
+    
+    :deep(.el-menu-item) {
+      height: 50px;
+      line-height: 50px;
+      
+      &.is-active {
+        font-weight: 600;
+      }
+      
+      .el-icon {
+        margin-right: 4px;
+      }
+    }
   }
-
-  const upgradeToPro = () => {
-    // Implement upgrade logic
-    window.open(window.HTPMM?.helpSection?.upgradeLink, '_blank')
-  }
-
-  const openDocs = () => {
-    window.open(window.HTPMM?.helpSection?.docLink, '_blank')
-  }
-
-  const openSupport = () => {
-    window.open(window.HTPMM?.helpSection?.supportLink, '_blank')
-  }
-
-  const openLicense = () => {
-    window.location.href = window.HTPMM?.helpSection?.licenseLink
-  }
-
-  const openRecommendedPlugins = () => {
-    window.location.href = window.HTPMM?.helpSection?.recommendedPluginsLink
-  }
-  </script>
   
-  <style lang="scss">
+  .text-right {
+    text-align: right;
+  }
+}
+</style>
+
+<style lang="scss">
   .notification-btn-wrapper {
     position: relative;
     display: inline-block;

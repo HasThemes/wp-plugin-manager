@@ -218,6 +218,7 @@ class HTPM_Main {
                         'is_pro' => $admin_settings->is_pro(),
                         'labels_texts' => $admin_settings->get_labels_texts(),
                         'dashboard_settings' => $admin_settings->get_dashboard_settings(),
+                        'menu_settings' => $admin_settings->get_menu_settings(),
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );

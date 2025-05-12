@@ -16,6 +16,69 @@ class WP_Plugin_Manager_Settings {
         $this->is_pro = defined('WP_PLUGIN_MANAGER_PRO_VERSION');
     }
 
+    public function get_help_section() {
+        return [
+            'docLink' => 'https://hasthemes.com/wp-plugin-manager-documentation/',
+            'supportLink' => 'https://hasthemes.com/contact-us/',
+            'licenseLink' => admin_url('admin.php?page=wp-plugin-manager-license'),
+            'recommendedPluginsLink' => admin_url('admin.php?page=htpm_recommendations'),
+            'upgradeLink' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/'
+        ];
+    }
+
+    public function get_menu_settings() {
+        return [
+            'general' => [
+                'label' => __('General', 'wp-plugin-manager'),
+                'icon' => 'Grid',
+                'link' => '/',
+                'order' => 1,
+                'visible' => true,
+                'isRouter' => true
+            ],
+            'settings' => [
+                'label' => __('Settings', 'wp-plugin-manager'),
+                'icon' => 'Setting',
+                'link' => '/settings',
+                'order' => 2,
+                'visible' => true,
+                'isRouter' => true
+            ],
+            'license' => [
+                'label' => __('License', 'wp-plugin-manager'),
+                'icon' => 'Key',
+                'link' => $this->get_help_section()['licenseLink'],
+                'order' => 3,
+                'visible' => true,
+                'target' => '_self'
+            ],
+            'documentation' => [
+                'label' => __('Documentation', 'wp-plugin-manager'),
+                'icon' => 'Document',
+                'link' => $this->get_help_section()['docLink'],
+                'order' => 4,
+                'visible' => true,
+                'target' => '_blank'
+            ],
+            'support' => [
+                'label' => __('Support', 'wp-plugin-manager'),
+                'icon' => 'Service',
+                'link' => $this->get_help_section()['supportLink'],
+                'order' => 5,
+                'visible' => true,
+                'target' => '_blank'
+            ],
+            'recommended_plugins' => [
+                'label' => __('Recommended Plugins', 'wp-plugin-manager'),
+                'icon' => 'Promotion',
+                'link' => $this->get_help_section()['recommendedPluginsLink'],
+                'order' => 6,
+                'visible' => true,
+                'target' => '_self'
+            ]
+        ];
+    }
+
     public function get_feature_settings() {
         return [
             'device_types' => [
