@@ -132,7 +132,6 @@ const openProModal = () => {
 
     .el-button {
       background-color: transparent;
-      border: none;
       padding: 8px;
       height: auto;
 
