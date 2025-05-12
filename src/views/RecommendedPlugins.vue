@@ -62,61 +62,45 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useRecommendedPluginsStore } from '../store/modules/recommendedPlugins'
+import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins'
 
-export default {
-  name: 'RecommendedPlugins',
-  
-  setup() {
-    const store = useRecommendedPluginsStore()
-    const { tabs, installedPlugins, loading, error, assetsUrl } = storeToRefs(store)
-    const activeTab = ref('Recommended')
+const store = useRecommendedPluginsStore()
+const { tabs, installedPlugins, loading, error, assetsUrl } = storeToRefs(store)
+const activeTab = ref('Recommended')
 
-    onMounted(() => {
-      // Load plugins data
-      store.fetchTabs()
-    })
+onMounted(() => {
+  // Load plugins data
+  store.fetchTabs()
+})
 
-    // Computed properties
-    const currentTabPlugins = computed(() => {
-      const currentTab = tabs.value.find(tab => tab.title === activeTab.value)
-      return currentTab ? currentTab.plugins : []
-    })
+// Computed properties
+const currentTabPlugins = computed(() => {
+  const currentTab = tabs.value.find(tab => tab.title === activeTab.value)
+  return currentTab ? currentTab.plugins : []
+})
 
-    // Methods
-    const getPluginImage = (slug) => {
-      return `${assetsUrl.value}/images/extensions/${slug}.png`
-    }
+// Methods
+const getPluginImage = (slug) => {
+  return `${assetsUrl.value}/images/extensions/${slug}.png`
+}
 
-    const isPluginInstalled = (slug) => {
-      return store.state.recommendedPlugins.installedPlugins.includes(slug)
-    }
+const isPluginInstalled = (slug) => {
+  return installedPlugins.value.includes(slug)
+}
 
-    const getPluginActionText = (plugin) => {
-      if (isPluginInstalled(plugin.slug)) {
-        return 'Installed'
-      }
-      return 'Install Now'
-    }
+const getPluginActionText = (plugin) => {
+  if (isPluginInstalled(plugin.slug)) {
+    return 'Installed'
+  }
+  return 'Install Now'
+}
 
-    const handlePluginAction = async (plugin) => {
-      if (!plugin.installed) {
-        await store.installPlugin(plugin)
-      }
-    }
-
-    return {
-      activeTab,
-      tabs,
-      currentTabPlugins,
-      getPluginImage,
-      isPluginInstalled,
-      getPluginActionText,
-      handlePluginAction
-    }
+const handlePluginAction = async (plugin) => {
+  if (!plugin.installed) {
+    await store.installPlugin(plugin)
   }
 }
 </script>

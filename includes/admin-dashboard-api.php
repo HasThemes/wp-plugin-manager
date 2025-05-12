@@ -3,6 +3,11 @@
 // Include recommended plugins
 require_once plugin_dir_path(__FILE__) . 'recommended-plugins/recommendations.php';
 
+if (!class_exists('WP_REST_Response')) {
+    require_once ABSPATH . 'wp-includes/rest-api/class-wp-rest-response.php';
+    require_once ABSPATH . 'wp-includes/rest-api.php';
+}
+
 /**
  * Register custom REST API endpoints for plugin management
  */
@@ -43,6 +48,15 @@ function htpm_register_rest_routes() {
         }
     ]);
     
+    // Get recommended plugins endpoint
+    register_rest_route('htpm/v1', '/recommended-plugins', [
+        'methods' => 'GET',
+        'callback' => 'htpm_get_recommended_plugins',
+        'permission_callback' => function() {
+            return current_user_can('activate_plugins');
+        }
+    ]);
+
     // Toggle plugin status endpoint
     register_rest_route('htpm/v1', '/plugins/(?P<id>\d+)/toggle', [
         'methods' => 'POST',
@@ -730,11 +744,11 @@ function htpm_get_recommended_plugins() {
         ];
     }
 
-    return rest_ensure_response([
+    return new WP_REST_Response([
         'tabs' => $tabs,
         'installed_plugins' => $installed_plugins,
         'assets_url' => HTPM_ROOT_URL . '/includes/recommended-plugins/assets'
-    ]);
+    ], 200);
 }
 
 /**

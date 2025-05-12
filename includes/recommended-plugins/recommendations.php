@@ -1,4 +1,7 @@
 <?php
+// Include the class file
+require_once plugin_dir_path(__FILE__) . 'class.recommended-plugins.php';
+
 /**
  * Constructor Parameters
  *
@@ -11,7 +14,11 @@
  *
  */
 
-if( class_exists('Hasthemes\HTPM\HTRP_Recommended_Plugins') ){
+function htpm_init_recommended_plugins() {
+    if (!class_exists('Hasthemes\HTPM\HTRP_Recommended_Plugins')) {
+        return;
+    }
+
     global $recommendations;
     $recommendations = new Hasthemes\HTPM\HTRP_Recommended_Plugins(
         array( 
@@ -336,3 +343,6 @@ if( class_exists('Hasthemes\HTPM\HTRP_Recommended_Plugins') ){
         )
     ));
 }
+
+// Initialize plugin on init hook with priority 15 to ensure textdomain is loaded
+add_action('init', 'htpm_init_recommended_plugins', 15);
