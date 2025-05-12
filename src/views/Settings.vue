@@ -107,7 +107,6 @@ const isPro = HTPMM.adminSettings.is_pro
 const dashboardSettings = HTPMM.adminSettings.dashboard_settings
 const proModal = ref(null)
 const proLabel = ref(HTPMM.buttontxt.pro);
-console.log(HTPMM);
 // Helper function for string formatting
 const sprintf = (str, ...args) => {
   return str.replace(/%d/g, () => args.shift())

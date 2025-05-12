@@ -21,26 +21,37 @@
         </template>
       </el-menu>
     </el-col>
-    <el-col :xs="8" :sm="8" :md="6" :lg="6" :xl="6" class="text-right">
-      <el-button type="primary" @click="openProModal" v-if="!isPro">
-        <el-icon><Key /></el-icon>
-        {{ labels_texts?.upgrade_to_pro }}
-      </el-button>
+    <el-col :xs="8" :sm="8" :md="6" :lg="6" :xl="6" class="htpm-header-actions">
+        <el-button type="primary" @click="upgradeToPro" v-if="!isPro">
+          <el-icon><Top /></el-icon>
+          <span class="hidden-sm-and-down">{{ labels_texts?.upgrade_to_pro }} </span>
+        </el-button>
+        <div class="notification-btn-wrapper">
+          <el-button :class="{'has-notification': updateCount}" :icon="Bell" circle @click="showChangelog" />
+          <span v-if="updateCount" class="notification-indicator"></span>
+        </div>
     </el-col>
   </el-row>
+   <!-- Changelog Drawer -->
+   <notification-drawer v-model="changelogDialog" />
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import { Key, Grid, Setting, Document, Service, Promotion } from '@element-plus/icons-vue'
+import { Key, Grid, Setting, Document, Service, Promotion, Top, Bell } from '@element-plus/icons-vue'
+import { usePluginStore } from '../store/plugins'
+import NotificationDrawer from './NotificationDrawer.vue'
+const store = usePluginStore()
+const changelogDialog = ref(false)
 
 const route = useRoute()
 const router = useRouter()
 const activeIndex = computed(() => route.path)
 const labels_texts = HTPMM.adminSettings.labels_texts
-
+  // Computed property for notification count
+  const updateCount = computed(() => store.notificationStatus?.has_unread || false)
 // Register Element Plus icons
 const icons = {
   Grid,
@@ -48,10 +59,26 @@ const icons = {
   Document,
   Service,
   Key,
-  Promotion
+  Promotion,
+  Top,
+  Bell
 }
 
 // Handle menu clicks
+const upgradeToPro = () => {
+  window.open(HTPMM?.helpSection?.upgradeLink, '_blank')
+}
+
+  // Check notification status on mount
+  onMounted(async () => {
+    await store.checkNotificationStatus()
+  })
+
+  const showChangelog = () => {
+    // Just open drawer immediately
+    changelogDialog.value = true
+  }
+
 const handleMenuClick = (menu) => {
   if (menu.isRouter) {
     // Use router.push for internal routes
@@ -91,6 +118,46 @@ const openProModal = () => {
   }
 }
 </script>
+
+<style lang="scss">
+.htpm-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+
+  .notification-btn-wrapper {
+    position: relative;
+    display: inline-block;
+
+    .el-button {
+      background-color: transparent;
+      border: none;
+      padding: 8px;
+      height: auto;
+
+      &:hover {
+        background-color: #f5f7fa;
+      }
+
+      &.has-notification {
+        color: var(--el-color-primary);
+      }
+    }
+
+    .notification-indicator {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--el-color-danger);
+    }
+  }
+}
+
+</style>
 
 <style lang="scss" scoped>
 .htpm-header-row {
@@ -220,7 +287,6 @@ const openProModal = () => {
     top: 32px;
     z-index: 100;
     border-radius: 5px;
-  
     .htpm-nav {
       border: none;
       padding: 0;
@@ -259,8 +325,16 @@ const openProModal = () => {
           .el-icon {
             font-size: 14px;
           }
+          .hidden-sm-and-down {
+            display: none;
+          }
         }
+
       }
+    }
+    @media screen and (max-width: 1024px) {
+      position: relative !important;
+      top: 0 !important;
     }
   }
   </style>

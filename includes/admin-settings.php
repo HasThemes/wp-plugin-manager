@@ -18,7 +18,7 @@ class WP_Plugin_Manager_Settings {
 
     public function get_help_section() {
         return [
-            'docLink' => 'https://hasthemes.com/wp-plugin-manager-documentation/',
+            'docLink' => 'https://hasthemes.com/docs/wp-plugin-manager/',
             'supportLink' => 'https://hasthemes.com/contact-us/',
             'licenseLink' => admin_url('admin.php?page=wp-plugin-manager-license'),
             'recommendedPluginsLink' => admin_url('admin.php?page=htpm_recommendations'),
@@ -49,7 +49,7 @@ class WP_Plugin_Manager_Settings {
                 'icon' => 'Key',
                 'link' => $this->get_help_section()['licenseLink'],
                 'order' => 3,
-                'visible' => true,
+                'visible' => false,
                 'target' => '_self'
             ],
             'documentation' => [
@@ -153,6 +153,7 @@ class WP_Plugin_Manager_Settings {
     }
     public function get_labels_texts() {
         return [
+            'upgrade_to_pro' => __('Upgrade to Pro', 'wp-plugin-manager'),
             'select_pages' => __('Select Pages:', 'wp-plugin-manager'),
             'select_posts' => __('Select Posts:', 'wp-plugin-manager'),
             'page_types' => __('Page Type', 'wp-plugin-manager'),

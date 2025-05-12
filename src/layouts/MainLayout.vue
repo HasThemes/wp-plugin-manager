@@ -3,10 +3,10 @@
     <!-- Header -->
     <Header />
     <el-row :gutter="30" class="htpm-content">
-      <el-col :span="19">
+      <el-col :span="19" :xs="24" :sm="24" :md="24" :lg="18" :xl="19" style="padding-bottom: 30px;">
         <slot></slot>
       </el-col>
-      <el-col :span="5">
+      <el-col :span="5" :xs="24" :sm="24" :md="24" :lg="6" :xl="5">
         <!-- Sidebar -->
         <sidebar />
       </el-col>

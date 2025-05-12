@@ -771,6 +771,11 @@ top: 32px !important;
     overflow: hidden;
     background-position: top center;
   }
+  @media (min-width: 450px) and (max-width: 1199px) {
+    .htpm-opt-get-pro-header{
+        width: 100%;
+    }
+  }
   .htpm-opt-get-pro-header-title {
     font-size: 30px;
     line-height: 1.2;
