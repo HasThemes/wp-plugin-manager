@@ -62,6 +62,32 @@ class WP_Plugin_Manager_Settings {
         ];
     }
 
+    public function get_dashboard_settings(){
+        return [
+            'post_typs_settings' => [
+                'custom_post_types' => [
+                    'label' => __('Select Post Types', 'wp-plugin-manager'),
+                    'options'=>htpm_get_all_post_types(['post','page']),
+                    'isPro' => true,
+                    'proBadge' => true,
+                    'desc' => __('Select the custom post types where you want to disable plugins.', 'wp-plugin-manager'),
+                    'note' => __('Note: Make sure to save settings to see options for each plugin for the selected post types.', 'wp-plugin-manager'),
+                    'type' => 'select',
+                ],
+                'load_posts' => [
+                    'label' => __('Load Posts', 'wp-plugin-manager'),
+                    'default' => 150,
+                    'desc' => __('Default: 150 posts. Adjust if you have more posts to manage.', 'wp-plugin-manager'),
+                    'type' => 'number',
+                    'min' => 1,
+                    'max' => 1000,
+                    'step' => 1,
+                    'isPro' => true,
+                    'proBadge' => true,
+                ],
+            ],
+        ];
+    }
     public function get_labels_texts() {
         return [
             'select_pages' => __('Select Pages:', 'wp-plugin-manager'),
@@ -81,7 +107,6 @@ class WP_Plugin_Manager_Settings {
             'items_per_page_desc' => __('Select how many plugins to display per page in the manage plugin list.', 'wp-plugin-manager'),
             'items' => __('items', 'wp-plugin-manager'),
             'save_settings' => __('Save Settings', 'wp-plugin-manager'),
-            'select_post_types_label' => __('Select Post Types', 'wp-plugin-manager'),
             'select_post_types_desc' => __('Select the custom post types where you want to disable plugins.', 'wp-plugin-manager'),
             'add_post_type' => __('Add post type...', 'wp-plugin-manager'),
             'number_of_posts' => __('Number of Posts to Load', 'wp-plugin-manager'),

@@ -10,32 +10,32 @@
         
         <div class="section-content">
           <div class="form-group">
-            <label class="setting-label">{{ labels_texts?.select_post_types_label }}</label>
+            <label class="setting-label"> {{ dashboardSettings.post_typs_settings.custom_post_types.label }} <el-tag v-if="dashboardSettings?.post_typs_settings?.custom_post_types?.proBadge" class="pro-badge" type="warning" size="small">{{ proLabel }}</el-tag></label>
             <div class="setting-control">
               <div class="selected-types">
-                <span v-for="type in filteredPostTypes" :key="type" class="type-tag">
+                <span v-if="!dashboardSettings?.post_typs_settings?.custom_post_types?.isPro" v-for="type in filteredPostTypes" :key="type" class="type-tag">
                   {{ type }}
                   <el-icon class="remove-tag" @click="removePostType(type)"><Close /></el-icon>
                 </span>
               </div>
-              <select v-model="newPostType" class="form-select" @change="addPostType">
+              <select v-model="newPostType" class="form-select" @change="addPostType" @click="()=> dashboardSettings?.post_typs_settings?.custom_post_types?.isPro ? openProModal() : null" :disabled="dashboardSettings?.post_typs_settings?.custom_post_types?.isPro">
                 <option value="">{{ labels_texts?.add_post_type }}</option>
-                <option v-for="type in availablePostTypes" :key="type.value" :value="type.value">
+                <option v-for="type in dashboardSettings?.post_typs_settings?.custom_post_types?.options" :key="type.name" :value="type.name" :disabled="dashboardSettings?.post_typs_settings?.custom_post_types?.isPro">
                   {{ type.label }}
                 </option>
               </select>
             </div>
-            <p class="setting-description">{{ labels_texts?.select_post_types_desc }}</p>
+            <p class="setting-description">{{dashboardSettings?.post_typs_settings?.custom_post_types?.desc }}</p>
           </div>
 
           <div class="form-group">
-            <label class="setting-label">{{ labels_texts?.number_of_posts }}</label>
+            <label class="setting-label">{{ dashboardSettings.post_typs_settings.load_posts.label }} <el-tag v-if="!isPro" class="pro-badge" type="warning" size="small">{{ proLabel }}</el-tag></label>
             <div class="setting-control number-input-group">
               <button class="number-btn" @click="decrementPosts">−</button>
-              <input type="number" v-model="settingsPagesSettings.htpm_load_posts" class="number-input" min="1" max="1000">
+              <input type="number" v-model="settingsPagesSettings.htpm_load_posts" class="number-input" :min="dashboardSettings.post_typs_settings.load_posts.min" :max="dashboardSettings.post_typs_settings.load_posts.max" :disabled="dashboardSettings.post_typs_settings.load_posts.isPro">
               <button class="number-btn" @click="incrementPosts">+</button>
             </div>
-            <p class="setting-description">{{ labels_texts?.number_of_posts_desc }}</p>
+            <p class="setting-description">{{ dashboardSettings.post_typs_settings.load_posts.desc }}</p>
           </div>
 
           <div class="info-note">
@@ -89,6 +89,8 @@
       </div>
     </div>
   </div>
+
+  <ProModal ref="proModal" />
 </template>
 
 <script setup>
@@ -96,9 +98,16 @@ import { ref, computed, onMounted } from 'vue'
 import { View, Document, Close, InfoFilled, Check, Warning } from '@element-plus/icons-vue'
 import { ElMessage, ElNotification } from 'element-plus'
 import { usePluginStore } from '../store/plugins'
+import ProModal from '../components/ProModal.vue'
+
 const store = usePluginStore()
 const labels_texts = HTPMM.adminSettings.labels_texts
-
+const modalSettingsFields = HTPMM.adminSettings.modal_settings_fields
+const isPro = HTPMM.adminSettings.is_pro
+const dashboardSettings = HTPMM.adminSettings.dashboard_settings
+const proModal = ref(null)
+const proLabel = ref(HTPMM.buttontxt.pro);
+console.log(HTPMM);
 // Helper function for string formatting
 const sprintf = (str, ...args) => {
   return str.replace(/%d/g, () => args.shift())
@@ -149,7 +158,7 @@ const loadSavedSettings = async () => {
       }
    
     // First fetch post types
-    await fetchPostTypes()
+    //await fetchPostTypes()
     
     // Then fetch saved settings
     const savedSettings = store.allSettings;
@@ -181,7 +190,10 @@ onMounted(async () => {
 
 // Post type management methods
 const addPostType = () => {
-
+  if (dashboardSettings?.post_typs_settings?.custom_post_types?.isPro) {
+    openProModal()
+    return
+  }
   if (newPostType.value && !settingsPagesSettings.value.postTypes.includes(newPostType.value)) {
     settingsPagesSettings.value.postTypes.push(newPostType.value)
     newPostType.value = ''
@@ -202,12 +214,20 @@ const removePostType = (type) => {
 
 // Number of posts increment/decrement
 const incrementPosts = () => {
+  if(dashboardSettings.post_typs_settings.load_posts.isPro){
+    openProModal()
+    return
+  }
   if (settingsPagesSettings.value.htpm_load_posts < 1000) {
     settingsPagesSettings.value.htpm_load_posts = parseInt(settingsPagesSettings.value.htpm_load_posts) + 10
   }
 }
 
 const decrementPosts = () => {
+  if(dashboardSettings.post_typs_settings.load_posts.isPro){
+    openProModal()
+    return
+  }
   if (settingsPagesSettings.value.htpm_load_posts > 1) {
     settingsPagesSettings.value.htpm_load_posts = Math.max(1, parseInt(settingsPagesSettings.value.htpm_load_posts) - 10)
   }
@@ -215,6 +235,10 @@ const decrementPosts = () => {
 
 const validateNumberOfPosts = () => {
   settingsPagesSettings.value.htpm_load_posts = Math.max(1, Math.min(1000, parseInt(settingsPagesSettings.value.htpm_load_posts) || 150))
+}
+
+const openProModal = () => {
+  proModal.value?.show();
 }
 
 // Save settings
@@ -262,6 +286,18 @@ const saveSettings = async () => {
 </script>
 
 <style scoped>
+.pro-badge {
+  vertical-align: middle;
+  background-color: rgba(214, 54, 56, 0.1);
+  border: 1px solid #d636386b;
+  color: #d63638;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+}
 .settings-container {
   width: 100%;
   max-width: 100%;
