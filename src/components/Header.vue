@@ -7,13 +7,13 @@
         class="htpm-nav" 
         :ellipsis="true"
         :default-active="activeIndex"
-        router
+        :router="false"
       >
         <template v-for="(menu, key) in sortedMenuItems" :key="key">
           <el-menu-item 
             v-if="menu.visible" 
             :index="menu.isRouter ? menu.link : key"
-            @click="handleMenuClick(menu)"
+            @click="() => handleMenuClick(menu)"
           >
             <el-icon><component :is="icons[menu.icon]" /></el-icon>
             {{ menu.label }}
@@ -32,11 +32,12 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import { Key, Grid, Setting, Document, Service, Promotion } from '@element-plus/icons-vue'
 
 const route = useRoute()
+const router = useRouter()
 const activeIndex = computed(() => route.path)
 const labels_texts = HTPMM.adminSettings.labels_texts
 
@@ -52,7 +53,11 @@ const icons = {
 
 // Handle menu clicks
 const handleMenuClick = (menu) => {
-  if (menu.isRouter) return // Let Vue Router handle it
+  if (menu.isRouter) {
+    // Use router.push for internal routes
+    router.push(menu.link)
+    return
+  }
   
   // For external links
   if (menu.link) {
