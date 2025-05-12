@@ -80,8 +80,10 @@
 
       <!-- Save Button -->
       <div class="save-button-container">
-        <el-button type="primary" @click="saveSettings" size="large" class="save-button">
-          <el-icon><Check /></el-icon>
+        <el-button type="primary" @click="saveSettings" size="large" class="save-button" :loading="isSaving">
+          <template #icon>
+            <el-icon v-if="!isSaving"><Check /></el-icon>
+          </template>
           {{ labels_texts?.save_settings }}
         </el-button>
       </div>
@@ -216,8 +218,11 @@ const validateNumberOfPosts = () => {
 }
 
 // Save settings
+const isSaving = ref(false)
+
 const saveSettings = async () => {
   try {
+    isSaving.value = true
     // Validate values before saving
     validateNumberOfPosts()
     
@@ -250,6 +255,8 @@ const saveSettings = async () => {
       type: 'error',
       duration: 5000
     })
+  } finally {
+    isSaving.value = false
   }
 }
 </script>
