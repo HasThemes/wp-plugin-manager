@@ -3,6 +3,7 @@ import General from '../views/General.vue'
 import Settings from '../views/Settings.vue'
 import Tools from '../views/Tools.vue'
 import License from '../views/License.vue'
+import RecommendedPlugins from '../views/RecommendedPlugins.vue'
 
 const routes = [
   {
@@ -15,6 +16,12 @@ const routes = [
     path: '/settings',
     name: 'Settings',
     component: Settings,
+    meta: { keepAlive: true }
+  },
+  {
+    path: '/recommended',
+    name: 'RecommendedPlugins',
+    component: RecommendedPlugins,
     meta: { keepAlive: true }
   },
   // {

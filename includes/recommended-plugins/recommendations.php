@@ -12,6 +12,7 @@
  */
 
 if( class_exists('Hasthemes\HTPM\HTRP_Recommended_Plugins') ){
+    global $recommendations;
     $recommendations = new Hasthemes\HTPM\HTRP_Recommended_Plugins(
         array( 
             'text_domain'       => 'htpm',
@@ -19,7 +20,7 @@ if( class_exists('Hasthemes\HTPM\HTRP_Recommended_Plugins') ){
             'menu_capability'   => 'manage_options', 
             'menu_page_slug'    => 'htpm_recommendations',
             'priority'          => '',
-            'assets_url'        => '',
+            'assets_url'        => HTPM_ROOT_URL . '/includes/recommended-plugins/assets',
             'hook_suffix'       => 'plugin-manager_page_htpm_recommendations',
         )
     );

@@ -74,7 +74,7 @@ class HTRP_Recommended_Plugins {
         $this->priority          =  !empty( $args['priority'] ) ? $args['priority'] : 100;
         $this->hook_suffix       =  !empty( $args['hook_suffix'] ) ? $args['hook_suffix'] : '';
         $this->assets_url        =  !empty( $args['assets_url'] ) ? $args['assets_url'] : plugins_url( 'assets', __FILE__ );
-        $this->tab_list          =  !empty( $args['tab_list'] ) ? $args['assets_url'] : [];
+        $this->tab_list          =  !empty( $args['tab_list'] ) ? $args['tab_list'] : [];
 
         
         add_action( 'admin_menu', [ $this, 'admin_menu' ], $this->priority );

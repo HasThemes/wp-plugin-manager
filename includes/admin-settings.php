@@ -68,14 +68,22 @@ class WP_Plugin_Manager_Settings {
                 'visible' => true,
                 'target' => '_blank'
             ],
+            // 'recommended_plugins' => [
+            //     'label' => __('Recommended Plugins', 'wp-plugin-manager'),
+            //     'icon' => 'Promotion',
+            //     'link' => $this->get_help_section()['recommendedPluginsLink'],
+            //     'order' => 6,
+            //     'visible' => true,
+            //     'target' => '_self'
+            // ],
             'recommended_plugins' => [
                 'label' => __('Recommended Plugins', 'wp-plugin-manager'),
                 'icon' => 'Promotion',
-                'link' => $this->get_help_section()['recommendedPluginsLink'],
-                'order' => 6,
+                'link' => '/recommended',
+                'order' => 2,
                 'visible' => true,
-                'target' => '_self'
-            ]
+                'isRouter' => true
+            ],
         ];
     }
 

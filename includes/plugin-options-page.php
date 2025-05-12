@@ -76,6 +76,13 @@ class HTPM_Option_Page {
 		
         if ( isset( $submenu['htpm-options'] ) ) {
             $submenu['htpm-options'][0][0] = esc_html__('Settings', 'wp-plugin-manager');
+            
+            // Add Recommended Plugins menu item
+            $submenu['htpm-options'][] = array(
+                esc_html__('Recommended', 'wp-plugin-manager'),
+                'manage_options',
+                'admin.php?page=htpm-options#/recommended'
+            );
         }
 	}
 

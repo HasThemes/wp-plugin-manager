@@ -1,4 +1,8 @@
 <?php
+
+// Include recommended plugins
+require_once plugin_dir_path(__FILE__) . 'recommended-plugins/recommendations.php';
+
 /**
  * Register custom REST API endpoints for plugin management
  */
@@ -48,6 +52,15 @@ function htpm_register_rest_routes() {
         }
     ]);
     
+    // Get recommended plugins endpoint
+    register_rest_route('htpm/v1', '/recommended-plugins', [
+        'methods' => 'GET',
+        'callback' => 'htpm_get_recommended_plugins',
+        'permission_callback' => function() {
+            return current_user_can('activate_plugins');
+        }
+    ]);
+
     // Get pages endpoint
     register_rest_route('htpm/v1', '/pages', [
         'methods' => 'GET',
@@ -672,6 +685,56 @@ function htpm_get_post_type_items($request) {
     }
     
     return new WP_REST_Response($result, 200);
+}
+
+/**
+ * Get sidebar content from the template
+ * @return WP_REST_Response|WP_Error
+ */
+/**
+ * Get recommended plugins data
+ * @return WP_REST_Response|WP_Error
+ */
+function htpm_get_recommended_plugins() {
+    global $recommendations;
+    if (!$recommendations) {
+        return rest_ensure_response([
+            'tabs' => [],
+            'installed_plugins' => [],
+            'assets_url' => HTPM_ROOT_URL . '/includes/recommended-plugins/assets'
+        ]);
+    }
+
+    // Get installed plugins
+    $installed_plugins = array_map(function($plugin) {
+        return dirname($plugin);
+    }, get_option('active_plugins'));
+
+    // Get tabs data
+    $tabs = [];
+    foreach ($recommendations->tab_list as $tab) {
+        $plugins = array_map(function($plugin) use ($installed_plugins) {
+            return [
+                'slug' => $plugin['slug'],
+                'name' => $plugin['name'],
+                'location' => $plugin['location'],
+                'link' => isset($plugin['link']) ? $plugin['link'] : '',
+                'installed' => in_array($plugin['slug'], $installed_plugins)
+            ];
+        }, $tab['plugins']);
+
+        $tabs[] = [
+            'title' => $tab['title'],
+            'active' => isset($tab['active']) ? $tab['active'] : false,
+            'plugins' => $plugins
+        ];
+    }
+
+    return rest_ensure_response([
+        'tabs' => $tabs,
+        'installed_plugins' => $installed_plugins,
+        'assets_url' => HTPM_ROOT_URL . '/includes/recommended-plugins/assets'
+    ]);
 }
 
 /**
