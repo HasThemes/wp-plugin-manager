@@ -4,7 +4,6 @@
             <el-skeleton v-if="isLoading" :rows="6" animated />
             <el-col v-else :span="12" :md="12" :sm="12" :xs="24" v-for="plugin in pluginList" :key="plugin.id">
                 <el-card class="htpm-plugin-info-card mb-4" shadow="hover">
-                    <!-- Rest of the template stays the same, just change 'plugins' to 'pluginList' -->
                     <div class="htpm-plugin-content">
                         <div class="htpm-plugin-logo">
                             <el-image 
@@ -12,8 +11,15 @@
                                 :alt="plugin.name"
                                 class="htpm-plugin-image"
                                 fit="cover"
-                                :lazy="true"
-                            />
+                                :initial-index="1"
+                                :preview-src-list="[getPluginIcon(plugin)]"
+                            >
+                                <template #placeholder>
+                                    <div class="image-slot">
+                                        <img :src="getPluginIcon(plugin)" :alt="plugin.name" style="width: 100%; height: 100%; object-fit: cover;" />
+                                    </div>
+                                </template>
+                            </el-image>
                         </div>
                         
                         <div class="htpm-plugin-info">

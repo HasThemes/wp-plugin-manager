@@ -62,22 +62,8 @@ const initializePlugins = async () => {
   }
 }
 
-const handleTabChange = async (tabTitle) => {
-  if (!tabTitle) return
-  activeTab.value = tabTitle
-  isInitialLoading.value = true
-  try {
-    const newTab = tabs.value.find(tab => tab.title === tabTitle)
-    if (newTab?.plugins) {
-      if (tabTitle === 'Recommended') {
-        await store.fetchTabs()
-      }
-    }
-  } catch (error) {
-    console.error('Error loading tab:', error)
-  } finally {
-    isInitialLoading.value = false
-  }
+const handleTabChange = (tabTitle) => {
+  activeTab.value = tabTitle;
 }
 
 onMounted(() => {
