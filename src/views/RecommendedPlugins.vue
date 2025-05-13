@@ -1,9 +1,6 @@
 <template>
   <div class="htpm-recommended-plugins htpm-inner-page-wrapper">
-    <div v-if="loading || isInitialLoading" class="loading">
-      <el-skeleton :rows="3" animated />
-    </div>
-
+    <RecommendedPageSkeleton v-if="loading || isInitialLoading" />
     <div v-else-if="error" class="error-message">
       <el-alert
         :title="error"
@@ -19,6 +16,7 @@
           :key="tab.title" 
           :label="tab.title" 
           :name="tab.title"
+          style="margin-top: 10px;"
         >
           <plugin-grid 
             :plugin-list="currentTabPlugins" 
@@ -35,6 +33,8 @@ import { ref, onMounted, computed } from 'vue'
 import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins'
 import PluginGrid from '@/components/recommended/PluginGrid.vue'
 import { ElTabs, ElTabPane, ElSkeleton } from 'element-plus'
+import RecommendedPageSkeleton from '@/skeleton/RecommendedPageSkeleton.vue'
+
 
 const store = useRecommendedPluginsStore()
 const loading = computed(() => store.loading)

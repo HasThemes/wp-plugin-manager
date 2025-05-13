@@ -13,10 +13,10 @@
     </div>
     
     <!-- Loading indicator shown until plugins are fully loaded -->
-    <div v-if="loading" class="loading-indicator">
+    <!-- <div v-if="loading" class="loading-indicator">
       <el-skeleton :rows="5" animated />
-    </div>
-    
+    </div> -->
+    <PluginListSkeleton v-if="loading" />
     <!-- Only show plugin list when loading is complete -->
     <div v-else class="plugin-list">
       <!-- Show only WordPress-activated plugins -->
@@ -88,32 +88,24 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, computed, watch } from 'vue'
-import { Search, Box, Setting, Monitor, Edit, Grid, QuestionFilled } from '@element-plus/icons-vue'
-import { ElMessage, ElPopconfirm, ElNotification } from 'element-plus'
+import { Search, Setting, QuestionFilled } from '@element-plus/icons-vue'
+import { ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
+import PluginListSkeleton from '../skeleton/PluginListSkeleton.vue'
 
-export default {
-  name: 'PluginList',
-  components: {
-    PluginSettingsModal,
-    ElMessage,
-    ElPopconfirm,
-    ElNotification
-  },
-  setup() {
-    const store = usePluginStore()
-    const searchQuery = ref('')
-    const showSettings = ref(false)
-    const selectedPlugin = ref(null)
-    const loading = ref(true)
-    const plugins = ref([])
-    const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
+const store = usePluginStore()
+const searchQuery = ref('')
+const showSettings = ref(false)
+const selectedPlugin = ref(null)
+const loading = ref(true)
+const plugins = ref([])
+const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
 
-    // Watch for plugins and update local list
-    watch(() => store.plugins, async (newPlugins) => {
+// Watch for plugins and update local list
+watch(() => store.plugins, async (newPlugins) => {
       if (!newPlugins || newPlugins.length === 0) return
       
       loading.value = true
@@ -308,22 +300,8 @@ export default {
       }
     }
 
-    return {
-      searchQuery,
-      showSettings,
-      selectedPlugin,
-      loading,
-      filteredPlugins,
-      handleToggle,
-      handleOptimizeNow,
-      togglePluginLoading,
-      openSettings,
-      savePluginSettings,
-      showPopconfirm,
-      Search, Box, Setting, Monitor, Edit, Grid, QuestionFilled
-    }
-  }
-}
+
+
 </script>
 
 <style lang="scss" scoped>

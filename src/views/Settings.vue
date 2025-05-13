@@ -1,6 +1,8 @@
 <template>
-  <div class="settings-page htpm-inner-page-wrapper" v-loading="isLoading">
-    <div class="settings-container">
+  <div class="settings-page htpm-inner-page-wrapper">
+    <SettingsPageSkeleton v-if="isLoading" />
+
+    <div v-else class="settings-container">
       <!-- Post Types Settings Section -->
       <div class="settings-section mb-8">
         <h2 class="section-title">
@@ -99,6 +101,7 @@ import { View, Document, Close, InfoFilled, Check, Warning } from '@element-plus
 import { ElMessage, ElNotification } from 'element-plus'
 import { usePluginStore } from '../store/plugins'
 import ProModal from '../components/ProModal.vue'
+import SettingsPageSkeleton from '../skeleton/SettingsPageSkeleton.vue'
 
 const store = usePluginStore()
 const labels_texts = HTPMM.adminSettings.labels_texts

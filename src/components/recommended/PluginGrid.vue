@@ -144,6 +144,7 @@ const toggleActivation = async (plugin) => {
   font-weight: 500;
   margin: 0 0 10px 0;
   color: #303133;
+  line-height:24px;
 }
 
 .htpm-plugin-description {

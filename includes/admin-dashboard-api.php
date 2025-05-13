@@ -1,8 +1,5 @@
 <?php
 
-// Include recommended plugins
-require_once plugin_dir_path(__FILE__) . 'recommended-plugins/recommendations.php';
-
 if (!class_exists('WP_REST_Response')) {
     require_once ABSPATH . 'wp-includes/rest-api/class-wp-rest-response.php';
     require_once ABSPATH . 'wp-includes/rest-api.php';
@@ -48,33 +45,6 @@ function htpm_register_rest_routes() {
         }
     ]);
     
-    // Get recommended plugins endpoint
-    register_rest_route('htpm/v1', '/recommended-plugins', [
-        'methods' => 'GET',
-        'callback' => 'htpm_get_recommended_plugins',
-        'permission_callback' => function() {
-            return current_user_can('activate_plugins');
-        }
-    ]);
-
-    // Toggle plugin status endpoint
-    register_rest_route('htpm/v1', '/plugins/(?P<id>\d+)/toggle', [
-        'methods' => 'POST',
-        'callback' => 'htpm_toggle_plugin',
-        'permission_callback' => function() {
-            return current_user_can('activate_plugins');
-        }
-    ]);
-    
-    // Get recommended plugins endpoint
-    register_rest_route('htpm/v1', '/recommended-plugins', [
-        'methods' => 'GET',
-        'callback' => 'htpm_get_recommended_plugins',
-        'permission_callback' => function() {
-            return current_user_can('activate_plugins');
-        }
-    ]);
-
     // Get pages endpoint
     register_rest_route('htpm/v1', '/pages', [
         'methods' => 'GET',
@@ -539,76 +509,6 @@ function htpm_update_plugin_settings($request) {
 }
 
 /**
- * Toggle plugin loading status via the switch in the plugin list
- */
-function htpm_toggle_plugin($request) {
-    $plugin_id = $request->get_param('id');
-    
-    // Get all plugins to find the matching one by ID
-    if (!function_exists('get_plugins')) {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-    }
-    
-    $all_plugins = get_plugins();
-    
-    // Convert numeric ID to plugin path
-    $index = 0;
-    $plugin_path = null;
-    
-    foreach ($all_plugins as $path => $data) {
-        $index++;
-        if ($index == $plugin_id) {
-            $plugin_path = $path;
-            break;
-        }
-    }
-    
-    if (!$plugin_path) {
-        return new WP_Error('plugin_not_found', 'Plugin not found', ['status' => 404]);
-    }
-    
-    // Get options
-    $options = get_option('htpm_options', []);
-    if (!isset($options['htpm_list_plugins'])) {
-        $options['htpm_list_plugins'] = [];
-    }
-    
-    // Check current disable state
-    $plugin_settings = isset($options['htpm_list_plugins'][$plugin_path]) 
-        ? $options['htpm_list_plugins'][$plugin_path] 
-        : [];
-    
-    $is_currently_disabled = !empty($plugin_settings['enable_deactivation']) && $plugin_settings['enable_deactivation'] === 'yes';
-    
-    // Toggle the disabled state
-    if (!isset($options['htpm_list_plugins'][$plugin_path]) || empty($options['htpm_list_plugins'][$plugin_path])) {
-        $options['htpm_list_plugins'][$plugin_path] = [
-            'enable_deactivation' => $is_currently_disabled ? 'no' : 'yes',
-            'device_type' => 'all',
-            'condition_type' => 'disable_on_selected',
-            'uri_type' => 'page',
-            'post_types' => ['page', 'post'],
-            'posts' => [],
-            'pages' => [],
-            'condition_list' => [
-                'name' => ['uri_equals'],
-                'value' => [''],
-            ]
-        ];
-    } else {
-        $options['htpm_list_plugins'][$plugin_path]['enable_deactivation'] = $is_currently_disabled ? 'no' : 'yes';
-    }
-    
-    // Save settings
-    update_option('htpm_options', $options);
-    
-    return new WP_REST_Response([
-        'success' => true,
-        'enable_deactivation' => !$is_currently_disabled
-    ], 200);
-}
-
-/**
  * Get pages for settings selector
  */
 function htpm_get_pages() {
@@ -701,55 +601,6 @@ function htpm_get_post_type_items($request) {
     return new WP_REST_Response($result, 200);
 }
 
-/**
- * Get sidebar content from the template
- * @return WP_REST_Response|WP_Error
- */
-/**
- * Get recommended plugins data
- * @return WP_REST_Response|WP_Error
- */
-function htpm_get_recommended_plugins() {
-    global $recommendations;
-    if (!$recommendations) {
-        return rest_ensure_response([
-            'tabs' => [],
-            'installed_plugins' => [],
-            'assets_url' => HTPM_ROOT_URL . '/includes/recommended-plugins/assets'
-        ]);
-    }
-
-    // Get installed plugins
-    $installed_plugins = array_map(function($plugin) {
-        return dirname($plugin);
-    }, get_option('active_plugins'));
-
-    // Get tabs data
-    $tabs = [];
-    foreach ($recommendations->tab_list as $tab) {
-        $plugins = array_map(function($plugin) use ($installed_plugins) {
-            return [
-                'slug' => $plugin['slug'],
-                'name' => $plugin['name'],
-                'location' => $plugin['location'],
-                'link' => isset($plugin['link']) ? $plugin['link'] : '',
-                'installed' => in_array($plugin['slug'], $installed_plugins)
-            ];
-        }, $tab['plugins']);
-
-        $tabs[] = [
-            'title' => $tab['title'],
-            'active' => isset($tab['active']) ? $tab['active'] : false,
-            'plugins' => $plugins
-        ];
-    }
-
-    return new WP_REST_Response([
-        'tabs' => $tabs,
-        'installed_plugins' => $installed_plugins,
-        'assets_url' => HTPM_ROOT_URL . '/includes/recommended-plugins/assets'
-    ], 200);
-}
 
 /**
  * Get sidebar content from the template
