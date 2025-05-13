@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '@/utils/axios'
+import { ElNotification } from 'element-plus'
 
 export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
   state: () => ({
@@ -11,7 +12,12 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
   }),
 
   getters: {
-    getButtonText: (state) => (plugin) => {
+    getButtonText: () => (plugin) => {
+      // Check for pro plugins first
+      if (plugin.is_pro || plugin.pro) {
+        return 'Buy Now';
+      }
+
       if (plugin.isLoading) {
         switch(plugin.status?.toLowerCase()) {
           case 'not_installed':
@@ -25,7 +31,7 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
 
       switch(plugin.status?.toLowerCase()) {
         case 'not_installed':
-          return plugin.is_pro ? 'Buy Now' : 'Install';
+          return 'Install';
         case 'inactive':
           return 'Activate';
         case 'active':
@@ -35,7 +41,12 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
       }
     },
 
-    isButtonDisabled: (state) => (plugin) => {
+    isButtonDisabled: () => (plugin) => {
+      // Pro plugins should never be disabled
+      if (plugin.is_pro || plugin.pro) {
+        return false;
+      }
+
       const status = plugin.status?.toLowerCase();
       return status === 'active' || 
              status === 'installing' || 
@@ -159,14 +170,30 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
 
     async handlePluginAction(plugin) {
       try {
-        if (plugin.status === 'not_installed') {
-          await this.installPlugin(plugin);
-          await this.activatePlugin(plugin);
-        } else if (plugin.status === 'inactive') {
+        // Check if it's a pro plugin first
+        if (plugin.is_pro && plugin.status?.toLowerCase() === 'not_installed') {
+          window.open(plugin.link, '_blank');
+          return;
+        }
+
+        // Handle free plugin installation/activation
+        if (plugin.status?.toLowerCase() === 'not_installed') {
+          const installed = await this.installPlugin(plugin);
+          if (installed) {
+            await this.activatePlugin(plugin);
+          }
+        } else if (plugin.status?.toLowerCase() === 'inactive') {
           await this.activatePlugin(plugin);
         }
       } catch (error) {
         console.error('Error handling plugin action:', error);
+        // Show notification
+        ElNotification({
+          title: 'Error',
+          message: error.message || 'Failed to perform plugin action',
+          type: 'error',
+          duration: 3000
+        });
         throw error;
       }
     },

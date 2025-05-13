@@ -1,10 +1,10 @@
 <template>
-  <div class="recommended-plugins">
+  <div class="htpm-recommended-plugins">
     <div v-if="loading || isInitialLoading" class="loading">
       <el-skeleton :rows="3" animated />
     </div>
 
-    <div v-else-if="error" class="error">
+    <div v-else-if="error" class="error-message">
       <el-alert
         :title="error"
         type="error"
@@ -13,135 +13,76 @@
     </div>
 
     <div v-else>
-      <div class="tabs">
-        <button 
+      <el-tabs v-model="activeTab" @tab-change="handleTabChange">
+        <el-tab-pane 
           v-for="tab in tabs" 
-          :key="tab.title"
-          :class="{ active: activeTab === tab.title }"
-          @click="handleTabChange(tab.title)"
+          :key="tab.title" 
+          :label="tab.title" 
+          :name="tab.title"
         >
-          {{ tab.title }}
-        </button>
-      </div>
-
-      <PluginGrid 
-        :plugin-list="currentTabPlugins"
-        :is-loading="loading || isInitialLoading"
-        :plugin-states="PLUGIN_STATES"
-        :get-plugin-button-text="getPluginButtonText"
-        @plugin-toggled="handlePluginToggle"
-    />
-      <!-- <div class="plugins-grid">
-        
-        <div 
-          v-for="plugin in currentTabPlugins" 
-          :key="plugin.slug"
-          class="plugin-card"
-        >
-          <img 
-            :src="getPluginImage(plugin.slug)" 
-            :alt="plugin.name"
-            class="plugin-image"
-          >
-          <div class="plugin-info">
-            <h3>{{ plugin.name }}</h3>
-            <div class="plugin-actions">
-              <button 
-                v-if="!plugin.link"
-                :class="['install-button', { 'installed': isPluginInstalled(plugin.slug) }]"
-                @click="handlePluginAction(plugin)"
-              >
-                {{ getPluginActionText(plugin) }}
-              </button>
-              <a 
-                v-else 
-                :href="plugin.link" 
-                target="_blank" 
-                class="get-pro-button"
-              >
-                Get Pro
-              </a>
-            </div>
-          </div>
-        </div>
-      </div> -->
+          <plugin-grid 
+            :plugin-list="currentTabPlugins" 
+            :is-loading="loading || isInitialLoading"
+          />
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
-
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { storeToRefs } from 'pinia'
+import { ref, onMounted, computed } from 'vue'
 import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins'
 import PluginGrid from '@/components/recommended/PluginGrid.vue'
-import { usePluginManager } from '@/composables/usePluginManager'
-import { ElNotification } from 'element-plus'
-
-const htpmLocalizeData = ref(window.HTPMM || {});
+import { ElTabs, ElTabPane, ElSkeleton } from 'element-plus'
 
 const store = useRecommendedPluginsStore()
-const { tabs, installedPlugins, loading, error, assetsUrl } = storeToRefs(store)
-const { 
-            PLUGIN_STATES,
-            getPluginButtonText, 
-            handlePluginAction, 
-            fetchPluginStatus,
-            initializePluginsWithData
-        } = usePluginManager()
-const activeTab = ref('Recommended')
-
+const loading = computed(() => store.loading)
+const error = computed(() => store.error)
+const tabs = computed(() => store.tabs)
+const activeTab = ref('')
 const isInitialLoading = ref(true)
 
+const currentTabPlugins = computed(() => {
+  if (!tabs.value.length) return []
+  const currentTab = tabs.value.find(tab => tab.title === activeTab.value)
+  return currentTab ? currentTab.plugins : []
+})
+
 const initializePlugins = async () => {
-    try {
-        isInitialLoading.value = true
-        await store.fetchTabs()
-        if (tabs.value.length > 0) {
-            const activeTabPlugins = tabs.value.find(tab => tab.title === activeTab.value)?.plugins || []
-            await initializePluginsWithData(activeTabPlugins)
-        }
-    } catch (error) {
-        console.error('Error initializing plugins:', error)
-    } finally {
-        isInitialLoading.value = false
+  try {
+    await store.fetchTabs()
+    if (tabs.value.length > 0) {
+      activeTab.value = tabs.value[0].title
     }
+  } catch (error) {
+    console.error('Error initializing plugins:', error)
+  } finally {
+    isInitialLoading.value = false
+  }
+}
+
+const handleTabChange = async (tabTitle) => {
+  if (!tabTitle) return
+  activeTab.value = tabTitle
+  isInitialLoading.value = true
+  try {
+    const newTab = tabs.value.find(tab => tab.title === tabTitle)
+    if (newTab?.plugins) {
+      if (tabTitle === 'Recommended') {
+        await store.fetchTabs()
+      }
+    }
+  } catch (error) {
+    console.error('Error loading tab:', error)
+  } finally {
+    isInitialLoading.value = false
+  }
 }
 
 onMounted(() => {
-    initializePlugins()
+  initializePlugins()
 })
-const currentTabPlugins = computed(() => {
-    if (!tabs.value || !tabs.value.length) return []
-    const currentTab = tabs.value.find(tab => tab.title === activeTab.value)
-    return currentTab?.plugins || []
-})
-
-console.log(currentTabPlugins.value, 'current plugins');
-const handleTabChange = async (tabTitle) => {
-    activeTab.value = tabTitle
-    const newTab = tabs.value.find(tab => tab.title === tabTitle)
-    if (newTab?.plugins) {
-      if ( activeTab.value === 'Recommended'){
-        await initializePluginsWithData(newTab.plugins)
-      } else {
-        await initializePluginsWithData(newTab.plugins,'local')
-      }
-    }
-}
-
-const handlePluginToggle = async (plugin) => {
-    try {
-        await store.handlePluginAction(plugin);
-    } catch (error) {
-        console.error('Error handling plugin action:', error);
-        ElNotification({
-            title: 'Error',
-            message: error.message || 'Failed to perform plugin action',
-            type: 'error'
-        });
-    }
-}
 
 const getPluginImage = (slug) => {
   return `${assetsUrl.value}/images/extensions/${slug}.png`
