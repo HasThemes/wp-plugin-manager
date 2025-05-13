@@ -33,10 +33,10 @@
                             <el-button 
                                 type="primary"
                                 :loading="plugin.isLoading"
-                                :disabled="isButtonDisabled(plugin)"
+                                :disabled="store.isButtonDisabled(plugin)"
                                 @click="toggleActivation(plugin)"
                             >
-                                {{ getButtonText(plugin) }}
+                                {{ store.getButtonText(plugin) }}
                             </el-button>
                         </div>
                     </template>
@@ -50,8 +50,11 @@
 import { computed, ref } from 'vue';
 import { trimWords } from '@/utils/helpers';
 import { InfoFilled } from '@element-plus/icons-vue';
-import { usePluginManager } from '@/composables/usePluginManager';
+import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins';
+
+const store = useRecommendedPluginsStore();
 const htpmLocalizeData = ref(window.HTPMM || {});
+
 // Get assets URL from store if available
 const getPluginIcon = (plugin) => {
     if (plugin.icon) return plugin.icon;
@@ -72,7 +75,6 @@ const activeInstallCount = (count) => {
     return count + '+';
 };
 
-
 const props = defineProps({
     pluginList: {
         type: Array,
@@ -82,58 +84,19 @@ const props = defineProps({
     isLoading: {
         type: Boolean,
         default: false
-    },
-    pluginStates: {
-        type: Object,
-        required: true,
-        default: () => ({})
-    },
-    getPluginButtonText: {
-        type: Function,
-        required: true,
-        default: (status, isLoading) => ''
     }
 });
-const emit = defineEmits(['plugin-toggled']);
-console.log(props.pluginList,'plugin list');
-const getButtonText = (plugin) => {
-    if (plugin.isLoading) {
-        switch(plugin.status?.toLowerCase()) {
-            case 'not_installed':
-                return 'Installing...';
-            case 'inactive':
-                return 'Activating...';
-            default:
-                return 'Processing...';
-        }
-    }
 
-    switch(plugin.status?.toLowerCase()) {
-        case 'not_installed':
-            return plugin.is_pro ? 'Buy Now' : 'Install';
-        case 'inactive':
-            return 'Activate';
-        case 'active':
-            return 'Activated';
-        default:
-            return 'Install';
-    }
-};
-
-const isButtonDisabled = (plugin) => {
-    const status = plugin.status?.toLowerCase();
-    return status === 'active' || 
-           status === 'installing' || 
-           status === 'activating' || 
-           plugin.isLoading;
-};
-
-const toggleActivation = (plugin) => {
+const toggleActivation = async (plugin) => {
     if (plugin.status?.toLowerCase() === 'not_installed' && plugin?.is_pro) {
         window.open(plugin.link, '_blank');
         return;
     }
-    emit('plugin-toggled', plugin);
+    try {
+        await store.handlePluginAction(plugin);
+    } catch (error) {
+        console.error('Error handling plugin action:', error);
+    }
 };
 
 

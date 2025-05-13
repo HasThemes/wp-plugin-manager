@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '@/utils/axios'
+
 export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
   state: () => ({
     tabs: [],
@@ -8,6 +9,40 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
     loading: false,
     error: null
   }),
+
+  getters: {
+    getButtonText: (state) => (plugin) => {
+      if (plugin.isLoading) {
+        switch(plugin.status?.toLowerCase()) {
+          case 'not_installed':
+            return 'Installing...';
+          case 'inactive':
+            return 'Activating...';
+          default:
+            return 'Processing...';
+        }
+      }
+
+      switch(plugin.status?.toLowerCase()) {
+        case 'not_installed':
+          return plugin.is_pro ? 'Buy Now' : 'Install';
+        case 'inactive':
+          return 'Activate';
+        case 'active':
+          return 'Activated';
+        default:
+          return 'Install';
+      }
+    },
+
+    isButtonDisabled: (state) => (plugin) => {
+      const status = plugin.status?.toLowerCase();
+      return status === 'active' || 
+             status === 'installing' || 
+             status === 'activating' || 
+             plugin.isLoading;
+    }
+  },
 
   actions: {
     async fetchTabs() {
