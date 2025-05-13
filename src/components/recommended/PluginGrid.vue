@@ -25,7 +25,7 @@
                                 <el-icon v-if="plugin.active_installs"><InfoFilled /></el-icon>
                                 <span v-if="plugin.active_installs">{{ `${activeInstallCount(plugin.active_installs)} Active Installations` }}</span>
                                 <el-link v-if="plugin.is_pro" type="primary" class="htpm-plugin-more-details" :href="plugin?.link" target="_blank">More Details</el-link>
-                                <!-- <el-link v-else type="primary" class="thickbox open-plugin-details-modal" :href="`${this.htpmLocalizeData.adminUrl}plugin-install.php?tab=plugin-information&plugin=${plugin.slug}&TB_iframe=true&width=772&height=577`" >More Details</el-link> -->
+                                <el-link v-else type="primary" class="thickbox open-plugin-details-modal" :href="`${htpmLocalizeData.adminURL}plugin-install.php?tab=plugin-information&plugin=${plugin.slug}&TB_iframe=true&width=772&height=577`" >More Details</el-link>
                             </div>
 
                             <el-button 
@@ -46,64 +46,55 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import { computed, ref } from 'vue';
 import { trimWords } from '@/utils/helpers';
 import { InfoFilled } from '@element-plus/icons-vue';
 
-export default {
-    name: 'PluginGrid',
-    components: {
-        InfoFilled
+
+const htpmLocalizeData = ref(HTPMM);
+const props = defineProps({
+    pluginList: {
+        type: Array,
+        required: true,
+        default: () => []
     },
-    props: {
-        pluginList: {
-            type: Array,
-            required: true,
-            default: () => []
-        },
-        isLoading: {
-            type: Boolean,
-            default: false
-        },
-        pluginStates: {
-            type: Object,
-            default: () => {}
-        },
-        getPluginButtonText: {
-            type: Function,
-            default: (status, isLoading) => ''
-        },
+    isLoading: {
+        type: Boolean,
+        default: false
     },
-    methods: {
-        toggleActivation(plugin) {
-            if( plugin.status === this.pluginStates.NOT_INSTALLED && plugin?.is_pro ){
-                window.open(plugin.link, '_blank');
-                return;
-            }else{
-                this.$emit('plugin-toggled', plugin)
-            }
-        },
-
-        trimWords(text, limit) {
-            return trimWords(text, limit);
-        },
-
-        activeInstallCount(activeInstalls) {
-            let activeInstallsText;
-
-            if (activeInstalls >= 1000000) {
-                const activeInstallsMillions = Math.floor(activeInstalls / 1000000);
-                activeInstallsText = `${activeInstallsMillions}+ Million`;
-            } else if (activeInstalls === 0) {
-                activeInstallsText = 'Less Than 10';
-            } else {
-                activeInstallsText = `${activeInstalls.toLocaleString()}+`;
-            }
-
-            return activeInstallsText;
-        },
+    pluginStates: {
+        type: Object,
+        required: true,
+        default: () => ({})
+    },
+    getPluginButtonText: {
+        type: Function,
+        required: true,
+        default: (status, isLoading) => ''
     }
-}
+});
+
+const emit = defineEmits(['plugin-toggled']);
+
+const toggleActivation = (plugin) => {
+    if (plugin.status === props.pluginStates.NOT_INSTALLED && plugin?.is_pro) {
+        window.open(plugin.link, '_blank');
+        return;
+    }
+    emit('plugin-toggled', plugin);
+};
+
+const activeInstallCount = (activeInstalls) => {
+    if (activeInstalls >= 1000000) {
+        const activeInstallsMillions = Math.floor(activeInstalls / 1000000);
+        return `${activeInstallsMillions}+ Million`;
+    }
+    if (activeInstalls === 0) {
+        return 'Less Than 10';
+    }
+    return `${activeInstalls.toLocaleString()}+`;
+};
 </script>
 
 <style scoped>
