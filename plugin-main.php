@@ -64,6 +64,7 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
         include_once( HTPM_ROOT_DIR . '/includes/admin-dashboard-api.php');
         include_once( HTPM_ROOT_DIR . '/includes/changelog-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/recommended-plugins.php');
 
     }
 

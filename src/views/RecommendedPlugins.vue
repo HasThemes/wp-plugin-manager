@@ -24,7 +24,14 @@
         </button>
       </div>
 
-      <div class="plugins-grid">
+      <PluginGrid 
+        :plugin-list="currentTabPlugins"
+        :is-loading="loading"
+        :plugin-states="PLUGIN_STATES"
+        :get-plugin-button-text="getPluginButtonText"
+        @plugin-toggled="handlePluginAction"
+    />
+      <!-- <div class="plugins-grid">
         
         <div 
           v-for="plugin in currentTabPlugins" 
@@ -57,30 +64,134 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
+
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins'
+import PluginGrid from '@/components/recommended/PluginGrid.vue'
 
 const store = useRecommendedPluginsStore()
 const { tabs, installedPlugins, loading, error, assetsUrl } = storeToRefs(store)
 const activeTab = ref('Recommended')
+const PLUGIN_STATES = {
+    NOT_INSTALLED: 'not_installed',
+    INSTALLING: 'installing',
+    INACTIVE: 'inactive',
+    ACTIVATING: 'activating',
+    ACTIVE: 'active'
+}
 
 onMounted(() => {
   // Load plugins data
   store.fetchTabs()
 })
-
+const pluginList = ref([
+            {
+                name: 'Support Genix Lite – Support Tickets Managing System',
+                slug: 'support-genix-lite',
+                description: 'Support Genix is a support ticket system for WordPress and WooCommerce.',
+                status: 'inactive',
+                isLoading: false,
+                icon: null
+            },
+            {
+                name: 'Pixelavo – Facebook Pixel Conversion API',
+                slug: 'pixelavo',
+                description: 'Easy connection of Facebook pixel to your online store.',
+                status: 'not_installed',
+                isLoading: false,
+                icon: null
+            },
+            {
+                name: 'Whols – Wholesale Prices and B2B Store',
+                slug: 'whols',
+                description: 'WooCommerce Wholesale plugin for B2B store management.',
+                status: 'inactive',
+                isLoading: false,
+                icon: null
+            },
+            {
+                name: "JustTables – WooCommerce Product Table",
+                slug: 'just-tables',
+                description: "JustTables is an incredible WordPress plugin that lets you showcase all your WooCommerce products in a sortable and filterable table view.",
+                status: 'inactive',
+                isLoading: false,
+                icon: null,
+            },
+            // {
+            //     name: "Multi Currency For WooCommerce",
+            //     slug: 'wc-multi-currency',
+            //     description: "WC Multicurrency is a prominent currency switcher plugin for WooCommerce.",
+            //     status: 'inactive',
+            //     isLoading: false,
+            //     icon: null,
+            // }
+        ]);
 // Computed properties
 const currentTabPlugins = computed(() => {
   const currentTab = tabs.value.find(tab => tab.title === activeTab.value)
   return currentTab ? currentTab.plugins : []
 })
+
+const handleAction = async (plugin) => {
+            const index = pluginList.value.findIndex(p => p.slug === plugin.slug)
+            if (index === -1) return
+
+            pluginList.value[index].isLoading = true
+            
+            try {
+                const newStatus = await handlePluginAction(plugin, (slug, status) => {
+                    const targetIndex = pluginList.value.findIndex(p => p.slug === slug)
+                    if (targetIndex !== -1) {
+                        pluginList.value[targetIndex].status = status
+                    }
+                })
+
+                if (newStatus) {
+                    pluginList.value[index].status = newStatus
+                }
+            } finally {
+                pluginList.value[index].isLoading = false
+            }
+        }
+
+        const initializePlugins = async () => {
+            isInitialLoading.value = true;
+            try {
+                const slugs = pluginList.value.map(p => p.slug);
+                let enrichedPlugins = null;
+
+                // Check cache first
+                const cacheKey = slugs.join(',')+'cache';
+                const cachedData = dataFetchingCache.get(cacheKey);
+                
+                if (cachedData) {
+                    enrichedPlugins = cachedData;
+                } else {
+                    // Fetch both WordPress.org data and installation status
+                    enrichedPlugins = await initializePluginsWithData(pluginList.value);
+                    dataFetchingCache.set(cacheKey, enrichedPlugins, {duration: 6000});
+                }
+
+                // Update plugins with enriched data
+                pluginList.value = enrichedPlugins.map(plugin => ({
+                    ...plugin,
+                    icon: plugin.icons?.['2x'] || plugin.icons?.['1x'] || plugin.icons?.default || null
+                }));
+
+            } catch (error) {
+                console.error('Error loading plugins:', error);
+            } finally {
+                isInitialLoading.value = false;
+            }
+
+        }
 
 // Methods
 const getPluginImage = (slug) => {
