@@ -198,4 +198,310 @@ class WP_Plugin_Manager_Settings {
     public function is_pro() {
         return $this->is_pro;
     }
+    public function get_recommendations_plugins() {
+        $recommendations_plugins = array();
+        // Recommended Tab
+        $recommendations_plugins[] = array(
+            'title'  => esc_html__( 'Recommended', 'wp-plugin-manager' ),
+            'active' => true,
+            'plugins' => array(
+                array(
+                    'slug'        => 'woolentor-addons',
+                    'location'    => 'woolentor_addons_elementor.php',
+                    'name'        => esc_html__( 'WooLentor', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'If you own a WooCommerce website, you’ll almost certainly want to use these capabilities: Woo Builder (Elementor WooCommerce Builder), WooCommerce Templates, WooCommerce Widgets,...', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'ht-mega-for-elementor',
+                    'location'    => 'htmega_addons_elementor.php',
+                    'name'        => esc_html__( 'HT Mega', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'HTMega is an absolute addon for elementor that includes 80+ elements', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'hashbar-wp-notification-bar',
+                    'location'    => 'init.php',
+                    'name'        => esc_html__( 'HashBar', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'Create notification bars to notify your customers', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'ht-slider-for-elementor',
+                    'location'    => 'ht-slider-for-elementor.php',
+                    'name'        => esc_html__( 'HT Slider For Elementor', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'Create beautiful sliders for your website using Elementor', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'ht-contactform',
+                    'location'    => 'contact-form-widget-elementor.php',
+                    'name'        => esc_html__( 'HT Contact Form 7', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'Contact Form 7 integration for Elementor', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'extensions-for-cf7',
+                    'location'    => 'extensions-for-cf7.php',
+                    'name'        => esc_html__( 'Extensions For CF7', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'Additional features for Contact Form 7', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'ht-wpform',
+                    'location'    => 'wpform-widget-elementor.php',
+                    'name'        => esc_html__( 'HT WPForms', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'WPForms integration for Elementor', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'ht-menu-lite',
+                    'location'    => 'ht-mega-menu.php',
+                    'name'        => esc_html__( 'HT Menu', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'WordPress Mega Menu Builder', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'insert-headers-and-footers-script',
+                    'location'    => 'init.php',
+                    'name'        => esc_html__( 'HT Script', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'Insert headers and footers code easily', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
+                array(
+                    'slug'        => 'wc-builder',
+                    'location'    => 'wc-builder.php',
+                    'name'        => esc_html__( 'WC Builder', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'WooCommerce page builder for Elementor', 'wp-plugin-manager' ),
+                ),
+                array(
+                    'slug'        => 'wc-multi-currency',
+                    'location'    => 'wcmilticurrency.php',
+                    'name'        => esc_html__( 'Multi Currency', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'WooCommerce multi-currency support', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                )
+            )
+        );
+    
+        // You May Also Like Tab
+        $recommendations_plugins[] = [
+            'title' => esc_html__( 'You May Also Like', 'wp-plugin-manager' ),
+            'plugins' => [
+                array(
+                    'slug' => 'woolentor-addons-pro',
+                    'location' => 'woolentor_addons_pro.php',
+                    'name' => esc_html__('WooLentor Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/woolentor-pro-woocommerce-page-builder/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('WooLentor is one of the most popular WooCommerce Elementor Addons...', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'htmega-pro',
+                    'location' => 'htmega_pro.php',
+                    'name' => esc_html__('HT Mega Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/ht-mega-pro/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('HTMega includes 80+ elements & 360 Blocks...', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'swatchly-pro',
+                    'location' => 'swatchly-pro.php',
+                    'name' => esc_html__('Product Variation Swatches', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/swatchly-product-variation-swatches-for-woocommerce-products/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Swatchly enhances how product variants are displayed...', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'wp-plugin-manager-pro',
+                    'location' => 'plugin-main.php',
+                    'name' => esc_html__('WP Plugin Manager Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Helps deactivate unnecessary plugins per page for better performance.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'whols-pro',
+                    'location' => 'whols-pro.php',
+                    'name' => esc_html__('Whols Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/whols-woocommerce-wholesale-prices/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Set wholesale pricing for WooCommerce.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'just-tables-pro',
+                    'location' => 'just-tables-pro.php',
+                    'name' => esc_html__('JustTables Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/wp/justtables/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Display WooCommerce products in sortable/filterable tables.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'multicurrencypro',
+                    'location' => 'multicurrencypro.php',
+                    'name' => esc_html__('Multi Currency Pro for WooCommerce', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/multi-currency-pro-for-woocommerce/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Currency switcher plugin for WooCommerce.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'cf7-extensions-pro',
+                    'location' => 'cf7-extensions-pro.php',
+                    'name' => esc_html__('Extensions For CF7 Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/cf7-extensions/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Advanced features for Contact Form 7.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'hashbar-pro',
+                    'location' => 'init.php',
+                    'name' => esc_html__('HashBar Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/wordpress-notification-bar-plugin/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Create unlimited notification bars.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'ht-script-pro',
+                    'location' => 'plugin-main.php',
+                    'name' => esc_html__('HT Script Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/insert-headers-and-footers-code-ht-script/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Insert headers/footers scripts easily.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'ht-menu',
+                    'location' => 'ht-mega-menu.php',
+                    'name' => esc_html__('HT Menu Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/ht-menu-pro/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('WordPress Mega Menu Builder for Elementor.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'ht-slider-addons-pro',
+                    'location' => 'ht-slider-addons-pro.php',
+                    'name' => esc_html__('HT Slider Pro For Elementor', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/ht-slider-pro-for-elementor/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Create sliders using Elementor easily.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'ht-google-place-review',
+                    'location' => 'ht-google-place-review.php',
+                    'name' => esc_html__('Google Place Review', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/google-place-review-plugin-for-wordpress/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Display Google Reviews on your site.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'was-this-helpful',
+                    'location' => 'was-this-helpful.php',
+                    'name' => esc_html__('Was This Helpful?', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/was-this-helpful/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Collect user feedback via like/dislike.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'ht-click-to-call',
+                    'location' => 'ht-click-to-call.php',
+                    'name' => esc_html__('HT Click To Call', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/ht-click-to-call/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Add floating click-to-call button.', 'wp-plugin-manager'),
+                ),
+                array(
+                    'slug' => 'docus-pro',
+                    'location' => 'docus-pro.php',
+                    'name' => esc_html__('Docus Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/plugins/docus-pro-youtube-video-playlist/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Embed YouTube playlists on your site.', 'wp-plugin-manager'),
+                )
+            ]
+        ];
+    
+        // Others Tab
+        $recommendations_plugins[] = [
+            'title' => esc_html__( 'Others', 'wp-plugin-manager' ),
+            'plugins' => [
+                array(
+                    'slug' => 'really-simple-google-tag-manager',
+                    'location' => 'really-simple-google-tag-manager.php',
+                    'name' => esc_html__('Really Simple Google Tag Manager', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'ht-instagram',
+                    'location' => 'ht-instagram.php',
+                    'name' => esc_html__('HT Feed', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'faster-youtube-embed',
+                    'location' => 'faster-youtube-embed.php',
+                    'name' => esc_html__('Faster YouTube Embed', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'wc-sales-notification',
+                    'location' => 'wc-sales-notification.php',
+                    'name' => esc_html__('WC Sales Notification', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'preview-link-generator',
+                    'location' => 'preview-link-generator.php',
+                    'name' => esc_html__('Preview Link Generator', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'quickswish',
+                    'location' => 'quickswish.php',
+                    'name' => esc_html__('QuickSwish', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'docus',
+                    'location' => 'docus.php',
+                    'name' => esc_html__('Docus – YouTube Video Playlist', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'data-captia',
+                    'location' => 'data-captia.php',
+                    'name' => esc_html__('DataCaptia', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'coupon-zen',
+                    'location' => 'coupon-zen.php',
+                    'name' => esc_html__('Coupon Zen', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'sirve',
+                    'location' => 'sirve.php',
+                    'name' => esc_html__('Sirve – Simple Directory Listing', 'wp-plugin-manager')
+                ),
+                array(
+                    'slug' => 'ht-social-share',
+                    'location' => 'ht-social-share.php',
+                    'name' => esc_html__('HT Social Share', 'wp-plugin-manager')
+                )
+            ]
+        ];
+    
+        return $recommendations_plugins;
+    }
+    
 }

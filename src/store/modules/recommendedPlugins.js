@@ -22,11 +22,15 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
       try {
         this.loading = true
         this.error = null
+
+        const recommendations_plugins = window.HTPMM?.adminSettings?.recommendations_plugins || [];
+        this.tabs = recommendations_plugins;
+
         const response = await api.get('/htpm/v1/recommended-plugins')
-       // const response = await axios.get('/wp-json/htpm/v1/recommended-plugins')
+        //const response = await axios.get('/wp-json/htpm/v1/recommended-plugins')
         
         console.log(response.data);
-        this.tabs = response.data.tabs
+        //this.tabs = response.data.tabs
         this.installedPlugins = response.data.installed_plugins
         this.assetsUrl = response.data.assets_url
       } catch (error) {

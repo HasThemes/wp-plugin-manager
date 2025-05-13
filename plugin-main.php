@@ -177,6 +177,7 @@ class HTPM_Main {
                     'ajaxurl'          => admin_url( 'admin-ajax.php' ),
                     'adminURL'         => admin_url(),
                     'pluginURL'        => plugin_dir_url( __FILE__ ),
+                    'assetsURL'        => plugin_dir_url( __FILE__ ) . 'assets/',
                     'restUrl' => rest_url(),  // This will include the wp-json prefix
                     'nonce' => wp_create_nonce('wp_rest'),
                     'message'          =>[
@@ -220,6 +221,7 @@ class HTPM_Main {
                         'labels_texts' => $admin_settings->get_labels_texts(),
                         'dashboard_settings' => $admin_settings->get_dashboard_settings(),
                         'menu_settings' => $admin_settings->get_menu_settings(),
+                        'recommendations_plugins' => $admin_settings->get_recommendations_plugins(),
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );

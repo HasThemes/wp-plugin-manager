@@ -8,15 +8,17 @@
                     <div class="htpm-plugin-content">
                         <div class="htpm-plugin-logo">
                             <el-image 
-                                :src="plugin.icon" 
+                                :src="getPluginIcon(plugin)" 
                                 :alt="plugin.name"
                                 class="htpm-plugin-image"
+                                fit="cover"
+                                :lazy="true"
                             />
                         </div>
                         
                         <div class="htpm-plugin-info">
                             <h3 class="htpm-plugin-title">{{ plugin.name }}</h3>
-                            <p class="htpm-plugin-description" v-html="trimWords(plugin.description, 23)"></p>
+                            <p class="htpm-plugin-description" v-html="trimWords(plugin.short_description || plugin.description, 23)"></p>
                         </div>
                     </div>
                     <template #footer>
@@ -50,9 +52,23 @@
 import { computed, ref } from 'vue';
 import { trimWords } from '@/utils/helpers';
 import { InfoFilled } from '@element-plus/icons-vue';
+import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins';
 
+const store = useRecommendedPluginsStore();
+const htpmLocalizeData = ref(window.HTPMM || {});
+// Get assets URL from store if available
+const getPluginIcon = (plugin) => {
+    if (plugin.icon) return plugin.icon;
+    if (plugin.icons && plugin.icons['2x']) return plugin.icons['2x'];
+    if (plugin.icons && plugin.icons['1x']) return plugin.icons['1x'];
+    if (plugin.icons && plugin.icons.default) return plugin.icons.default;
+    // Try to get from assets URL if available
+    if (htpmLocalizeData.value?.assetsURL) {
+        return `${htpmLocalizeData.value.assetsURL}/images/extensions/${plugin.slug}.png`;
+    }
+    return `${htpmLocalizeData.value.assetsURL}/images/logo.png`;
+};
 
-const htpmLocalizeData = ref(HTPMM);
 const props = defineProps({
     pluginList: {
         type: Array,
@@ -86,14 +102,22 @@ const toggleActivation = (plugin) => {
 };
 
 const activeInstallCount = (activeInstalls) => {
-    if (activeInstalls >= 1000000) {
-        const activeInstallsMillions = Math.floor(activeInstalls / 1000000);
-        return `${activeInstallsMillions}+ Million`;
+    if (!activeInstalls) return 'N/A';
+    
+    const count = parseInt(activeInstalls.replace(/[^0-9]/g, ''));
+    
+    if (count >= 1000000) {
+        const millions = Math.floor(count / 1000000);
+        return `${millions}+ Million`;
     }
-    if (activeInstalls === 0) {
+    if (count === 0) {
         return 'Less Than 10';
     }
-    return `${activeInstalls.toLocaleString()}+`;
+    if (count >= 1000) {
+        const thousands = Math.floor(count / 1000);
+        return `${thousands}k+`;
+    }
+    return `${count}+`;
 };
 </script>
 

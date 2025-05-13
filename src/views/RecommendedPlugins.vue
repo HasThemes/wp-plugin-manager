@@ -25,7 +25,7 @@
       </div>
 
       <PluginGrid 
-        :plugin-list="pluginList"
+        :plugin-list="currentTabPlugins"
         :is-loading="loading"
         :plugin-states="PLUGIN_STATES"
         :get-plugin-button-text="getPluginButtonText"
@@ -75,6 +75,8 @@ import { ref, computed, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins'
 import PluginGrid from '@/components/recommended/PluginGrid.vue'
+const htpmLocalizeData = ref(window.HTPMM || {});
+console.log(htpmLocalizeData.value.adminSettings.recommendations_plugins, 'htpmLocalizeData.value.recommendations_plugins');
 
 const store = useRecommendedPluginsStore()
 const { tabs, installedPlugins, loading, error, assetsUrl } = storeToRefs(store)
