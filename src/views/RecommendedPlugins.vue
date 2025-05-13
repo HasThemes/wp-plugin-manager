@@ -117,34 +117,29 @@ const currentTabPlugins = computed(() => {
     return currentTab?.plugins || []
 })
 
-console.log(currentTabPlugins.value);
+console.log(currentTabPlugins.value, 'current plugins');
 const handleTabChange = async (tabTitle) => {
     activeTab.value = tabTitle
     const newTab = tabs.value.find(tab => tab.title === tabTitle)
     if (newTab?.plugins) {
+      if ( activeTab.value === 'Recommended'){
         await initializePluginsWithData(newTab.plugins)
+      } else {
+        await initializePluginsWithData(newTab.plugins,'local')
+      }
     }
 }
 
 const handlePluginToggle = async (plugin) => {
     try {
-        await handlePluginAction(plugin)
-        // After action, refresh the plugin status
-        const updatedPlugins = await initializePluginsWithData(currentTabPlugins.value)
-        // Update the store with new plugin data
-        store.$patch((state) => {
-            const tabIndex = state.tabs.findIndex(tab => tab.title === activeTab.value)
-            if (tabIndex !== -1) {
-                state.tabs[tabIndex].plugins = updatedPlugins
-            }
-        })
+        await store.handlePluginAction(plugin);
     } catch (error) {
-        console.error('Error handling plugin action:', error)
+        console.error('Error handling plugin action:', error);
         ElNotification({
             title: 'Error',
             message: error.message || 'Failed to perform plugin action',
             type: 'error'
-        })
+        });
     }
 }
 

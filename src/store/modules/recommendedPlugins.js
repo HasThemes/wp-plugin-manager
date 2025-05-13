@@ -24,16 +24,35 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
           
           // Get plugin info for all plugins in the tab
           const slugs = tab.plugins.map(p => p.slug);
-          const pluginsResponse = await api.get('/htpm/v1/plugins-info', {
-            params: { slugs: slugs.join(',') }
-          });
+          
+          // Get both plugin info and status in parallel
+          const [pluginsResponse, statusResponse] = await Promise.all([
+            api.get('/htpm/v1/plugins-info', {
+              params: { slugs: slugs.join(',') }
+            }),
+            api.get('/htpm/v1/plugins-status', {
+              params: {
+                plugins: slugs.join(','),
+                nonce: window.HTPMM?.nonce
+              }
+            })
+          ]);
 
           if (pluginsResponse.data.success && pluginsResponse.data.plugins) {
-            // Merge WordPress.org data with our plugin data
+            // Create a map of plugin statuses
+            const statusMap = {};
+            if (statusResponse.data.success && statusResponse.data.plugins) {
+              statusResponse.data.plugins.forEach(p => {
+                statusMap[p.slug] = p.status;
+              });
+            }
+
+            // Merge WordPress.org data with our plugin data and status
             tab.plugins = tab.plugins.map(plugin => ({
               ...plugin,
               ...pluginsResponse.data.plugins[plugin.slug],
-              isInstalled: this.installedPlugins.includes(plugin.slug)
+              status: statusMap[plugin.slug] || 'not_installed',
+              isLoading: false
             }));
           }
           
@@ -47,6 +66,86 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
       } finally {
         this.loading = false
       }
+    },
+
+    async installPlugin(plugin) {
+      try {
+        // Update plugin loading state
+        this.updatePluginState(plugin.slug, { isLoading: true });
+
+        // Call install API
+        const response = await api.post('/htpm/v1/install-plugin', {
+          slug: plugin.slug,
+          nonce: window.HTPMM?.nonce
+        });
+
+        if (response.data.success) {
+          // Update plugin status
+          this.updatePluginState(plugin.slug, { 
+            status: 'inactive',
+            isLoading: false 
+          });
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error('Error installing plugin:', error);
+        this.updatePluginState(plugin.slug, { isLoading: false });
+        throw error;
+      }
+    },
+
+    async activatePlugin(plugin) {
+      try {
+        // Update plugin loading state
+        this.updatePluginState(plugin.slug, { isLoading: true });
+
+        // Call activate API
+        const response = await api.post('/htpm/v1/activate-plugin', {
+          slug: plugin.slug,
+          nonce: window.HTPMM?.nonce
+        });
+
+        if (response.data.success) {
+          // Update plugin status
+          this.updatePluginState(plugin.slug, { 
+            status: 'active',
+            isLoading: false 
+          });
+          return true;
+        }
+        return false;
+      } catch (error) {
+        console.error('Error activating plugin:', error);
+        this.updatePluginState(plugin.slug, { isLoading: false });
+        throw error;
+      }
+    },
+
+    async handlePluginAction(plugin) {
+      try {
+        if (plugin.status === 'not_installed') {
+          await this.installPlugin(plugin);
+          await this.activatePlugin(plugin);
+        } else if (plugin.status === 'inactive') {
+          await this.activatePlugin(plugin);
+        }
+      } catch (error) {
+        console.error('Error handling plugin action:', error);
+        throw error;
+      }
+    },
+
+    updatePluginState(slug, updates) {
+      this.tabs = this.tabs.map(tab => ({
+        ...tab,
+        plugins: tab.plugins?.map(plugin => {
+          if (plugin.slug === slug) {
+            return { ...plugin, ...updates };
+          }
+          return plugin;
+        })
+      }));
     },
 
     // async installPlugin(plugin) {

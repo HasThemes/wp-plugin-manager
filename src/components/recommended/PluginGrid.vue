@@ -33,12 +33,10 @@
                             <el-button 
                                 type="primary"
                                 :loading="plugin.isLoading"
-                                :disabled="plugin.status === pluginStates.ACTIVE || 
-                                        plugin.status === pluginStates.INSTALLING || 
-                                        plugin.status === pluginStates.ACTIVATING"
+                                :disabled="isButtonDisabled(plugin)"
                                 @click="toggleActivation(plugin)"
                             >
-                                {{ plugin.status === pluginStates.NOT_INSTALLED && plugin?.pro ? 'Buy Now' : getPluginButtonText(plugin.status, plugin.isLoading) }}
+                                {{ getButtonText(plugin) }}
                             </el-button>
                         </div>
                     </template>
@@ -97,9 +95,41 @@ const props = defineProps({
     }
 });
 const emit = defineEmits(['plugin-toggled']);
-console.log(props.pluginList);
+console.log(props.pluginList,'plugin list');
+const getButtonText = (plugin) => {
+    if (plugin.isLoading) {
+        switch(plugin.status?.toLowerCase()) {
+            case 'not_installed':
+                return 'Installing...';
+            case 'inactive':
+                return 'Activating...';
+            default:
+                return 'Processing...';
+        }
+    }
+
+    switch(plugin.status?.toLowerCase()) {
+        case 'not_installed':
+            return plugin.is_pro ? 'Buy Now' : 'Install';
+        case 'inactive':
+            return 'Activate';
+        case 'active':
+            return 'Activated';
+        default:
+            return 'Install';
+    }
+};
+
+const isButtonDisabled = (plugin) => {
+    const status = plugin.status?.toLowerCase();
+    return status === 'active' || 
+           status === 'installing' || 
+           status === 'activating' || 
+           plugin.isLoading;
+};
+
 const toggleActivation = (plugin) => {
-    if (plugin.status === props.pluginStates.NOT_INSTALLED && plugin?.is_pro) {
+    if (plugin.status?.toLowerCase() === 'not_installed' && plugin?.is_pro) {
         window.open(plugin.link, '_blank');
         return;
     }

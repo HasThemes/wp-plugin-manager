@@ -14,28 +14,33 @@ export const usePluginManager = () => {
 
     // Get button text based on plugin status and loading state
     const getPluginButtonText = (status, isLoading = false) => {
-        console.log(status, isLoading);
+        console.log('Button status:', status, 'isLoading:', isLoading);
+        
+        // Normalize the status to match our PLUGIN_STATES
+        const normalizedStatus = status?.toLowerCase();
+        
         if (isLoading) {
-            switch(status) {
-                case PLUGIN_STATES.NOT_INSTALLED:
-                case PLUGIN_STATES.INSTALLING:
+            switch(normalizedStatus) {
+                case 'not_installed':
+                case 'installing':
                     return 'Installing...'
-                case PLUGIN_STATES.INACTIVE:
-                case PLUGIN_STATES.ACTIVATING:
+                case 'inactive':
+                case 'activating':
                     return 'Activating...'
                 default:
                     return 'Processing...'
             }
         }
 
-        switch(status) {
-            case PLUGIN_STATES.NOT_INSTALLED:
+        switch(normalizedStatus) {
+            case 'not_installed':
                 return 'Install'
-            case PLUGIN_STATES.INACTIVE:
+            case 'inactive':
                 return 'Activate'
-            case PLUGIN_STATES.ACTIVE:
+            case 'active':
                 return 'Activated'
             default:
+                console.log('Unknown status:', status);
                 return 'Install'
         }
     }
