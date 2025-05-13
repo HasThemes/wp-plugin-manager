@@ -17,11 +17,6 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
 
         // Get initial tabs structure
         const recommendations_plugins = window.HTPMM?.adminSettings?.recommendations_plugins || [];
-        
-        // Get installed plugins and assets URL
-        const response = await api.get('/htpm/v1/recommended-plugins')
-        this.installedPlugins = response.data.installed_plugins || []
-        this.assetsUrl = response.data.assets_url
 
         // Fetch plugin data for each tab
         const tabsWithData = await Promise.all(recommendations_plugins.map(async (tab) => {
@@ -54,24 +49,24 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
       }
     },
 
-    async installPlugin(plugin) {
-      try {
-        const formData = new FormData()
-        formData.append('action', 'htpm_ajax_plugin_activation')
-        formData.append('location', plugin.location)
-        formData.append('slug', plugin.slug)
-        formData.append('nonce', window.HTPMM.nonce)
+    // async installPlugin(plugin) {
+    //   try {
+    //     const formData = new FormData()
+    //     formData.append('action', 'htpm_ajax_plugin_activation')
+    //     formData.append('location', plugin.location)
+    //     formData.append('slug', plugin.slug)
+    //     formData.append('nonce', window.HTPMM.nonce)
 
-        const response = await axios.post(window.HTPMM.ajaxUrl, formData)
-        console.log(response.data);
-        if (response.data.success) {
-          this.installedPlugins.push(plugin.slug)
-        }
-        return response.data
-      } catch (error) {
-        console.error('Error installing plugin:', error)
-        throw error
-      }
-    }
+    //     const response = await axios.post(window.HTPMM.ajaxUrl, formData)
+    //     console.log(response.data);
+    //     if (response.data.success) {
+    //       this.installedPlugins.push(plugin.slug)
+    //     }
+    //     return response.data
+    //   } catch (error) {
+    //     console.error('Error installing plugin:', error)
+    //     throw error
+    //   }
+    // }
   }
 })

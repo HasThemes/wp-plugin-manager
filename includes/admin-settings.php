@@ -291,15 +291,6 @@ class WP_Plugin_Manager_Settings {
                     'location'    => 'wc-builder.php',
                     'name'        => esc_html__( 'WC Builder', 'wp-plugin-manager' ),
                     'description' => esc_html__( 'WooCommerce page builder for Elementor', 'wp-plugin-manager' ),
-                ),
-                array(
-                    'slug'        => 'wc-multi-currency',
-                    'location'    => 'wcmilticurrency.php',
-                    'name'        => esc_html__( 'Multi Currency', 'wp-plugin-manager' ),
-                    'description' => esc_html__( 'WooCommerce multi-currency support', 'wp-plugin-manager' ),
-                    'status'     => 'inactive',
-                    'isLoading'  => false,
-                    'icon'       => null
                 )
             )
         );
