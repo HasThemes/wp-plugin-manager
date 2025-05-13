@@ -61,10 +61,10 @@ const getPluginIcon = (plugin) => {
     if (plugin.icons && plugin.icons['1x']) return plugin.icons['1x'];
     if (plugin.icons && plugin.icons.default) return plugin.icons.default;
     // Try to get from assets URL if available
-    if (htpmLocalizeData.value?.assetsUrl) {
-        return `${htpmLocalizeData.value.assetsUrl}/images/extensions/${plugin.slug}.png`;
+    if (htpmLocalizeData.value?.assetsURL) {
+        return `${htpmLocalizeData.value.assetsURL}/images/extensions/${plugin.slug}.png`;
     }
-    return `${htpmLocalizeData.value.assetsUrl}/images/logo.jpg`;
+    return `${htpmLocalizeData.value.assetsURL}/images/logo.jpg`;
 };
 
 const activeInstallCount = (count) => {
