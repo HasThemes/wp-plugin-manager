@@ -1,13 +1,5 @@
-import axios from 'axios'
 import { defineStore } from 'pinia'
-// Create an axios instance with WordPress REST API base URL and nonce
-const api = axios.create({
-  baseURL: window.HTPMM?.restUrl || '/wp-json',
-  headers: {
-    'X-WP-Nonce': window.HTPMM?.nonce || '',
-    'Content-Type': 'application/json'
-  }
-})
+import api from '@/utils/axios'
 export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
   state: () => ({
     tabs: [],

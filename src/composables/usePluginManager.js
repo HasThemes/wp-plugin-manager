@@ -1,5 +1,5 @@
 // composables/usePluginManager.js
-import Api from '@/axios'
+import Api from '@/utils/axios'
 import { ElNotification } from 'element-plus'
 
 export const usePluginManager = () => {

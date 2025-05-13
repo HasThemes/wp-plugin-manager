@@ -52,9 +52,7 @@
 import { computed, ref } from 'vue';
 import { trimWords } from '@/utils/helpers';
 import { InfoFilled } from '@element-plus/icons-vue';
-import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins';
-
-const store = useRecommendedPluginsStore();
+import { usePluginManager } from '@/composables/usePluginManager';
 const htpmLocalizeData = ref(window.HTPMM || {});
 // Get assets URL from store if available
 const getPluginIcon = (plugin) => {
