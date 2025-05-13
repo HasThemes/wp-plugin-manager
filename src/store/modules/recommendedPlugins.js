@@ -171,7 +171,7 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
     async handlePluginAction(plugin) {
       try {
         // Check if it's a pro plugin first
-        if (plugin.is_pro && plugin.status?.toLowerCase() === 'not_installed') {
+        if (plugin.pro && plugin.status?.toLowerCase() === 'not_installed') {
           window.open(plugin.link, '_blank');
           return;
         }

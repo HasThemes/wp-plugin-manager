@@ -32,7 +32,7 @@
                             <div class="htpm-plugin-installation-info">
                                 <el-icon v-if="plugin.active_installs"><InfoFilled /></el-icon>
                                 <span v-if="plugin.active_installs">{{ `${activeInstallCount(plugin.active_installs)} Active Installations` }}</span>
-                                <el-link v-if="plugin.is_pro" type="primary" class="htpm-plugin-more-details" :href="plugin?.link" target="_blank">More Details</el-link>
+                                <el-link v-if="plugin.pro" type="primary" class="htpm-plugin-more-details" :href="plugin?.link" target="_blank">More Details</el-link>
                                 <el-link v-else type="primary" class="thickbox open-plugin-details-modal" :href="`${htpmLocalizeData.adminURL}plugin-install.php?tab=plugin-information&plugin=${plugin.slug}&TB_iframe=true&width=772&height=577`" >More Details</el-link>
                             </div>
 
@@ -94,7 +94,7 @@ const props = defineProps({
 });
 
 const toggleActivation = async (plugin) => {
-    if (plugin.status?.toLowerCase() === 'not_installed' && plugin?.is_pro) {
+    if (plugin.status?.toLowerCase() === 'not_installed' && plugin?.pro) {
         window.open(plugin.link, '_blank');
         return;
     }
