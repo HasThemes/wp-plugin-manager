@@ -13,31 +13,12 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
 
   getters: {
     getButtonText: () => (plugin) => {
-      // Check for pro plugins first
-      if (plugin.is_pro || plugin.pro) {
-        return 'Buy Now';
-      }
-
-      if (plugin.isLoading) {
-        switch(plugin.status?.toLowerCase()) {
-          case 'not_installed':
-            return 'Installing...';
-          case 'inactive':
-            return 'Activating...';
-          default:
-            return 'Processing...';
-        }
-      }
-
-      switch(plugin.status?.toLowerCase()) {
-        case 'not_installed':
-          return 'Install';
-        case 'inactive':
-          return 'Activate';
-        case 'active':
-          return 'Activated';
-        default:
-          return 'Install';
+      if (plugin.pro && plugin.status?.toLowerCase() === 'not_installed') return 'Buy Now';
+      if (plugin.isLoading) return plugin.status === 'inactive' ? 'Activating...' : 'Installing...';
+      switch(plugin.status) {
+        case 'active': return 'Activated';
+        case 'inactive': return 'Activate';
+        default: return 'Install';
       }
     },
 

@@ -232,15 +232,15 @@ class WP_Plugin_Manager_Settings {
                     'isLoading'  => false,
                     'icon'       => null
                 ),
-                // array(
-                //     'slug'        => 'ht-slider-for-elementor',
-                //     'location'    => 'ht-slider-for-elementor.php',
-                //     'name'        => esc_html__( 'HT Slider For Elementor', 'wp-plugin-manager' ),
-                //     'description' => esc_html__( 'Create beautiful sliders for your website using Elementor', 'wp-plugin-manager' ),
-                //     'status'     => 'inactive',
-                //     'isLoading'  => false,
-                //     'icon'       => null
-                // ),
+                array(
+                    'slug'        => 'ht-slider-for-elementor',
+                    'location'    => 'ht-slider-for-elementor.php',
+                    'name'        => esc_html__( 'HT Slider For Elementor', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'Create beautiful sliders for your website using Elementor', 'wp-plugin-manager' ),
+                    'status'     => 'inactive',
+                    'isLoading'  => false,
+                    'icon'       => null
+                ),
                 // array(
                 //     'slug'        => 'ht-contactform',
                 //     'location'    => 'contact-form-widget-elementor.php',
@@ -311,15 +311,15 @@ class WP_Plugin_Manager_Settings {
                     'description' => esc_html__('Set wholesale pricing for WooCommerce.', 'wp-plugin-manager'),
                     'pro' => true
                 ),
-                // array(
-                //     'slug' => 'just-tables-pro',
-                //     'location' => 'just-tables-pro.php',
-                //     'name' => esc_html__('JustTables Pro', 'wp-plugin-manager'),
-                //     'link' => 'https://hasthemes.com/wp/justtables/',
-                //     'author_link' => 'https://hasthemes.com/',
-                //     'description' => esc_html__('Display WooCommerce products in sortable/filterable tables.', 'wp-plugin-manager'),
-                //     'pro' => true
-                // ),
+                array(
+                    'slug' => 'just-tables-pro',
+                    'location' => 'just-tables-pro.php',
+                    'name' => esc_html__('JustTables Pro', 'wp-plugin-manager'),
+                    'link' => 'https://hasthemes.com/wp/justtables/',
+                    'author_link' => 'https://hasthemes.com/',
+                    'description' => esc_html__('Display WooCommerce products in sortable/filterable tables.', 'wp-plugin-manager'),
+                    'pro' => true
+                ),
                 // array(
                 //     'slug' => 'cf7-extensions-pro',
                 //     'location' => 'cf7-extensions-pro.php',

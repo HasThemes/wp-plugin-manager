@@ -3,7 +3,7 @@
         <el-row :gutter="20">
             <el-skeleton v-if="isLoading" :rows="6" animated />
             <el-col v-else :span="12" :md="12" :sm="12" :xs="24" v-for="plugin in pluginList" :key="plugin.id">
-                <el-card class="htpm-plugin-info-card mb-4" shadow="hover">
+                <el-card class="htpm-plugin-info-card mb-4" shadow="hover" style="box-shadow: none;">
                     <div class="htpm-plugin-content">
                         <div class="htpm-plugin-logo">
                             <el-image 

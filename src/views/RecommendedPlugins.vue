@@ -1,5 +1,5 @@
 <template>
-  <div class="htpm-recommended-plugins">
+  <div class="htpm-recommended-plugins htpm-inner-page-wrapper">
     <div v-if="loading || isInitialLoading" class="loading">
       <el-skeleton :rows="3" animated />
     </div>
