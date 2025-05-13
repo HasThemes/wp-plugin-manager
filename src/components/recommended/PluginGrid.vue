@@ -38,7 +38,7 @@
                                         plugin.status === pluginStates.ACTIVATING"
                                 @click="toggleActivation(plugin)"
                             >
-                                {{ plugin.status === pluginStates.NOT_INSTALLED && plugin?.is_pro ? 'Buy Now' : getPluginButtonText(plugin.status, plugin.isLoading) }}
+                                {{ plugin.status === pluginStates.NOT_INSTALLED && plugin?.pro ? 'Buy Now' : getPluginButtonText(plugin.status, plugin.isLoading) }}
                             </el-button>
                         </div>
                     </template>
@@ -74,6 +74,7 @@ const activeInstallCount = (count) => {
     return count + '+';
 };
 
+
 const props = defineProps({
     pluginList: {
         type: Array,
@@ -95,9 +96,8 @@ const props = defineProps({
         default: (status, isLoading) => ''
     }
 });
-
 const emit = defineEmits(['plugin-toggled']);
-
+console.log(props.pluginList);
 const toggleActivation = (plugin) => {
     if (plugin.status === props.pluginStates.NOT_INSTALLED && plugin?.is_pro) {
         window.open(plugin.link, '_blank');

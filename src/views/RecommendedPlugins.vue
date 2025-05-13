@@ -117,6 +117,7 @@ const currentTabPlugins = computed(() => {
     return currentTab?.plugins || []
 })
 
+console.log(currentTabPlugins.value);
 const handleTabChange = async (tabTitle) => {
     activeTab.value = tabTitle
     const newTab = tabs.value.find(tab => tab.title === tabTitle)

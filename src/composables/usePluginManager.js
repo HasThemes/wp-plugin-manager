@@ -14,6 +14,7 @@ export const usePluginManager = () => {
 
     // Get button text based on plugin status and loading state
     const getPluginButtonText = (status, isLoading = false) => {
+        console.log(status, isLoading);
         if (isLoading) {
             switch(status) {
                 case PLUGIN_STATES.NOT_INSTALLED:
@@ -123,10 +124,16 @@ export const usePluginManager = () => {
     // Fetch plugin status
     const fetchPluginStatus = async (pluginSlugs) => {
         try {
+            // Ensure HTPMM is available
+            if (!window.HTPMM || !window.HTPMM.nonce) {
+                console.error('HTPMM or nonce not available');
+                return [];
+            }
+
             const response = await Api.get('/htpm/v1/plugins-status', {
                 params: {
                     plugins: Array.isArray(pluginSlugs) ? pluginSlugs.join(',') : pluginSlugs,
-                    nonce: HTPMM?.nonce
+                    nonce: window.HTPMM.nonce
                 }
             })
 
@@ -135,6 +142,7 @@ export const usePluginManager = () => {
             }
             return []
         } catch (error) {
+            console.error('Error fetching plugin status:', error);
             handleError(error)
             return []
         }
@@ -223,6 +231,7 @@ export const usePluginManager = () => {
             // Then, fetch installation status for all plugins in one call
             const slugs = enrichedPlugins.map(p => p.slug)
             const statuses = await fetchPluginStatus(slugs)
+            console.log(statuses,'statussssssss');
             
             // Merge the data
             return enrichedPlugins.map(plugin => {

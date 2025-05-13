@@ -177,6 +177,32 @@ class HTPM_Main {
             wp_enqueue_script( 'select2', HTPM_ROOT_URL . '/assets/js/select2.min.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
             wp_enqueue_script( 'htpm-admin', HTPM_ROOT_URL . '/assets/js/admin.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
             // wp_enqueue_script( 'install-manager', HTPM_ROOT_URL . '/assets/js/install_manager.js', array('jquery', 'wp-util', 'updates'), HTPM_PLUGIN_VERSION, true );
+            
+            // Localize the script with new data
+            $localize_data = [
+                'ajaxurl'          => admin_url( 'admin-ajax.php' ),
+                'adminURL'         => admin_url(),
+                'pluginURL'        => plugin_dir_url( __FILE__ ),
+                'assetsURL'        => plugin_dir_url( __FILE__ ) . 'assets/',
+                'restUrl'          => rest_url(),
+                'nonce'            => wp_create_nonce('wp_rest'),
+                'message'          => [
+                    'packagedesc'  => esc_html__( 'in this package', 'wp-plugin-manager' ),
+                    'allload'      => esc_html__( 'All Items have been Loaded', 'wp-plugin-manager' ),
+                    'notfound'     => esc_html__( 'Nothing Found', 'wp-plugin-manager' ),
+                ],
+                'buttontxt'        => [
+                    'tmplibrary'   => esc_html__( 'Import to Library', 'wp-plugin-manager' ),
+                    'tmppage'      => esc_html__( 'Import to Page', 'wp-plugin-manager' ),
+                    'import'       => esc_html__( 'Import', 'wp-plugin-manager' ),
+                    'buynow'       => esc_html__( 'Buy Now', 'wp-plugin-manager' ),
+                    'buynow_link'  => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
+                    'preview'      => esc_html__( 'Preview', 'wp-plugin-manager' ),
+                    'installing'   => esc_html__( 'Installing..', 'wp-plugin-manager' ),
+                ],
+            ];
+            wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
+            
             $admin_settings = WP_Plugin_Manager_Settings::get_instance();
             if( is_admin() ){
                 $localize_data = [
