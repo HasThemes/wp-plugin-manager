@@ -18,7 +18,7 @@
           v-for="tab in tabs" 
           :key="tab.title"
           :class="{ active: activeTab === tab.title }"
-          @click="activeTab = tab.title"
+          @click="handleTabChange(tab.title)"
         >
           {{ tab.title }}
         </button>
@@ -116,6 +116,14 @@ const currentTabPlugins = computed(() => {
     const currentTab = tabs.value.find(tab => tab.title === activeTab.value)
     return currentTab?.plugins || []
 })
+
+const handleTabChange = async (tabTitle) => {
+    activeTab.value = tabTitle
+    const newTab = tabs.value.find(tab => tab.title === tabTitle)
+    if (newTab?.plugins) {
+        await initializePluginsWithData(newTab.plugins)
+    }
+}
 
 const handlePluginToggle = async (plugin) => {
     try {

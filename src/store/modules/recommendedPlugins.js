@@ -15,16 +15,37 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
         this.loading = true
         this.error = null
 
+        // Get initial tabs structure
         const recommendations_plugins = window.HTPMM?.adminSettings?.recommendations_plugins || [];
-        this.tabs = recommendations_plugins;
-
-        const response = await api.get('/htpm/v1/recommended-plugins')
-        //const response = await axios.get('/wp-json/htpm/v1/recommended-plugins')
         
-        console.log(response.data);
-        //this.tabs = response.data.tabs
-        this.installedPlugins = response.data.installed_plugins
+        // Get installed plugins and assets URL
+        const response = await api.get('/htpm/v1/recommended-plugins')
+        this.installedPlugins = response.data.installed_plugins || []
         this.assetsUrl = response.data.assets_url
+
+        // Fetch plugin data for each tab
+        const tabsWithData = await Promise.all(recommendations_plugins.map(async (tab) => {
+          if (!tab.plugins || !tab.plugins.length) return tab;
+          
+          // Get plugin info for all plugins in the tab
+          const slugs = tab.plugins.map(p => p.slug);
+          const pluginsResponse = await api.get('/htpm/v1/plugins-info', {
+            params: { slugs: slugs.join(',') }
+          });
+
+          if (pluginsResponse.data.success && pluginsResponse.data.plugins) {
+            // Merge WordPress.org data with our plugin data
+            tab.plugins = tab.plugins.map(plugin => ({
+              ...plugin,
+              ...pluginsResponse.data.plugins[plugin.slug],
+              isInstalled: this.installedPlugins.includes(plugin.slug)
+            }));
+          }
+          
+          return tab;
+        }));
+
+        this.tabs = tabsWithData
       } catch (error) {
         console.error('Error fetching recommended plugins:', error)
         this.error = error.message
