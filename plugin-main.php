@@ -66,6 +66,12 @@ class HTPM_Main {
         include_once( HTPM_ROOT_DIR . '/includes/changelog-api.php');
         include_once( HTPM_ROOT_DIR . '/includes/api/recommended-plugins.php');
 
+        // Initialize REST API endpoints
+        add_action('rest_api_init', function() {
+            $plugins_api = new \HTPM\Api\Plugins();
+            $plugins_api->register_routes();
+        });
+
     }
 
     /**

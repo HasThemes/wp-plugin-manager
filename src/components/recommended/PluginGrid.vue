@@ -61,10 +61,17 @@ const getPluginIcon = (plugin) => {
     if (plugin.icons && plugin.icons['1x']) return plugin.icons['1x'];
     if (plugin.icons && plugin.icons.default) return plugin.icons.default;
     // Try to get from assets URL if available
-    if (htpmLocalizeData.value?.assetsURL) {
-        return `${htpmLocalizeData.value.assetsURL}/images/extensions/${plugin.slug}.png`;
+    if (htpmLocalizeData.value?.assetsUrl) {
+        return `${htpmLocalizeData.value.assetsUrl}/images/extensions/${plugin.slug}.png`;
     }
-    return `${htpmLocalizeData.value.assetsURL}/images/logo.png`;
+    return `${htpmLocalizeData.value.assetsUrl}/images/logo.jpg`;
+};
+
+const activeInstallCount = (count) => {
+    if (!count) return '0';
+    if (count >= 1000000) return Math.floor(count / 1000000) + 'M+';
+    if (count >= 1000) return Math.floor(count / 1000) + 'K+';
+    return count + '+';
 };
 
 const props = defineProps({
@@ -99,24 +106,7 @@ const toggleActivation = (plugin) => {
     emit('plugin-toggled', plugin);
 };
 
-const activeInstallCount = (activeInstalls) => {
-    if (!activeInstalls) return 'N/A';
-    
-    const count = parseInt(activeInstalls.replace(/[^0-9]/g, ''));
-    
-    if (count >= 1000000) {
-        const millions = Math.floor(count / 1000000);
-        return `${millions}+ Million`;
-    }
-    if (count === 0) {
-        return 'Less Than 10';
-    }
-    if (count >= 1000) {
-        const thousands = Math.floor(count / 1000);
-        return `${thousands}k+`;
-    }
-    return `${count}+`;
-};
+
 </script>
 
 <style scoped>

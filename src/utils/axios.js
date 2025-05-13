@@ -6,7 +6,9 @@ const api = axios.create({
     headers: {
         'X-WP-Nonce': window.HTPMM?.nonce || '',
         'Content-Type': 'application/json'
-    }
+    },
+    withCredentials: true,
+    credentials: 'same-origin'
 });
 
 export default api;

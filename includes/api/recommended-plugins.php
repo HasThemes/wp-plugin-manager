@@ -74,15 +74,13 @@ class Plugins extends \WP_REST_Controller {
     }
 
     public function permissions_check($request) {
-        return current_user_can('activate_plugins');
+        // Allow plugin info access to all logged-in users
+        return is_user_logged_in();
     }
 
     public function get_plugins_info($request) {
 
-        $nonce = $request->get_param('nonce');
-        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-            return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to activate plugins.'), ['status' => 403]);
-        }
+        // Nonce check is handled by WordPress REST API
 
         if (!function_exists('plugins_api')) {
             require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
@@ -186,10 +184,7 @@ class Plugins extends \WP_REST_Controller {
 
     public function install_plugin($request) {
 
-        $nonce = $request->get_param('nonce');
-        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-            return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to activate plugins.'), ['status' => 403]);
-        }
+        // Nonce check is handled by WordPress REST API
 
         if (!current_user_can('install_plugins')) {
             return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to install plugins.'), ['status' => 403]);
@@ -244,10 +239,7 @@ class Plugins extends \WP_REST_Controller {
 
     public function activate_plugin($request) {
 
-        $nonce = $request->get_param('nonce');
-        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
-            return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to activate plugins.'), ['status' => 403]);
-        }
+        // Nonce check is handled by WordPress REST API
 
         if (!current_user_can('activate_plugins')) {
             return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to activate plugins.'), ['status' => 403]);

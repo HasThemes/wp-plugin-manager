@@ -173,19 +173,16 @@ export const usePluginManager = () => {
     // Fetch plugin data from WordPress.org
     const fetchPluginsData = async (plugins) => {
         try {
-            const slugs = plugins.map(p => p.slug).join(',')
+            const slugs = plugins.map(p => p.slug)
             const response = await Api.get('/htpm/v1/plugins-info', {
-                params: { 
-                    slugs, 
-                    nonce: HTPMM?.nonce
+                params: {
+                    slugs: Array.isArray(slugs) ? slugs.join(',') : slugs
                 }
             })
 
-            if (response.data.success) {
-                const wpData = response.data.plugins
-                
+            if (response.data.success && response.data.plugins) {
                 return plugins.map(plugin => {
-                    const pluginData = wpData[plugin.slug]
+                    const pluginData = response.data.plugins[plugin.slug]
                     if (pluginData) {
                         return {
                             ...plugin,
@@ -200,7 +197,11 @@ export const usePluginManager = () => {
                             download_link: pluginData.download_link,
                             homepage: pluginData.homepage,
                             icons: pluginData.icons || {},
-                            banners: pluginData.banners || {}
+                            banners: pluginData.banners || {},
+                            icon: pluginData.icons?.['2x'] || 
+                                  pluginData.icons?.['1x'] || 
+                                  pluginData.icons?.default || 
+                                  `${HTPMM?.assetsUrl}/images/plugins/${plugin.slug}.png`
                         }
                     }
                     return plugin
