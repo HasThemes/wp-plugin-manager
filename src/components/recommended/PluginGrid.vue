@@ -23,7 +23,7 @@
                         </div>
                         
                         <div class="htpm-plugin-info">
-                            <h3 class="htpm-plugin-title">{{ plugin.name }}</h3>
+                            <h3 class="htpm-plugin-title" v-html="decodeHtmlEntities(plugin.name)"></h3>
                             <p class="htpm-plugin-description" v-html="trimWords(plugin.short_description || plugin.description, 23)"></p>
                         </div>
                     </div>
@@ -55,6 +55,12 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { trimWords } from '@/utils/helpers';
+
+const decodeHtmlEntities = (text) => {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+};
 import { InfoFilled } from '@element-plus/icons-vue';
 import { useRecommendedPluginsStore } from '@/store/modules/recommendedPlugins';
 
