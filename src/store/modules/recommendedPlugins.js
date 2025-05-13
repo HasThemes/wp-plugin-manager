@@ -137,6 +137,12 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
       } catch (error) {
         console.error('Error installing plugin:', error);
         this.updatePluginState(plugin.slug, { isLoading: false });
+        ElNotification({
+          title: 'Error',
+          message: error.response?.data?.message || 'Failed to install plugin. Please try again.',
+          type: 'error',
+          duration: 5000
+        });
         throw error;
       }
     },
@@ -157,6 +163,12 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
           this.updatePluginState(plugin.slug, { 
             status: 'active',
             isLoading: false 
+          });
+          ElNotification({
+            title: 'Success',
+            message: 'Plugin activated successfully',
+            type: 'success',
+            duration: 3000
           });
           return true;
         }

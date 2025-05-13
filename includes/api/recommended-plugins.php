@@ -183,58 +183,90 @@ class Plugins extends \WP_REST_Controller {
     }
 
     public function install_plugin($request) {
+        try {
+            $nonce = $request->get_param('nonce');
+            if (!wp_verify_nonce($nonce, 'wp_rest')) {
+                return new \WP_Error('rest_forbidden', __('Invalid nonce.'), ['status' => 403]);
+            }
 
-        // Nonce check is handled by WordPress REST API
+            if (!current_user_can('install_plugins')) {
+                return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to install plugins.'), ['status' => 403]);
+            }
 
-        if (!current_user_can('install_plugins')) {
-            return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to install plugins.'), ['status' => 403]);
+            $slug = $request->get_param('slug');
+            
+            if (empty($slug)) {
+                return new \WP_Error('missing_slug', __('Plugin slug is required.'));
+            }
+
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+            require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+            require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+            require_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+
+            // Set filesystem method to direct
+            add_filter('filesystem_method', function() { return 'direct'; });
+            WP_Filesystem();
+
+            // Verify we can write to the plugins directory
+            $plugins_dir = WP_PLUGIN_DIR;
+            if (!is_writable($plugins_dir)) {
+                error_log('Plugin directory is not writable: ' . $plugins_dir);
+                return new \WP_Error('fs_permission_error', __('Plugin directory is not writable.'));
+            }
+
+            // Get plugin information
+            $api = plugins_api('plugin_information', [
+                'slug' => $slug,
+                'fields' => [
+                    'short_description' => false,
+                    'sections' => false,
+                    'requires' => false,
+                    'rating' => false,
+                    'ratings' => false,
+                    'downloaded' => false,
+                    'last_updated' => false,
+                    'added' => false,
+                    'tags' => false,
+                    'compatibility' => false,
+                    'homepage' => false,
+                    'donate_link' => false,
+                ],
+            ]);
+
+            if (is_wp_error($api)) {
+                return new \WP_Error('plugin_api_error', $api->get_error_message());
+            }
+
+            $skin = new \WP_Ajax_Upgrader_Skin();
+            $upgrader = new \Plugin_Upgrader($skin);
+            $installed = $upgrader->install($api->download_link);
+
+            if (is_wp_error($installed)) {
+                error_log('Plugin installation error: ' . $installed->get_error_message());
+                return new \WP_Error('installation_failed', $installed->get_error_message());
+            }
+
+            if ($skin->get_errors()->has_errors()) {
+                $error_messages = $skin->get_error_messages();
+                error_log('Plugin installation skin errors: ' . print_r($error_messages, true));
+                return new \WP_Error('installation_failed', implode(', ', $error_messages));
+            }
+
+            if (is_null($installed) || !$installed) {
+                error_log('Plugin installation failed without specific error');
+                return new \WP_Error('installation_failed', __('Installation failed for an unknown reason.'));
+            }
+
+            return [
+                'success' => true,
+                'message' => __('Plugin installed successfully.')
+            ];
+        } catch (\Exception $e) {
+            error_log('Plugin installation exception: ' . $e->getMessage());
+            return new \WP_Error('installation_failed', $e->getMessage());
         }
-
-        $slug = $request->get_param('slug');
-        
-        if (empty($slug)) {
-            return new \WP_Error('missing_slug', __('Plugin slug is required.'));
-        }
-
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-        require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-        require_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
-
-        // Get plugin information
-        $api = plugins_api('plugin_information', [
-            'slug' => $slug,
-            'fields' => [
-                'short_description' => false,
-                'sections' => false,
-                'requires' => false,
-                'rating' => false,
-                'ratings' => false,
-                'downloaded' => false,
-                'last_updated' => false,
-                'added' => false,
-                'tags' => false,
-                'compatibility' => false,
-                'homepage' => false,
-                'donate_link' => false,
-            ],
-        ]);
-
-        if (is_wp_error($api)) {
-            return new \WP_Error('plugin_api_error', $api->get_error_message());
-        }
-
-        $upgrader = new \Plugin_Upgrader(new \WP_Ajax_Upgrader_Skin());
-        $installed = $upgrader->install($api->download_link);
-
-        if (is_wp_error($installed)) {
-            return new \WP_Error('installation_failed', $installed->get_error_message());
-        }
-
-        return [
-            'success' => true,
-            'message' => __('Plugin installed successfully.')
-        ];
     }
 
     public function activate_plugin($request) {
