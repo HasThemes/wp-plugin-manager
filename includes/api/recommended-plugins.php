@@ -80,7 +80,7 @@ class Plugins extends \WP_REST_Controller {
     public function get_plugins_info($request) {
 
         $nonce = $request->get_param('nonce');
-        if ( ! wp_verify_nonce( $nonce, 'woolentor_verifynonce' ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
             return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to activate plugins.'), ['status' => 403]);
         }
 
@@ -92,7 +92,7 @@ class Plugins extends \WP_REST_Controller {
         $slugs = explode(',', $request->get_param('slugs'));
         $plugins_data = [];
 
-        $transient_var = 'woolentor_plugins_list_' . implode(',', $slugs);
+        $transient_var = 'htpm_plugins_list_' . implode(',', $slugs);
     	$org_plugins_list = get_transient( $transient_var );
 
         if ( $org_plugins_list ) {
@@ -163,7 +163,7 @@ class Plugins extends \WP_REST_Controller {
 
     public function get_plugins_status($request) {
         $nonce = $request->get_param('nonce');
-        if ( ! wp_verify_nonce( $nonce, 'woolentor_verifynonce' ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
             return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to activate plugins.dsds:'.$nonce), ['status' => 403]);
         }
 
@@ -187,7 +187,7 @@ class Plugins extends \WP_REST_Controller {
     public function install_plugin($request) {
 
         $nonce = $request->get_param('nonce');
-        if ( ! wp_verify_nonce( $nonce, 'woolentor_verifynonce' ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
             return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to activate plugins.'), ['status' => 403]);
         }
 
@@ -245,7 +245,7 @@ class Plugins extends \WP_REST_Controller {
     public function activate_plugin($request) {
 
         $nonce = $request->get_param('nonce');
-        if ( ! wp_verify_nonce( $nonce, 'woolentor_verifynonce' ) ) {
+        if ( ! wp_verify_nonce( $nonce, 'wp_rest' ) ) {
             return new \WP_Error('rest_forbidden', __('Sorry, you are not allowed to activate plugins.'), ['status' => 403]);
         }
 

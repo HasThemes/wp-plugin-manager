@@ -25,7 +25,7 @@
       </div>
 
       <PluginGrid 
-        :plugin-list="currentTabPlugins"
+        :plugin-list="pluginList"
         :is-loading="loading"
         :plugin-states="PLUGIN_STATES"
         :get-plugin-button-text="getPluginButtonText"
@@ -120,7 +120,7 @@ const pluginList = ref([
                 name: "JustTables – WooCommerce Product Table",
                 slug: 'just-tables',
                 description: "JustTables is an incredible WordPress plugin that lets you showcase all your WooCommerce products in a sortable and filterable table view.",
-                status: 'inactive',
+                status: 'active',
                 isLoading: false,
                 icon: null,
             },

@@ -49,7 +49,7 @@ export const usePluginManager = () => {
 
             const response = await Api.post('/htpm/v1/install-plugin', {
                 slug: plugin.slug,
-                nonce: woolentorOptions.verifynonce
+                nonce: HTPMM?.nonce
             })
 
             if (response.data.success) {
@@ -72,7 +72,7 @@ export const usePluginManager = () => {
 
             const response = await Api.post('/htpm/v1/activate-plugin', {
                 slug: plugin.slug,
-                nonce: woolentorOptions.verifynonce
+                nonce: HTPMM?.nonce
             })
 
             if (response.data.success) {
@@ -126,7 +126,7 @@ export const usePluginManager = () => {
             const response = await Api.get('/htpm/v1/plugins-status', {
                 params: {
                     plugins: Array.isArray(pluginSlugs) ? pluginSlugs.join(',') : pluginSlugs,
-                    nonce: woolentorOptions.verifynonce
+                    nonce: HTPMM?.nonce
                 }
             })
 
@@ -177,7 +177,7 @@ export const usePluginManager = () => {
             const response = await Api.get('/htpm/v1/plugins-info', {
                 params: { 
                     slugs, 
-                    nonce: woolentorOptions.verifynonce
+                    nonce: HTPMM?.nonce
                 }
             })
 
