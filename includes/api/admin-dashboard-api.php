@@ -45,6 +45,15 @@ function htpm_register_rest_routes() {
         }
     ]);
     
+    // Get sidebar content endpoint
+    register_rest_route('htpm/v1', '/sidebar', [
+        'methods' => 'GET',
+        'callback' => 'htpm_get_sidebar_content',
+        'permission_callback' => function() {
+            return current_user_can('activate_plugins');
+        }
+    ]);
+
     // Get pages endpoint
     register_rest_route('htpm/v1', '/pages', [
         'methods' => 'GET',
@@ -89,11 +98,12 @@ function htpm_register_rest_routes() {
         }
     ]);
     
-    // Get sidebar content endpoint
     register_rest_route('htpm/v1', '/sidebar-content', [
-        'methods' => WP_REST_Server::READABLE,
+        'methods' => 'GET',
         'callback' => 'htpm_get_sidebar_content',
-        'permission_callback' => '__return_true',
+        'permission_callback' => function() {
+            return current_user_can('activate_plugins');
+        }
     ]);
     // Get dashboard  Settings endpoint
     // register_rest_route('htpm/v1', '/get-dashboard-settings', [
@@ -608,7 +618,7 @@ function htpm_get_post_type_items($request) {
  */
 function htpm_get_sidebar_content() {
     try {
-        $template_path = plugin_dir_path(__DIR__) . '/includes/templates/sidebar-banner.php';
+        $template_path = HTPM_ROOT_DIR . '/includes/templates/sidebar-banner.php';
         
         if (!file_exists($template_path)) {
             error_log('WP Plugin Manager - Template not found: ' . $template_path);

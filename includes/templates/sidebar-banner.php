@@ -4,7 +4,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$plugin_url = plugin_dir_url(dirname(__DIR__));
+// Use the constant for consistent URL path
+$plugin_url = HTPM_ROOT_URL;
 ?>
 <div class="htpm-sidebar-adds-area">
     <div class="htpm-opt-get-pro htpm-opt-sidebar-item">
@@ -22,7 +23,7 @@ $plugin_url = plugin_dir_url(dirname(__DIR__));
                 <li><?php esc_html_e('Much More...', 'wp-plugin-manager')?></li>
             </ul>
             <a href="https://hasthemes.com/wp-plugin-manager-pro" class="upgrade-button" target="_blank">
-                <img src="<?php echo esc_url($plugin_url . 'assets/images/get-pro.png'); ?>" alt="<?php echo esc_attr__('Upgrade to Pro', 'wp-plugin-manager')?>">
+                <img src="<?php echo esc_url($plugin_url . '/assets/images/get-pro.png'); ?>" alt="<?php echo esc_attr__('Upgrade to Pro', 'wp-plugin-manager')?>">
                 <?php esc_html_e('Upgrade To PRO', 'wp-plugin-manager')?>
             </a>
         </div>
@@ -30,7 +31,7 @@ $plugin_url = plugin_dir_url(dirname(__DIR__));
 
     <div class="htoption-rating-area htpm-opt-sidebar-item">
         <div class="htoption-rating-icon">
-            <img src="<?php echo esc_url($plugin_url . 'assets/images/rating.png'); ?>" alt="<?php echo esc_attr__('Rating icon', 'wp-plugin-manager'); ?>">
+            <img src="<?php echo esc_url($plugin_url . '/assets/images/rating.png'); ?>" alt="<?php echo esc_attr__('Rating icon', 'wp-plugin-manager'); ?>">
         </div>
         <div class="htoption-rating-intro">
         <h3 class="htpm-rating-title"><?php esc_html_e( 'Have We Fully Met Your Expectations?', 'wp-plugin-manager' ) ?></h3>

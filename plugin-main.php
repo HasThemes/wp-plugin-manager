@@ -62,9 +62,10 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
-        include_once( HTPM_ROOT_DIR . '/includes/admin-dashboard-api.php');
-        include_once( HTPM_ROOT_DIR . '/includes/changelog-api.php');
-        include_once( HTPM_ROOT_DIR . '/includes/api/recommended-plugins.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/admin-dashboard-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/changelog-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/recommended-plugins-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/admin-settings.php');
 
         // Initialize REST API endpoints
         add_action('rest_api_init', function() {
@@ -153,8 +154,6 @@ class HTPM_Main {
             include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
             include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
             include_once( HTPM_ROOT_DIR . '/includes/HTPM_Trial.php');
-            include_once( HTPM_ROOT_DIR . '/includes/admin-dashboard-api.php');
-            include_once( HTPM_ROOT_DIR . '/includes/admin-settings.php');
         }
     }
 
