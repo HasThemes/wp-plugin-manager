@@ -407,4 +407,23 @@ class HTPM_Main {
     }
 
 }
-HTPM_Main::instance();
+/**
+ * Returns the main instance of WP Plugin Manager
+ *
+ * @since 1.0.0
+ * @return HTPM_Main Main instance of the plugin
+ */
+function htpm() {
+    if( function_exists( 'is_plugin_active' ) && is_plugin_active( 'wp-plugin-manager-pro/plugin-main.php' ) ){
+        deactivate_plugins( 'wp-plugin-manager/plugin-main.php' );
+        return;
+    }
+
+    // Only initialize if pro version class doesn't exist
+    if (!class_exists('HTPMPRO_Main') && !function_exists('htpmpro')) {
+        return HTPM_Main::instance();
+    }
+}
+
+// Initialize the plugin
+htpm();
