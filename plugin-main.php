@@ -414,8 +414,7 @@ class HTPM_Main {
  */
 function htpm() {
     if( function_exists( 'is_plugin_active' ) && is_plugin_active( 'wp-plugin-manager-pro/plugin-main.php' ) ){
-        deactivate_plugins( 'wp-plugin-manager/plugin-main.php' );
-        return;
+        deactivate_plugins( 'wp-plugin-manager-pro/plugin-main.php' );
     }
 
     // Only initialize if pro version class doesn't exist
