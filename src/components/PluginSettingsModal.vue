@@ -7,7 +7,8 @@
     class="plugin-settings-modal"
     destroy-on-close
   >
-    <el-form label-position="top" v-loading="loading">
+    <ModalSettingsSkeleton v-if="loading" />
+    <el-form label-position="top" v-else>
       <!-- Configuration settings for the plugin - Always visible now -->
       <div class="form-field">
         <label>{{ modalSettingsFields?.device_types?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{proLabel}}</span></label>
@@ -175,6 +176,7 @@ import { ElMessage } from 'element-plus'
 import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
 import { usePluginStore } from '../store/plugins'
 import ProModal from './ProModal.vue'
+import ModalSettingsSkeleton from '../skeleton/ModalSettingsSkeleton.vue'
 
 const props = defineProps({
   visible: Boolean,
