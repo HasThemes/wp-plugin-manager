@@ -164,16 +164,16 @@ class HTPM_Main {
         if( $hook_suffix ==  'toplevel_page_htpm-options' ){
             // Add REST API data for JavaScript
             
-            wp_enqueue_style( 'wp-jquery-ui-dialog' );
-            wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css', [], HTPM_PLUGIN_VERSION );
+            //wp_enqueue_style( 'wp-jquery-ui-dialog' );
+            //wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css', [], HTPM_PLUGIN_VERSION );
             wp_enqueue_style( 'htpm-admin', HTPM_ROOT_URL . '/assets/css/admin-style.css', [], HTPM_PLUGIN_VERSION );
-            wp_enqueue_style( 'jquery-ui', HTPM_ROOT_URL . '/assets/css/jquery-ui.css', [], HTPM_PLUGIN_VERSION );
-            wp_enqueue_style( 'admin-options', HTPM_ROOT_URL . '/assets/css/admin-options.css', [], HTPM_PLUGIN_VERSION );
+           // wp_enqueue_style( 'jquery-ui', HTPM_ROOT_URL . '/assets/css/jquery-ui.css', [], HTPM_PLUGIN_VERSION );
+            //wp_enqueue_style( 'admin-options', HTPM_ROOT_URL . '/assets/css/admin-options.css', [], HTPM_PLUGIN_VERSION );
     
             // wp core scripts
-            wp_enqueue_script( 'jquery-ui-dialog' );
-            wp_enqueue_script( 'jquery-ui-accordion');
-            wp_enqueue_script( 'select2', HTPM_ROOT_URL . '/assets/js/select2.min.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
+            //wp_enqueue_script( 'jquery-ui-dialog' );
+            //wp_enqueue_script( 'jquery-ui-accordion');
+            //wp_enqueue_script( 'select2', HTPM_ROOT_URL . '/assets/js/select2.min.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
             wp_enqueue_script( 'htpm-admin', HTPM_ROOT_URL . '/assets/js/admin.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
             // wp_enqueue_script( 'install-manager', HTPM_ROOT_URL . '/assets/js/install_manager.js', array('jquery', 'wp-util', 'updates'), HTPM_PLUGIN_VERSION, true );
             
