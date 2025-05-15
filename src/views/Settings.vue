@@ -148,7 +148,7 @@ const loadSavedSettings = async () => {
     // settingsPagesSettings.value.postTypes = settingsPagesSettings.value.postTypes.filter(type => type !== 'page' && type !== 'post');
     // Handle other settings with default values
     settingsPagesSettings.value.htpm_load_posts = parseInt(savedSettings?.htpm_load_posts) || 150;
-    settingsPagesSettings.value.showThumbnails = savedSettings?.showThumbnails ?? true;
+    settingsPagesSettings.value.showThumbnails = savedSettings?.showThumbnails ?? false;
     settingsPagesSettings.value.itemsPerPage = parseInt(savedSettings?.itemsPerPage) || 10;
       
   } catch (error) {

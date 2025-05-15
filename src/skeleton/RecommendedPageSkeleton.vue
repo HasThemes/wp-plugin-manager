@@ -7,7 +7,7 @@
 
     <el-row :gutter="20" class="plugin-grid">
       <el-col :xs="24" :sm="12" v-for="n in 4" :key="n">
-        <el-card class="plugin-card-skeleton" shadow="hover">
+        <el-card class="plugin-card-skeleton" shadow="hover" style="box-shadow: none;">
           <el-skeleton animated>
             <template #template>
               <div class="card-body">

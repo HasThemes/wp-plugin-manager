@@ -161,8 +161,8 @@ class WP_Plugin_Manager_Settings {
                     'default' => false,
                     'desc' => __('Default: True. Adjust if you have more posts to manage.', 'wp-plugin-manager'),
                     'type' => 'checkbox',
-                    'isPro' => true,
-                    'proBadge' => true,
+                    'isPro' => false,
+                    'proBadge' => false,
                 ],
                 'items_per_page' => [
                     'label' => __('Items per Page', 'wp-plugin-manager'),

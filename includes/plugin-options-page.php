@@ -140,18 +140,17 @@ class HTPM_Option_Page {
 		if ( !current_user_can( 'manage_options' ) ) {
 			return;
 		}
-
-		// Add styles to hide default WordPress notices
-		echo '<style>
-			.wrap > .notice { display: none !important; }
-			.wrap > #message { display: none !important; }
-			.wrap > h1 { display: none !important; }
-			#wpbody-content > .notice { display: none !important; }
-			#wpbody-content > #message { display: none !important; }
-		</style>';
-
+		do_action('htpm_admin_notices');
 		// Render Vue app container
-		echo '<div class="wrap"><div id="htpm-app"></div></div>';
+		echo '<div id="htpm-app"></div>';
+				//Add styles to hide default WordPress notices
+			// 	echo '<style>
+			// 	.wrap > .notice { display: none !important; }
+			// 	.wrap > #message { display: none !important; }
+			// 	.wrap > h1 { display: none !important; }
+			// 	#wpbody-content > .notice { display: none !important; }
+			// 	#wpbody-content > #message { display: none !important; }
+			// </style>';
 	}
 
 }

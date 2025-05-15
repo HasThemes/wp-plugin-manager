@@ -2,7 +2,7 @@
 <template>
   <div class="htpm-plugins">
     <div class="htpm-plugins-header">
-      <h2>Manage Plugins</h2>
+      <h3>Manage Plugins</h3>
       <div class="htpm-plugins-actions">
         <el-input
           v-model="searchQuery"
@@ -49,6 +49,7 @@
             cancel-button-text="Review Settings"
             confirm-button-type="primary"
             cancel-button-type="default"
+            placement="top"
             :icon="QuestionFilled"
             @confirm="handleOptimizeNow(plugin)"
             @cancel="openSettings(plugin)"
@@ -343,7 +344,7 @@ watch(() => store.plugins, async (newPlugins) => {
     align-items: center;
     margin-bottom: 20px;
 
-    h2 {
+    h3 {
       margin: 0;
       font-size: 18px;
       font-weight: 600;

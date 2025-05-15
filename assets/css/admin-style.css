@@ -11,6 +11,9 @@
 	--htpm-border: #8c8f94;
 	--htpm-border2: #DCDCDC;
 }
+.toplevel_page_htpm-options {
+    background: #f5f7fa;
+}
 
 .el-input input,.el-input input:focus,
 .el-select__input-wrapper input,
