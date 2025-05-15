@@ -75,7 +75,7 @@
                 <option value="100">100 {{ labels_texts?.items }}</option>
               </select>
             </div>
-            <p class="setting-description">{{ labels_texts?.items_per_page_desc }}</p>
+            <p class="setting-description" v-if="labels_texts?.items_per_page_desc">{{ labels_texts?.items_per_page_desc }}</p>
           </div>
         </div>
       </div>

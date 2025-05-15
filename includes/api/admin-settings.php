@@ -174,7 +174,7 @@ class WP_Plugin_Manager_Settings {
             'post_types_settings' => __('Post Types Settings', 'wp-plugin-manager'),
             'display_settings' => __('Display Settings', 'wp-plugin-manager'),
             'show_thumbnails' => __('Show Plugin Thumbnails', 'wp-plugin-manager'),
-            'show_thumbnails_desc' => __('Enable this option to display plugin thumbnails in the plugin list.', 'wp-plugin-manager'),
+            'show_thumbnails_desc' => __('Enable this option to display plugin thumbnails in the plugin list. (After enabling, you need to refresh the page to see the changes.)', 'wp-plugin-manager'),
             'items_per_page' => __('Items Per Page in Plugin List', 'wp-plugin-manager'),
             'items_per_page_desc' => __('Select how many plugins to display per page in the manage plugin list.', 'wp-plugin-manager'),
             'items' => __('items', 'wp-plugin-manager'),
