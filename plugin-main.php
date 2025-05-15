@@ -62,16 +62,6 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
-        include_once( HTPM_ROOT_DIR . '/includes/api/admin-dashboard-api.php');
-        include_once( HTPM_ROOT_DIR . '/includes/api/changelog-api.php');
-        include_once( HTPM_ROOT_DIR . '/includes/api/recommended-plugins-api.php');
-        include_once( HTPM_ROOT_DIR . '/includes/api/admin-settings.php');
-
-        // Initialize REST API endpoints
-        add_action('rest_api_init', function() {
-            $plugins_api = new \HTPM\Api\Plugins();
-            $plugins_api->register_routes();
-        });
 
     }
 
@@ -155,6 +145,16 @@ class HTPM_Main {
             include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
             include_once( HTPM_ROOT_DIR . '/includes/HTPM_Trial.php');
         }
+        include_once( HTPM_ROOT_DIR . '/includes/api/admin-dashboard-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/changelog-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/recommended-plugins-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/admin-settings.php');
+
+        // Initialize REST API endpoints
+        add_action('rest_api_init', function() {
+            $plugins_api = new \HTPM\Api\Plugins();
+            $plugins_api->register_routes();
+        });
     }
 
     /**
@@ -162,20 +162,9 @@ class HTPM_Main {
      */
     function admin_scripts( $hook_suffix ) {
         if( $hook_suffix ==  'toplevel_page_htpm-options' ){
-            // Add REST API data for JavaScript
             
-            //wp_enqueue_style( 'wp-jquery-ui-dialog' );
-            //wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css', [], HTPM_PLUGIN_VERSION );
             wp_enqueue_style( 'htpm-admin', HTPM_ROOT_URL . '/assets/css/admin-style.css', [], HTPM_PLUGIN_VERSION );
-           // wp_enqueue_style( 'jquery-ui', HTPM_ROOT_URL . '/assets/css/jquery-ui.css', [], HTPM_PLUGIN_VERSION );
-            //wp_enqueue_style( 'admin-options', HTPM_ROOT_URL . '/assets/css/admin-options.css', [], HTPM_PLUGIN_VERSION );
-    
-            // wp core scripts
-            //wp_enqueue_script( 'jquery-ui-dialog' );
-            //wp_enqueue_script( 'jquery-ui-accordion');
-            //wp_enqueue_script( 'select2', HTPM_ROOT_URL . '/assets/js/select2.min.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
             wp_enqueue_script( 'htpm-admin', HTPM_ROOT_URL . '/assets/js/admin.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
-            // wp_enqueue_script( 'install-manager', HTPM_ROOT_URL . '/assets/js/install_manager.js', array('jquery', 'wp-util', 'updates'), HTPM_PLUGIN_VERSION, true );
             
             // Localize the script with new data
             $localize_data = [
@@ -407,22 +396,5 @@ class HTPM_Main {
     }
 
 }
-/**
- * Returns the main instance of WP Plugin Manager
- *
- * @since 1.0.0
- * @return HTPM_Main Main instance of the plugin
- */
-function htpm() {
-    if( function_exists( 'is_plugin_active' ) && is_plugin_active( 'wp-plugin-manager-pro/plugin-main.php' ) ){
-        deactivate_plugins( 'wp-plugin-manager-pro/plugin-main.php' );
-    }
 
-    // Only initialize if pro version class doesn't exist
-    if (!class_exists('HTPMPRO_Main') && !function_exists('htpmpro')) {
-        return HTPM_Main::instance();
-    }
-}
-
-// Initialize the plugin
-htpm();
+HTPM_Main::instance();
