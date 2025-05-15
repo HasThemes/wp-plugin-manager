@@ -555,7 +555,7 @@ function htpm_get_posts() {
         $result[] = [
             'id' => $post->ID,
             'title' => $post->post_title,
-            'url' => str_replace(home_url(), '', get_permalink($post->ID))
+            'url' =>get_permalink($post->ID)
         ];
     }
     
@@ -604,7 +604,7 @@ function htpm_get_post_type_items($request) {
         $result[] = [
             'id' => $item->ID,
             'title' => $item->post_title,
-            'url' => str_replace(home_url(), '', get_permalink($item->ID))
+            'url' => get_permalink($item->ID)
         ];
     }
     
