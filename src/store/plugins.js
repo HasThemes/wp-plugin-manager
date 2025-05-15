@@ -1,6 +1,6 @@
 // plugins.js - Simplified store with straightforward data loading
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import api from '../utils/axios'
 
 // Default dashboard settings
 const defaultDashboardSettings = {
@@ -11,19 +11,12 @@ const defaultDashboardSettings = {
 }
 
 // Create an axios instance with WordPress REST API base URL and nonce
-const api = axios.create({
-  baseURL: window.HTPMM?.restUrl || '/wp-json',
-  headers: {
-    'X-WP-Nonce': window.HTPMM?.nonce || '',
-    'Content-Type': 'application/json'
-  }
-})
 
 export const usePluginStore = defineStore('plugins', {
   state: () => ({
     apiBase: (window.HTPMM?.restUrl || '/wp-json').replace(/\/$/, '') + '/htpm/v1',
     plugins: [],
-    allSettings:[],
+    allSettings: window.HTPMM?.adminSettings?.allSettings || {},
     dashboardSettings: {
       htpm_dashboard_settings: { ...defaultDashboardSettings }
     },
@@ -166,8 +159,6 @@ export const usePluginStore = defineStore('plugins', {
         this.dashboardSettings = {
           htpm_dashboard_settings: newSettings
         }
-
-        console.log('Dashboard Settings:', this.dashboardSettings)
         return this.dashboardSettings
       } catch (error) {
         console.error('Error fetching dashboard settings:', error)

@@ -113,10 +113,9 @@ const showSettings = ref(false)
 const selectedPlugin = ref(null)
 const loading = ref(true)
 const plugins = ref([])
-const itemsPerPage = ref(store.allSettings?.itemsPerPage || 5)
 const pagination = reactive({
   currentPage: 1,
-  pageSize: parseInt(itemsPerPage.value),
+  pageSize: parseInt(store.allSettings?.itemsPerPage || 10),
   total: 0
 })
 const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown

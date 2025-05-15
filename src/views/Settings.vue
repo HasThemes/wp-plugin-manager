@@ -105,7 +105,6 @@ import SettingsPageSkeleton from '../skeleton/SettingsPageSkeleton.vue'
 
 const store = usePluginStore()
 const labels_texts = HTPMM.adminSettings.labels_texts
-const modalSettingsFields = HTPMM.adminSettings.modal_settings_fields
 const isPro = HTPMM.adminSettings.is_pro
 const dashboardSettings = HTPMM.adminSettings.dashboard_settings
 const proModal = ref(null)
@@ -119,8 +118,8 @@ const settingsPagesSettings = ref(
   {
     postTypes: [],
     htpm_load_posts: 150,
-    showThumbnails: true,
-    itemsPerPage: 10
+    showThumbnails: dashboardSettings?.show_thumbnails?.default,
+    itemsPerPage: dashboardSettings?.items_per_page?.default
   }
 )
 const filteredPostTypes = computed(() => {
@@ -130,33 +129,12 @@ const isLoading = ref(true)
 const newPostType = ref('')
 const availablePostTypes = ref([])
 
-// Fetch available post types
-const fetchPostTypes = async () => {
-  try {
-    const data = await store.fetchPostTypes()
-    availablePostTypes.value = data.map(type => ({
-      value: type.name,
-      label: type.label
-    }))
-    availablePostTypes.value = availablePostTypes.value.filter(type => type.value !== 'page' && type.value !== 'post')
-  } catch (error) {
-    console.error('Error fetching post types:', error)
-    ElNotification({
-      title: 'Error',
-      message: 'Failed to load post types. Please refresh the page or contact support.',
-      type: 'error',
-      duration: 5000,
-      icon: Warning
-    })
-  }
-}
-
 // Load saved settings
 const loadSavedSettings = async () => {
   isLoading.value = true
   try {
     if(store.plugins.length <=0){
-      await store.fetchPlugins()
+      //await store.fetchPlugins()
       }
    
     // First fetch post types

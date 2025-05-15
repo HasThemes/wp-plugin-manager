@@ -253,6 +253,7 @@ class HTPM_Main {
                         'dashboard_settings' => $admin_settings->get_dashboard_settings(),
                         'menu_settings' => $admin_settings->get_menu_settings(),
                         'recommendations_plugins' => $admin_settings->get_recommendations_plugins(),
+                        'allSettings' => get_option('htpm_options') ? get_option('htpm_options') : [],
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
