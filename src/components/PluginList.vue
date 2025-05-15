@@ -78,6 +78,17 @@
       </div>
     </div>
 
+    <!-- Pagination -->
+    <div class="pagination-container" v-if="!loading && filteredPlugins.length > 0">
+      <el-pagination
+        layout="total, prev, pager, next"
+        :total="pagination.total"
+        :page-size="pagination.pageSize"
+        :current-page="pagination.currentPage"
+        @current-change="handlePageChange"
+      />
+    </div>
+
     <!-- Plugin Settings Modal -->
     <plugin-settings-modal
       :visible="showSettings"
@@ -89,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, reactive } from 'vue'
 import { Search, Setting, QuestionFilled } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
@@ -102,6 +113,12 @@ const showSettings = ref(false)
 const selectedPlugin = ref(null)
 const loading = ref(true)
 const plugins = ref([])
+const itemsPerPage = ref(store.allSettings?.itemsPerPage || 5)
+const pagination = reactive({
+  currentPage: 1,
+  pageSize: parseInt(itemsPerPage.value),
+  total: 0
+})
 const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
 
 // Watch for plugins and update local list
@@ -144,11 +161,18 @@ watch(() => store.plugins, async (newPlugins) => {
       const activePlugins = plugins.value.filter(plugin => plugin.wpActive)
       
       // Then apply search filter if there's a query
-      if (!searchQuery.value) return activePlugins
+      const searchFilteredPlugins = !searchQuery.value 
+        ? activePlugins 
+        : activePlugins.filter(plugin => 
+            plugin.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+          )
       
-      return activePlugins.filter(plugin => 
-        plugin.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-      )
+      // Update total for pagination
+      pagination.total = searchFilteredPlugins.length
+      
+      // Apply pagination
+      const startIndex = (pagination.currentPage - 1) * pagination.pageSize
+      return searchFilteredPlugins.slice(startIndex, startIndex + pagination.pageSize)
     })
 
     // Handle the toggle click
@@ -300,7 +324,10 @@ watch(() => store.plugins, async (newPlugins) => {
       }
     }
 
-
+    // Handle page change for pagination
+    const handlePageChange = (page) => {
+      pagination.currentPage = page
+    }
 
 </script>
 
@@ -438,6 +465,44 @@ watch(() => store.plugins, async (newPlugins) => {
 
   .el-input {
     width: 200px;
+  }
+
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    
+    .el-pagination {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      .el-pager {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        
+        li {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 32px;
+          height: 32px;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &.is-active {
+            background-color: var(--el-color-primary);
+            color: white;
+          }
+          
+          &:hover:not(.is-active) {
+            background-color: #f0f2f5;
+          }
+        }
+      }
+    }
   }
 }
 
