@@ -47,7 +47,7 @@
       <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
         <label>{{ labels_texts?.select_post_types }}</label>
         <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange" style="display: flex;gap: 10px;">
-          <el-checkbox v-for="postType in filteredPostTypes" :key="postType.name" :label="postType.name" :disabled="!isPro" @click="openProModal">
+          <el-checkbox v-for="postType in filteredPostTypes" :key="postType.name" :label="postType.name" :disabled="!isPro" @click="!isPro && openProModal()">
             {{ postType.label }}
           </el-checkbox>
         </el-checkbox-group>
@@ -123,7 +123,7 @@
         <div class="form-field">
           <label>{{ labels_texts?.uri_conditions }}</label>
           <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
-            <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type" :disabled="!isPro" @click="openProModal">
+            <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type" :disabled="!isPro" @click=" !isPro && openProModal()">
               <el-option label="URI Equals" value="uri_equals" />
               <el-option label="URI Not Equals" value="uri_not_equals" />
               <el-option label="URI Contains" value="uri_contains" />
@@ -134,7 +134,7 @@
               placeholder="e.g: contact-us or leave blank for homepage"
               class="condition-value"
               :disabled="!isPro"
-              @click="openProModal"
+              @click="!isPro && openProModal()"
             />
             <div class="condition-actions">
               <el-button 
@@ -442,7 +442,7 @@ const getCustomPostTypeItems = (postType) => {
 
 // Add new URI condition
 const addCondition = () => {
-  if (!isPro.value) {
+  if (!isPro) {
     proModal.value?.show();
     return;
   }

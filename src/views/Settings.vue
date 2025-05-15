@@ -37,10 +37,10 @@
               <input type="number" v-model="settingsPagesSettings.htpm_load_posts" class="number-input" :min="dashboardSettings.post_typs_settings.load_posts.min" :max="dashboardSettings.post_typs_settings.load_posts.max" :disabled="dashboardSettings.post_typs_settings.load_posts.isPro">
               <button class="number-btn" @click="incrementPosts">+</button>
             </div>
-            <p class="setting-description">{{ dashboardSettings.post_typs_settings.load_posts.desc }}</p>
+            <p class="setting-description" v-if="dashboardSettings.post_typs_settings.load_posts.desc">{{ getTextFromHtml( dashboardSettings.post_typs_settings.load_posts.desc ) }}</p>
           </div>
 
-          <div class="info-note">
+          <div class="info-note" v-if="labels_texts?.save_settings_note">
             <el-icon><InfoFilled /></el-icon>
             {{ labels_texts?.save_settings_note }}
           </div>
@@ -75,7 +75,7 @@
                 <option value="100">100 {{ labels_texts?.items }}</option>
               </select>
             </div>
-            <p class="setting-description" v-if="labels_texts?.items_per_page_desc">{{ labels_texts?.items_per_page_desc }}</p>
+            <p class="setting-description" v-if="labels_texts?.items_per_page_desc">{{ getTextFromHtml(labels_texts?.items_per_page_desc) }}</p>
           </div>
         </div>
       </div>
@@ -102,6 +102,7 @@ import { ElMessage, ElNotification } from 'element-plus'
 import { usePluginStore } from '../store/plugins'
 import ProModal from '../components/ProModal.vue'
 import SettingsPageSkeleton from '../skeleton/SettingsPageSkeleton.vue'
+import { getTextFromHtml } from '../utils/helpers'
 
 const store = usePluginStore()
 const labels_texts = HTPMM.adminSettings.labels_texts

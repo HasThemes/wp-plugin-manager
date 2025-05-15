@@ -79,7 +79,7 @@
     </div>
 
     <!-- Pagination -->
-    <div class="pagination-container" v-if="!loading && filteredPlugins.length > 0">
+    <div class="pagination-container" v-if="!loading && pagination.total > pagination.pageSize">
       <el-pagination
         layout="total, prev, pager, next"
         :total="pagination.total"

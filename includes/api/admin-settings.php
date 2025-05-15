@@ -202,7 +202,7 @@ class WP_Plugin_Manager_Settings {
             'add_post_type' => __('Add post type...', 'wp-plugin-manager'),
             'number_of_posts' => __('Number of Posts to Load', 'wp-plugin-manager'),
             'number_of_posts_desc' => __('Default: 150 posts. Adjust if you have more posts to manage.', 'wp-plugin-manager'),
-            'save_settings_note' => __('Note: Make sure to save settings to see options for each plugin for the selected post types.', 'wp-plugin-manager'),
+            'save_settings_note' => '',
         ];
     }
 
