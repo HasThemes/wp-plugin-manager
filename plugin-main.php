@@ -192,6 +192,7 @@ class HTPM_Main {
             wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
             
             $admin_settings = WP_Plugin_Manager_Settings::get_instance();
+
             if( is_admin() ){
                 $localize_data = [
                     'ajaxurl'          => admin_url( 'admin-ajax.php' ),
@@ -243,11 +244,13 @@ class HTPM_Main {
                         'menu_settings' => $admin_settings->get_menu_settings(),
                         'recommendations_plugins' => $admin_settings->get_recommendations_plugins(),
                         'allSettings' => get_option('htpm_options') ? get_option('htpm_options') : [],
+                        'plugins_info' => $admin_settings->get_plugins_info(),
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
             }
-    
+            
+            //var_dump($localize_data['adminSettings']['plugins_info']);
         }
     }
 

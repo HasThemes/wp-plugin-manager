@@ -53,10 +53,11 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
           const slugs = tab.plugins.map(p => p.slug);
           
           // Get both plugin info and status in parallel
-          const [pluginsResponse, statusResponse] = await Promise.all([
-            api.get('/htpm/v1/plugins-info', {
-              params: { slugs: slugs.join(',') }
-            }),
+          const pluginsResponse = window.HTPMM?.adminSettings?.plugins_info;
+          const [statusResponse] = await Promise.all([
+            // api.get('/htpm/v1/plugins-info', {
+            //   params: { slugs: slugs.join(',') }
+            // }),
             api.get('/htpm/v1/plugins-status', {
               params: {
                 plugins: slugs.join(','),
@@ -65,7 +66,7 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
             })
           ]);
 
-          if (pluginsResponse.data.success && pluginsResponse.data.plugins) {
+          if (pluginsResponse.success && pluginsResponse.plugins) {
             // Create a map of plugin statuses
             const statusMap = {};
             if (statusResponse.data.success && statusResponse.data.plugins) {
@@ -77,7 +78,7 @@ export const useRecommendedPluginsStore = defineStore('recommendedPlugins', {
             // Merge WordPress.org data with our plugin data and status
             tab.plugins = tab.plugins.map(plugin => ({
               ...plugin,
-              ...pluginsResponse.data.plugins[plugin.slug],
+              ...pluginsResponse.plugins[plugin.slug],
               status: statusMap[plugin.slug] || 'not_installed',
               isLoading: false
             }));

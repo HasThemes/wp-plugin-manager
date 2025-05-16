@@ -460,5 +460,16 @@ class WP_Plugin_Manager_Settings {
     
         return $recommendations_plugins;
     }
+
+    public function get_plugins_info(){
+        $slugs = $this->get_recommendations_plugins();
+        
+        //$slugs = array_column($slugs[0]['plugins'], 'slug');
+        $all_slugs = [];
+        foreach ($slugs as $slug_array) {
+            $all_slugs = array_merge($all_slugs, array_column($slug_array['plugins'], 'slug'));
+        }
+        return get_plugins_info($all_slugs);
+    }
     
 }

@@ -159,3 +159,67 @@ function htpm_get_all_post_types($exclude=[]){
     }
     return $result;
 }
+//$slugs = ['elementor'];
+function get_plugins_info($slugs) {
+
+    if (!function_exists('plugins_api')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+    }
+
+    foreach ($slugs as $slug) {
+        $plugin_info = plugins_api('plugin_information', [
+            'slug' => trim($slug),
+            'fields' => [
+                'short_description' => true,
+                'sections' => false,
+                'requires' => true,
+                'rating' => true,
+                'ratings' => true,
+                'downloaded' => true,
+                'last_updated' => true,
+                'added' => true,
+                'tags' => true,
+                'compatibility' => true,
+                'homepage' => true,
+                'versions' => false,
+                'donate_link' => true,
+                'reviews' => false,
+                'banners' => true,
+                'icons' => true,
+                'active_installs' => true,
+                'author' => true,
+                'author_profile' => true,
+            ]
+        ]);
+
+        if (!is_wp_error($plugin_info)) {
+            $plugins_data[$slug] = [
+                'name' => $plugin_info->name,
+                'slug' => $plugin_info->slug,
+                'version' => $plugin_info->version,
+                'author' => $plugin_info->author,
+                'author_profile' => $plugin_info->author_profile,
+                'requires' => $plugin_info->requires,
+                'tested' => $plugin_info->tested,
+                'rating' => $plugin_info->rating,
+                'num_ratings' => $plugin_info->num_ratings,
+                'active_installs' => $plugin_info->active_installs,
+                'last_updated' => $plugin_info->last_updated,
+                'added' => $plugin_info->added,
+                'homepage' => $plugin_info->homepage,
+                'download_link' => $plugin_info->download_link,
+                'short_description' => $plugin_info->short_description,
+                'tags' => $plugin_info->tags,
+                'icons' => $plugin_info->icons,
+                'banners' => $plugin_info->banners
+            ];
+        }
+    }
+
+    return [
+        'success' => true,
+        'plugins' => $plugins_data
+    ];
+}
+
+//var_dump(get_plugins_info($slugs));
