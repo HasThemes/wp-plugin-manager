@@ -1,6 +1,6 @@
 === WP Plugin Manager - Deactivate plugins per page  ===
-Contributors: hasthemes, htplugins, devitemsllc, tarekht, zenaulislam, aslamhasib, alberuni-azad
-Tags: WP Plugin Manager, Disable plugin, deactivate plugin, plugin manager, performance
+Contributors: hasthemes, htplugins, devitemsllc, tarekht, zenaulislam, aslamhasib, alberuni-azad, madhusudandev
+Tags: plugin manager, disable plugins, performance optimization, selective loading, wordpress speed
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 5.4
@@ -86,6 +86,10 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+
+= Version: 1.3.2 Date: 19 May 2025 =
+* Improved: UI/UX for better user experience.
+* Tested: Compatibility with the latest version of WordPress.
 
 = Version: 1.3.1 Date: 17 April 2025 =
 * Updated: Language translation .pot file.

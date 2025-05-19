@@ -107,9 +107,11 @@ import { ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
 import PluginListSkeleton from '../skeleton/PluginListSkeleton.vue'
+import { debounce } from 'lodash-es'
 
 const store = usePluginStore()
 const searchQuery = ref('')
+const debouncedSearchQuery = ref('')
 const showSettings = ref(false)
 const selectedPlugin = ref(null)
 const loading = ref(true)
@@ -120,6 +122,16 @@ const pagination = reactive({
   total: 0
 })
 const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
+
+// Create debounced search handler
+const updateDebouncedSearch = debounce((value) => {
+  debouncedSearchQuery.value = value
+}, 300)
+
+// Watch for search query changes
+watch(searchQuery, (newValue) => {
+  updateDebouncedSearch(newValue)
+})
 
 // Watch for plugins and update local list
 watch(() => store.plugins, async (newPlugins) => {
@@ -161,10 +173,10 @@ watch(() => store.plugins, async (newPlugins) => {
       const activePlugins = plugins.value.filter(plugin => plugin.wpActive)
       
       // Then apply search filter if there's a query
-      const searchFilteredPlugins = !searchQuery.value 
+      const searchFilteredPlugins = !debouncedSearchQuery.value 
         ? activePlugins 
         : activePlugins.filter(plugin => 
-            plugin.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+            plugin.name.toLowerCase().includes(debouncedSearchQuery.value.toLowerCase())
           )
       
       // Update total for pagination

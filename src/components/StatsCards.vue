@@ -3,7 +3,7 @@
     <div class="stats-row">
       <template v-for="(stat, index) in statsList" :key="index">
         <template v-if="!isLoading">
-          <div :class="['stat-card', stat.type]">
+          <div :class="['stat-card', stat.type]" @click="handleStatClick(stat.key)">
             <div class="icon-box">
               <el-icon><component :is="stat.icon" /></el-icon>
             </div>
@@ -56,6 +56,28 @@ const stats = computed(() => ({
   inactivePlugins: store.inactivePlugins.length
 }))
 
+const handleStatClick = (statKey) => {
+  if(statKey === 'updateAvailable') {
+    window.open(`${store.adminURL}plugins.php?plugin_status=upgrade`, '_blank');
+    //window.location.href = `${store.adminURL}plugins.php?plugin_status=upgrade`
+    return
+  }
+  if(statKey === 'inactivePlugins') {
+    window.open(`${store.adminURL}plugins.php?plugin_status=inactive`, '_blank');
+    return
+  }
+  if(statKey === 'activePlugins') {
+    window.open(`${store.adminURL}plugins.php?plugin_status=active`, '_blank');
+   // window.location.href = `${store.adminURL}plugins.php?plugin_status=active`
+    return
+  } else {
+    window.open(`${store.adminURL}plugins.php`, '_blank');
+    //window.location.href = `${store.adminURL}plugins.php`
+    return
+  }
+
+}
+
 // Watch for changes in plugins store and update loading state
 watch(() => store.plugins, (newPlugins) => {
   isLoading.value = !newPlugins || newPlugins.length === 0
@@ -93,6 +115,7 @@ const statsList = [
   min-height: 55px;
   flex: 1;
   min-width: 150px;
+  cursor: pointer;
 }
 
 .skeleton-content {

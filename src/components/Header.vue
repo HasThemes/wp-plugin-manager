@@ -143,16 +143,6 @@ const openProModal = () => {
         color: var(--el-color-primary);
       }
     }
-
-    .notification-indicator {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: var(--el-color-danger);
-    }
   }
 }
 
@@ -194,10 +184,10 @@ const openProModal = () => {
 
     .notification-indicator {
       position: absolute;
-      top: -2px;
-      right: -2px;
-      width: 10px;
-      height: 10px;
+      top: 0px;
+      right: 0px;
+      width: 8px;
+      height: 8px;
       background: #f56c6c;
       border-radius: 50%;
       border: 2px solid #fff;

@@ -182,83 +182,72 @@ class ChangeLog extends WP_REST_Controller {
     private function get_changelog_data() {
         return [
             [
-                'version' => '1.3.5',
-                'date'    => '2025-05-07',
+                'version' => '1.3.2',
+                'date'    => '2025-05-19',
                 'changes' => [
                     'Improvements' => [
-                        'Added changelog feature',
-                        'Better notification system for updates'
-                    ],
-                    'Fixes' => [
-                        'Fixed API route registration',
-                        'Improved error handling'
+                        'Enhanced dashboard performance.',
+                        'Better UI/UX.'
                     ],
                     'Compatibility' => [
-                        'Latest WordPress version'
+                        'Latest WordPress version.'
+                    ],
+                ]
+            ],
+            [
+                'version' => '1.3.1',
+                'date'    => '2025-04-17',
+                'changes' => [
+                    'Updated' => [
+                        'Language translation .pot file.'
                     ]
                 ]
             ],
             [
                 'version' => '1.3.0',
-                'date'    => '2025-04-15',
+                'date'    => '2025-04-17',
                 'changes' => [
-                    'Improvements' => [
-                        'Template Library Design and import process.',
-                        'Better UI/UX Wishlist and Compare Module Setting.'
-                    ],
-                    'Fixes' => [
-                        'Variation Swatch Color Picker showing issue.',
-                        'Variation Swatch showing issue in Product Archive page.',
-                        'Wishlist table product remove issue fixed',
-                        'Empty Product bases render issue.'
+                    'Updated' => [
+                        'Plugin text domain for improved translation support.'
                     ],
                     'Compatibility' => [
-                        'Latest WordPress and WooCommerce version.'
+                        'Tested with the latest version of WordPress.'
                     ]
                 ]
             ],
             [
-                'version' => '3.1.0',
-                'date'    => '2025-02-18',
+                'version' => '1.2.9',
+                'date'    => '2025-02-09',
                 'changes' => [
-                    'Improvements' => [
-                        'Enhanced dashboard performance',
-                        'Better UI/UX'
-                    ],
-                    'Fixes' => [
-                        'Wishlist icon position issue with add to cart addon.',
-                        'Dynamic Text showing issue in Available Stock Progressbar fixed',
-                        'Wishlist table product remove issue fixed',
-                        'Description, Price and ratting hide show issue fixed in Product Accordion addon',
-                        'Description, Price, Title and ratting hide show issue fixed in Product Curvy addon',
-                        'Warnings: Undefined Array Keys in Product Stock Progress Bar Block',
-                        'Warnings: Undefined Array Keys in Checkout Page'
-                    ],
-                    'Compatibility' => [
-                        'Latest WordPress and WooCommerce version.'
-                    ],
+                    'Improved' => [
+                        'User interface for better user experience.'
+                    ]
                 ]
             ],
             [
-                'version' => '3.0.3',
-                'date'    => '2025-01-07',
+                'version' => '1.2.8',
+                'date'    => '2024-12-03',
                 'changes' => [
-                    'New Features' => [
-                        'Sales Report Email Module.',
-                        'Smart Cross Sell Popup Module.',
-                        'Store Vacation Module.',
-                        'Filter hook for Manage category list showing limit in universal product layout.',
+                    'Added' => [
+                        'Option to disable/enable plugin in all Page/Post/Custom Post Type.'
                     ],
-                    'Fixes' => [
-                        'PHP Warning with shopify like checkout module.'
-                    ],
-                    'Compatibility' => [
-                        'Latest WordPress and WooCommerce version.'
-                    ],
+                    'Fixed' => [
+                        '“Select Pages” and “Select Posts” options do not appear after selecting “Page & Post” for the “Page Type” setting.'
+                    ]
                 ]
             ],
+            [
+                'version' => '1.2.7',
+                'date'    => '2024-11-04',
+                'changes' => [
+                    'Enhanced' => [
+                        'UI/UX for a better user experience.'
+                    ]
+                ]
+            ]
         ];
     }
+    
 }
 
 // Initialize the changelog

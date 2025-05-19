@@ -1,0 +1,23 @@
+# Common
+.DS_Store
+Thumbs.db
+.distignore
+.editorconfig
+.idea
+.vscode/*
+
+# GitHub files
+.git
+.github
+.gitignore
+.gitmodules
+.wordpress-org
+
+# Dev files
+node_modules
+src
+.gitignore
+package.json
+package-lock.json
+vite.config.js
+yarn.lock

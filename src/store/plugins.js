@@ -17,6 +17,7 @@ export const usePluginStore = defineStore('plugins', {
     apiBase: (window.HTPMM?.restUrl || '/wp-json').replace(/\/$/, '') + '/htpm/v1',
     plugins: [],
     allSettings: window.HTPMM?.adminSettings?.allSettings || {},
+    adminURL: window.HTPMM?.adminURL || '',
     dashboardSettings: {
       htpm_dashboard_settings: { ...defaultDashboardSettings }
     },

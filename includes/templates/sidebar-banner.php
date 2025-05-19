@@ -16,12 +16,14 @@ $plugin_url = HTPM_ROOT_URL;
         <div class="htpm-opt-get-pro-content">
             <h3 class="htpm-opt-get-pro-title"><?php esc_html_e('What You Get', 'wp-plugin-manager')?></h3>
             <ul>
-                <li><?php esc_html_e('Advanced Plugin Management', 'wp-plugin-manager')?></li>
-                <li><?php esc_html_e('Performance Optimization', 'wp-plugin-manager')?></li>
-                <li><?php esc_html_e('Plugin Dependencies', 'wp-plugin-manager')?></li>
-                <li><?php esc_html_e('Conflict Detection', 'wp-plugin-manager')?></li>
-                <li><?php esc_html_e('Much More...', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('Easily Manage All Your Plugins', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('Enable or Disable Plugins for Specific Pages or Posts', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('Control Plugins Based on URL or Path', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('Set Plugin Rules for Mobile, Tablet, or Desktop Devices', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('Boost Site Speed with Smart Plugin Loading', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('And So Much More!', 'wp-plugin-manager')?></li>
             </ul>
+
             <a href="https://hasthemes.com/wp-plugin-manager-pro" class="upgrade-button" target="_blank">
                 <img src="<?php echo esc_url($plugin_url . '/assets/images/get-pro.png'); ?>" alt="<?php echo esc_attr__('Upgrade to Pro', 'wp-plugin-manager')?>">
                 <?php esc_html_e('Upgrade To PRO', 'wp-plugin-manager')?>

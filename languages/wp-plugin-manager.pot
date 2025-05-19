@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Plugin Manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-17 05:24+0000\n"
+"POT-Creation-Date: 2025-05-19 05:59+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -13,86 +13,51 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.7.2; wp-6.8\n"
+"X-Loco-Version: 2.7.2; wp-6.8.1\n"
 "X-Domain: wp-plugin-manager"
 
-#. %s: Number of installations.
-#: includes/recommended-plugins/class.recommended-plugins.php:299
-#, php-format
-msgid "%s Active Installations"
-msgstr ""
-
-#: includes/plugin-options-page.php:708
-msgid "Action"
-msgstr ""
-
-#: includes/plugin-options-page.php:339
+#: includes/api/admin-settings.php:107
 msgid "Action:"
 msgstr ""
 
 #: includes/helper_functions.php:26
-#: includes/recommended-plugins/class.recommended-plugins.php:244
 msgid "Activate"
 msgstr ""
 
 #: includes/helper_functions.php:37
-#: includes/recommended-plugins/class.recommended-plugins.php:127
-#: includes/recommended-plugins/class.recommended-plugins.php:255
 msgid "Activated"
 msgstr ""
 
-#: plugin-main.php:186
-#: includes/recommended-plugins/class.recommended-plugins.php:126
+#: plugin-main.php:216
 msgid "Activating.."
 msgstr ""
 
-#: plugin-main.php:187
+#: plugin-main.php:217
 msgid "Active"
 msgstr ""
 
-#. %s: Number of millions.
-#: includes/recommended-plugins/class.recommended-plugins.php:373
-#, php-format
-msgctxt "Active plugin installations"
-msgid "%s+ Million"
-msgid_plural "%s+ Million"
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/recommended-plugins/class.recommended-plugins.php:377
-msgctxt "Active plugin installations"
-msgid "Less Than 10"
+#: includes/api/admin-settings.php:189
+msgid "Add Condition:"
 msgstr ""
 
-#: includes/plugin-options-page.php:441
-msgid "All "
+#: includes/api/admin-settings.php:202
+msgid "Add post type..."
 msgstr ""
 
-#: includes/plugin-options-page.php:326
+#: includes/api/admin-settings.php:97
 msgid "All Devices"
 msgstr ""
 
-#: plugin-main.php:176
+#: plugin-main.php:179 plugin-main.php:205
 msgid "All Items have been Loaded"
 msgstr ""
 
-#: includes/plugin-options-page.php:396
-msgid "All Pages"
-msgstr ""
-
-#: includes/plugin-options-page.php:417
-msgid "All Posts"
+#: includes/templates/sidebar-banner.php:24
+msgid "And So Much More!"
 msgstr ""
 
 #: includes/class.notices.php:81
 msgid "Are you cheating?"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:142
-msgid ""
-"Are you getting frustrated with WooCommerce’s current way of presenting the "
-"variants for your products? Well, say goodbye to dropdowns and start showing "
-"the product variations in a whole new light with Swatchly."
 msgstr ""
 
 #. %1$s: project name
@@ -114,235 +79,170 @@ msgid ""
 "guaranteed. %4$sPrivacy Policy%5$s"
 msgstr ""
 
-#: plugin-main.php:183
-#: includes/recommended-plugins/class.recommended-plugins.php:123
-#: includes/recommended-plugins/class.recommended-plugins.php:232
-#: includes/recommended-plugins/class.recommended-plugins.php:286
+#: includes/templates/sidebar-banner.php:23
+msgid "Boost Site Speed with Smart Plugin Loading"
+msgstr ""
+
+#: plugin-main.php:186 plugin-main.php:212
 msgid "Buy Now"
 msgstr ""
 
-#: includes/recommended-plugins/class.recommended-plugins.php:272
-msgid "By "
+#: plugin-main.php:220
+msgid "BUY PRO"
 msgstr ""
 
-#: includes/plugin-options-page.php:363
+#: includes/api/admin-settings.php:192
+msgid "Cancel"
+msgstr ""
+
+#: includes/api/admin-settings.php:118
 msgid ""
 "Choose the types of pages. \"Custom\" allows you to specify pages matching a "
 "particular URI pattern."
 msgstr ""
 
-#: includes/plugin-options-page.php:746
-msgid "Clone"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:187
-msgid ""
-"Contact Form7 Extensions plugin is a fantastic WordPress plugin that "
-"enriches the functionalities of Contact Form 7.This all-in-one WordPress "
-"plugin will help you turn any contact page into a well-organized, engaging "
-"tool for communicating with your website visitors by providing tons of "
-"advanced features like drag and drop file upload, repeater field, trigger "
-"error for already submitted forms, popup form response, country flags and "
-"dial codes with a telephone input field and acceptance field, etc. in "
-"addition to its basic features."
+#: includes/templates/sidebar-banner.php:21
+msgid "Control Plugins Based on URL or Path"
 msgstr ""
 
 #: includes/class-diagnostic-data.php:575
 msgid "Count Me In"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:320
-msgid "Coupon Zen"
+#: includes/api/admin-settings.php:258
+msgid "Create beautiful sliders for your website using Elementor"
 msgstr ""
 
-#: includes/plugin-options-page.php:360
+#: includes/api/admin-settings.php:249
+msgid "Create notification bars to notify your customers"
+msgstr ""
+
+#: includes/api/admin-settings.php:125
 msgid "Custom"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:314
-msgid "DataCaptia"
+#: includes/api/admin-settings.php:170
+msgid "Default: 10 items per page. Adjust if you have more posts to manage."
 msgstr ""
 
-#: includes/plugin-options-page.php:327
+#: includes/api/admin-settings.php:151 includes/api/admin-settings.php:204
+msgid "Default: 150 posts. Adjust if you have more posts to manage."
+msgstr ""
+
+#: includes/api/admin-settings.php:162
+msgid "Default: True. Adjust if you have more posts to manage."
+msgstr ""
+
+#: includes/api/admin-settings.php:98
 msgid "Desktop"
 msgstr ""
 
-#: includes/plugin-options-page.php:330
+#: includes/api/admin-settings.php:101
 msgid "Desktop + Tablet"
 msgstr ""
 
-#: includes/plugin-options-page.php:342
+#: includes/api/admin-settings.php:111
 msgid "Disable on Selected Pages"
 msgstr ""
 
-#: includes/plugin-options-page.php:347
+#: includes/api/admin-settings.php:108
 msgid ""
 "Disable on Selected Pages refers to the pages where the plugin will be "
 "disabled and enabled elsewhere."
 msgstr ""
 
-#: includes/plugin-options-page.php:321
+#: includes/api/admin-settings.php:93
 msgid "Disable Plugin on:"
-msgstr ""
-
-#: includes/plugin-options-page.php:301
-msgid "Disable This Plugin:"
 msgstr ""
 
 #: includes/class.notices.php:273
 msgid "Dismiss this notice."
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:256
-msgid "Docus Pro"
+#: includes/api/admin-settings.php:194
+msgid "Display Settings"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:308
-msgid "Docus – YouTube Video Playlist"
+#: includes/api/admin-settings.php:339
+msgid "Display WooCommerce products in sortable/filterable tables."
 msgstr ""
 
-#: includes/plugin-options-page.php:738
+#: plugin-main.php:228 includes/api/admin-settings.php:56
+msgid "Documentation"
+msgstr ""
+
+#: includes/api/admin-settings.php:190
 msgid ""
-"e.g: You can use 'contact-us' on URLs like https://example.com/contact-us or "
-"leave it blank for the homepage"
+"E.g. You can use 'contact-us' on URLs like https://example.com/contact-us or "
+"leave it blank for the homepage."
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:259
-msgid ""
-"Embedding a YouTube playlist into your website plays a vital role to curate "
-"your content into several categories and make your web content more engaging "
-"and popular by keeping the visitors on your website for a longer period."
+#: includes/templates/sidebar-banner.php:19
+msgid "Easily Manage All Your Plugins"
 msgstr ""
 
-#: includes/plugin-options-page.php:343
+#: includes/api/admin-settings.php:112
 msgid "Enable on Selected Pages"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:66
-msgid "Extensions For CF7"
+#: includes/templates/sidebar-banner.php:20
+msgid "Enable or Disable Plugins for Specific Pages or Posts"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:184
-msgid "Extensions For CF7 Pro"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:284
-msgid "Faster YouTube Embed"
-msgstr ""
-
-#: includes/plugin-options-page.php:226
+#: includes/api/admin-settings.php:196
 msgid ""
-"For better performance, the number of pages, posts, or custom posts has been "
-"set to 150. <br/> Please adjust the number if you have more than 150 pages, "
-"posts, or custom posts, then click \"Save Settings\" to see them in the "
-"dropdown list."
+"Enable this option to display plugin thumbnails in the plugin list. (After "
+"enabling, you need to refresh the page to see the changes.)"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:229
-msgid "Google Place Review"
+#: includes/plugin-options-page.php:75 includes/api/admin-settings.php:32
+msgid "General"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:48
+#: includes/templates/sidebar-banner.php:14
+msgid ""
+"Get more powerful plugin management features to elevate your WordPress "
+"website"
+msgstr ""
+
+#: includes/templates/sidebar-banner.php:13
+msgid "Get WP Plugin Manager"
+msgstr ""
+
+#: includes/api/admin-settings.php:248
 msgid "HashBar"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:196
-msgid ""
-"HashBar is a WordPress Notification / Alert / Offer Bar plugin which allows "
-"you to create unlimited notification bars to notify your customers. This "
-"plugin has option to show email subscription form (sometimes it increases up "
-"to 500% email subscriber), Offer text and buttons about your promotions. "
-"This plugin has the options to add unlimited background colors and images to "
-"make your notification bar more professional."
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:193
-msgid "HashBar Pro"
-msgstr ""
-
-#: includes/recommended-plugins/class.recommended-plugins.php:229
-msgid "HasTheme"
 msgstr ""
 
 #. Author of the plugin
 msgid "HasThemes"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:247
-msgid "HT Click To Call"
+#: includes/templates/sidebar-banner.php:39
+msgid "Have We Fully Met Your Expectations?"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:60
-msgid "HT Contact Form 7"
+#: includes/api/admin-settings.php:321
+msgid "Helps deactivate unnecessary plugins per page for better performance."
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:278
-msgid "HT Feed"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:42
+#: includes/api/admin-settings.php:239
 msgid "HT Mega"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:130
+#: includes/api/admin-settings.php:300
 msgid "HT Mega Pro"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:78
-msgid "HT Menu"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:211
-msgid "HT Menu Pro"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:84
-msgid "HT Script"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:202
-msgid "HT Script Pro"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:54
+#: includes/api/admin-settings.php:257
 msgid "HT Slider For Elementor"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:220
-msgid "HT Slider Pro For Elementor"
+#: includes/api/admin-settings.php:303
+msgid "HTMega includes 80+ elements & 360 Blocks..."
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:223
-msgid ""
-"HT Slider Pro is a plugin to create a slider for WordPress websites easily "
-"using the Elementor page builder. 80+ prebuild slides/templates are included "
-"in this plugin. There is the option to create a post slider, WooCommerce "
-"product slider, Video slider, image slider, etc. Fullscreen, full width and "
-"box layout option are included."
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:332
-msgid "HT Social Share"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:72
-msgid "HT WPForms"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:250
-msgid ""
-"HT – Click to Call is a lightweight WordPress plugin that allows you to add "
-"a floating click to call button on your website. It will offer your website "
-"visitors an opportunity to call your business immediately at the right "
-"moment, especially when they are interested in your products or services and "
-"seeking more information."
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:133
-msgid ""
-"HTMega is an absolute addon for elementor that includes 80+ elements & 360 "
-"Blocks with unlimited variations. HT Mega brings limitless possibilities. "
-"Embellish your site with the elements of HT Mega."
+#: includes/api/admin-settings.php:240
+msgid "HTMega is an absolute addon for elementor that includes 80+ elements"
 msgstr ""
 
 #. Author URI of the plugin
@@ -353,249 +253,231 @@ msgstr ""
 msgid "https://hasthemes.com/plugins/"
 msgstr ""
 
-#: plugin-main.php:308
+#: plugin-main.php:366
 msgid "I already did"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:232
+#: includes/api/admin-settings.php:231
 msgid ""
-"If you are searching for a modern and excellent google places review "
-"WordPress plugin to showcase reviews from Google Maps and strengthen trust "
-"between you and your site visitors, look no further than HT Google Place "
-"Review"
+"If you own a WooCommerce website, you’ll almost certainly want to use these "
+"capabilities: Woo Builder (Elementor WooCommerce Builder), WooCommerce "
+"Templates, WooCommerce Widgets,..."
 msgstr ""
 
-#: includes/plugin-options-page.php:365
+#: includes/api/admin-settings.php:129
 msgid ""
-"If you wish to select custom posts, please choose the custom post above "
-"through the \"Select Post Types\" option."
+"If you wish to select custom posts, please choose the custom post types below"
 msgstr ""
 
-#: plugin-main.php:182
+#: plugin-main.php:185 plugin-main.php:211
 msgid "Import"
 msgstr ""
 
-#: plugin-main.php:180
+#: plugin-main.php:183 plugin-main.php:209
 msgid "Import to Library"
 msgstr ""
 
-#: plugin-main.php:181
+#: plugin-main.php:184 plugin-main.php:210
 msgid "Import to Page"
 msgstr ""
 
-#: plugin-main.php:175
+#: plugin-main.php:178 plugin-main.php:204
 msgid "in this package"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:205
-msgid ""
-"Insert Headers and Footers Code allows you to insert Google Analytics, "
-"Facebook Pixel, custom CSS, custom HTML, JavaScript code to your website "
-"header and footer without modifying your theme code.This plugin has the "
-"option to add any custom code to your theme in one place, no need to edit "
-"the theme code. It will save your time and remove the hassle for the theme "
-"update."
-msgstr ""
-
 #: includes/helper_functions.php:31
-#: includes/recommended-plugins/class.recommended-plugins.php:250
 msgid "Install Now"
 msgstr ""
 
-#: plugin-main.php:185
-#: includes/recommended-plugins/class.recommended-plugins.php:125
+#: plugin-main.php:189 plugin-main.php:215
 msgid "Installing.."
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:102
-msgid "JustTables"
+#: includes/api/admin-settings.php:199
+msgid "items"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:169
-msgid ""
-"JustTables is an incredible WordPress plugin that lets you showcase all your "
-"WooCommerce products in a sortable and filterable table view. It allows your "
-"customers to easily navigate through different attributes of the products "
-"and compare them on a single page. This plugin will be of great help if you "
-"are looking for an easy solution that increases the chances of landing a "
-"sale on your online store."
+#: includes/api/admin-settings.php:168
+msgid "Items per Page"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:166
+#: includes/api/admin-settings.php:197
+msgid "Items Per Page in Plugin List"
+msgstr ""
+
+#: includes/api/admin-settings.php:336
 msgid "JustTables Pro"
 msgstr ""
 
-#: plugin-main.php:307
+#: includes/api/admin-settings.php:48
+msgid "License"
+msgstr ""
+
+#: includes/api/admin-settings.php:149
+msgid "Load Posts"
+msgstr ""
+
+#: includes/api/changelog-api.php:130
+msgid "Marked as read successfully"
+msgstr ""
+
+#: plugin-main.php:365
 msgid "Maybe Later"
 msgstr ""
 
-#: includes/plugin-options-page.php:329
+#: includes/api/admin-settings.php:100
 msgid "Mobile"
 msgstr ""
 
-#: includes/plugin-options-page.php:894
-#: includes/recommended-plugins/class.recommended-plugins.php:294
-msgid "More Details"
-msgstr ""
-
-#: includes/plugin-options-page.php:82
+#: includes/plugin-options-page.php:129
 msgid "More details"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:108
-msgid "Multi Currency"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:175
-msgid "Multi Currency Pro for WooCommerce"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:178
-msgid ""
-"Multi-Currency Pro for WooCommerce is a prominent currency switcher plugin "
-"for WooCommerce. This plugin allows your website or online store visitors to "
-"switch to their preferred currency or their country’s currency."
+#: plugin-main.php:226
+msgid "Need Help with Plugin Manager?"
 msgstr ""
 
 #: includes/class-diagnostic-data.php:578
 msgid "No, Thanks"
 msgstr ""
 
-#: plugin-main.php:177
+#: includes/api/admin-settings.php:145
+msgid ""
+"Note: Make sure to save settings to see options for each plugin for the "
+"selected post types."
+msgstr ""
+
+#: plugin-main.php:180 plugin-main.php:206
 msgid "Nothing Found"
 msgstr ""
 
-#: includes/plugin-options-page.php:166
-msgid "Number Of Posts to Load"
+#: includes/api/admin-settings.php:203
+msgid "Number of Posts to Load"
 msgstr ""
 
-#: plugin-main.php:306
+#: plugin-main.php:364
 msgid "Ok, you deserve it!"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:266
-msgid "Others"
+#: plugin-main.php:227
+msgid ""
+"Our comprehensive documentation provides detailed information on how to use "
+"Plugin Manager effectively to improve your websites performance."
 msgstr ""
 
-#: includes/plugin-options-page.php:77
+#: plugin-main.php:221 includes/plugin-options-page.php:124
 msgid ""
 "Our free version is great, but it doesn't have all our advanced features. "
 "The best way to unlock all of the features in our plugin is by purchasing "
 "the pro version."
 msgstr ""
 
-#: includes/plugin-options-page.php:356
-msgid "Page"
-msgstr ""
-
-#: includes/plugin-options-page.php:358
+#: includes/api/admin-settings.php:123
 msgid "Page & Post"
 msgstr ""
 
-#: includes/plugin-options-page.php:353
+#: includes/api/admin-settings.php:186
+msgid "Page Type"
+msgstr ""
+
+#: includes/api/admin-settings.php:117
 msgid "Page Type:"
 msgstr ""
 
-#: includes/plugin-options-page.php:38 includes/plugin-options-page.php:39
+#: includes/api/admin-settings.php:122
+msgid "Pages"
+msgstr ""
+
+#: includes/plugin-options-page.php:64 includes/plugin-options-page.php:65
 msgid "Plugin Manager"
 msgstr ""
 
-#: plugin-main.php:219
-#: includes/recommended-plugins/class.recommended-plugins.php:397
+#: plugin-main.php:277
 msgid "Plugin Not Found"
 msgstr ""
 
-#: plugin-main.php:239
-#: includes/recommended-plugins/class.recommended-plugins.php:417
+#: plugin-main.php:297
 msgid "Plugin Successfully Activated"
 msgstr ""
 
-#: includes/plugin-options-page.php:178
-msgid "Plugins List"
+#: includes/api/admin-settings.php:193
+msgid "Post Types Settings"
 msgstr ""
 
-#: includes/plugin-options-page.php:357
-msgid "Post"
-msgstr ""
-
-#: includes/plugin-options-page.php:359
+#: includes/api/admin-settings.php:124
 msgid "Post, Pages & Custom Post Type"
 msgstr ""
 
-#: plugin-main.php:184
-#: includes/recommended-plugins/class.recommended-plugins.php:124
+#: includes/api/admin-settings.php:121
+msgid "Posts"
+msgstr ""
+
+#: plugin-main.php:188 plugin-main.php:214
 msgid "Preview"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:296
-msgid "Preview Link Generator"
+#: includes/templates/sidebar-banner.php:13
+msgid "PRO"
 msgstr ""
 
-#: includes/plugin-options-page.php:154 includes/plugin-options-page.php:523
-#: includes/plugin-options-page.php:603 includes/plugin-options-page.php:663
+#: plugin-main.php:218
 msgid "Pro"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:139
+#: includes/api/admin-settings.php:309
 msgid "Product Variation Swatches"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:302
-msgid "QuickSwish"
+#: includes/templates/sidebar-banner.php:42
+msgid "Provide Your Feedback"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:272
-msgid "Really Simple Google Tag Manager"
+#: includes/templates/sidebar-banner.php:36
+msgid "Rating icon"
 msgstr ""
 
-#: includes/recommended-plugins/class.recommended-plugins.php:71
-msgid "Recommendations"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:29
+#: includes/plugin-options-page.php:92 includes/plugin-options-page.php:93
+#: includes/api/admin-settings.php:224
 msgid "Recommended"
 msgstr ""
 
-#: includes/plugin-options-page.php:745
-msgid "Remove"
+#: includes/api/admin-settings.php:80
+msgid "Recommended Plugins"
 msgstr ""
 
-#: includes/plugin-options-page.php:127
+#: includes/api/admin-settings.php:191
+msgid "Save & Enable"
+msgstr ""
+
+#: includes/api/admin-settings.php:200
 msgid "Save Settings"
 msgstr ""
 
-#: includes/helper_functions.php:119
+#: includes/helper_functions.php:119 includes/api/admin-settings.php:187
 msgid "Select"
 msgstr ""
 
-#: includes/plugin-options-page.php:436
-msgid "Select "
+#: includes/api/admin-settings.php:198
+msgid "Select how many plugins to display per page in the manage plugin list."
 msgstr ""
 
-#: includes/plugin-options-page.php:391
+#: includes/api/admin-settings.php:184
 msgid "Select Pages:"
 msgstr ""
 
-#: includes/plugin-options-page.php:154
+#: includes/api/admin-settings.php:140
 msgid "Select Post Types"
 msgstr ""
 
-#: includes/plugin-options-page.php:373
-msgid "Select Post Types:"
-msgstr ""
-
-#: includes/plugin-options-page.php:412
+#: includes/api/admin-settings.php:185
 msgid "Select Posts:"
 msgstr ""
 
-#: includes/plugin-options-page.php:202
-msgid ""
-"Select the custom post types where you want to disable plugins. <br/>Note: "
-"Make sure that, you click on \"Save Settings\" button so you'll see options "
-"for each plugin for the custom post types you selected."
+#: includes/api/admin-settings.php:144 includes/api/admin-settings.php:201
+msgid "Select the custom post types where you want to disable plugins."
 msgstr ""
 
-#: includes/plugin-options-page.php:333
+#: includes/api/admin-settings.php:94
 msgid "Select the device(s) where this plugin should be disabled."
 msgstr ""
 
@@ -610,27 +492,55 @@ msgid ""
 "collected or tracked. %1$sLearn more%2$s."
 msgstr ""
 
-#: includes/plugin-options-page.php:52 includes/plugin-options-page.php:111
+#: includes/templates/sidebar-banner.php:22
+msgid "Set Plugin Rules for Mobile, Tablet, or Desktop Devices"
+msgstr ""
+
+#: includes/api/admin-settings.php:330
+msgid "Set wholesale pricing for WooCommerce."
+msgstr ""
+
+#: includes/plugin-options-page.php:83 includes/plugin-options-page.php:84
+#: includes/api/admin-settings.php:40
 msgid "Settings"
 msgstr ""
 
-#: includes/plugin-options-page.php:99
-msgid "Settings Saved"
+#: includes/api/admin-settings.php:195
+msgid "Show Plugin Thumbnails"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:326
-msgid "Sirve – Simple Directory Listing"
+#: includes/api/admin-settings.php:160
+msgid "Show Thumbnails"
 msgstr ""
 
-#: includes/plugin-options-page.php:328
+#: includes/api/admin-dashboard-api.php:627
+msgid "Sidebar template file not found."
+msgstr ""
+
+#: plugin-main.php:230 includes/api/admin-settings.php:64
+msgid "Support"
+msgstr ""
+
+#: includes/api/admin-settings.php:312
+msgid "Swatchly enhances how product variants are displayed..."
+msgstr ""
+
+#: includes/api/admin-settings.php:99
 msgid "Tablet"
 msgstr ""
 
-#: includes/plugin-options-page.php:331
+#: includes/api/admin-settings.php:102
 msgid "Tablet + Mobile"
 msgstr ""
 
-#: plugin-main.php:303
+#: includes/templates/sidebar-banner.php:41
+msgid ""
+"Thank you for choosing our plugin! If it makes your work easier, please "
+"share your happiness with a 5-star rating on WordPress. It’ll take just 2 "
+"minutes & means a lot to us!"
+msgstr ""
+
+#: plugin-main.php:361
 msgid "Thank you for choosing WP Plugin Manager to manage you plugins!"
 msgstr ""
 
@@ -642,92 +552,44 @@ msgstr ""
 msgid "Thank you very much for supporting %2$s%1$s%3$s."
 msgstr ""
 
-#: plugin-main.php:202 plugin-main.php:203
+#: includes/templates/sidebar-banner.php:29
+msgid "Upgrade To PRO"
+msgstr ""
+
+#: plugin-main.php:260 plugin-main.php:261 includes/api/admin-settings.php:183
+#: includes/templates/sidebar-banner.php:28
 msgid "Upgrade to Pro"
 msgstr ""
 
-#: includes/plugin-options-page.php:706
-msgid "URI Condition"
+#: includes/api/admin-settings.php:188
+msgid "URI Conditions:"
 msgstr ""
 
-#: includes/plugin-options-page.php:724
-msgid "URI Contains"
+#: plugin-main.php:229
+msgid "Video Tutorial"
 msgstr ""
 
-#: includes/plugin-options-page.php:722
-msgid "URI Equals"
+#: includes/templates/sidebar-banner.php:17
+msgid "What You Get"
 msgstr ""
 
-#: includes/plugin-options-page.php:725
-msgid "URI Not Contains"
-msgstr ""
-
-#: includes/plugin-options-page.php:723
-msgid "URI Not Equals"
-msgstr ""
-
-#: includes/plugin-options-page.php:707
-msgid "Value"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:238
-msgid "Was This Helpful?"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:241
-msgid ""
-"Was this helpful? is a WordPress plugin that allows you to take visitors' "
-"feedback on your post/pages or any article. A visitor can share his feedback "
-"by like/dislike/yes/no"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:90
-msgid "WC Builder"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:290
-msgid "WC Sales Notification"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:96
-msgid "Whols"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:160
-msgid ""
-"Whols is an outstanding WordPress plugin for WooCommerce that allows store "
-"owners to set wholesale prices for the products of their online stores. This "
-"plugin enables you to show special wholesale prices to the wholesaler. Users "
-"can easily request to become a wholesale customer by filling out a simple "
-"online registration form. Once the registration is complete, the owner of "
-"the store will be able to review the request and approve the request either "
-"manually or automatically."
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:157
+#: includes/api/admin-settings.php:327
 msgid "Whols Pro"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:36
+#: includes/api/admin-settings.php:230
 msgid "WooLentor"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:124
-msgid ""
-"WooLentor is one of the most popular WooCommerce Elementor Addons on "
-"WordPress.org. It has been downloaded more than 672,148 times and 60,000 "
-"stores are using WooLentor plugin. Why not you?"
+#: includes/api/admin-settings.php:294
+msgid "WooLentor is one of the most popular WooCommerce Elementor Addons..."
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:121
+#: includes/api/admin-settings.php:291
 msgid "WooLentor Pro"
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:214
-msgid "WordPress Mega Menu Builder for Elementor"
-msgstr ""
-
-#: plugin-main.php:304
+#: plugin-main.php:362
 msgid ""
 "Would you mind doing us a huge favor by providing your feedback on WordPress?"
 " Your support helps us spread the word and greatly boosts our motivation."
@@ -743,30 +605,19 @@ msgid ""
 "for certain pages, posts or URI conditions."
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:148
+#: includes/api/admin-settings.php:318
 msgid "WP Plugin Manager Pro"
-msgstr ""
-
-#: includes/recommended-plugins/recommendations.php:151
-msgid ""
-"WP Plugin Manager Pro is a specialized WordPress Plugin that helps you to "
-"deactivate unnecessary WordPress Plugins page wise and boosts the speed of "
-"your WordPress site to improve the overall site performance."
-msgstr ""
-
-#: includes/plugin-options-page.php:307
-msgid "Yes"
 msgstr ""
 
 #: includes/class.notices.php:73
 msgid "You are not authorized."
 msgstr ""
 
-#: includes/plugin-options-page.php:474
-msgid "You don't have any active plugins!!"
+#: includes/api/changelog-api.php:89
+msgid "You do not have permissions to manage this resource."
 msgstr ""
 
-#: includes/recommended-plugins/recommendations.php:115
+#: includes/api/admin-settings.php:286
 msgid "You May Also Like"
 msgstr ""
 

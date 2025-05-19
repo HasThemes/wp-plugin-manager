@@ -300,7 +300,7 @@ class WP_Plugin_Manager_Settings {
                     'name' => esc_html__('HT Mega Pro', 'wp-plugin-manager'),
                     'link' => 'https://hasthemes.com/plugins/ht-mega-pro/',
                     'author_link' => 'https://hasthemes.com/',
-                    'description' => esc_html__('HTMega includes 80+ elements & 360 Blocks...', 'wp-plugin-manager'),
+                    'description' => esc_html__('Unleash your creativity with the incredible collection of Elementor widgets, templates, and blocks from HT Mega. This is the only tool you\'ll ever need to elevate your Elementor website design experience to new heights...', 'wp-plugin-manager'),
                     'pro' => true
                 ),
                 array(
