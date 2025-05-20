@@ -23,7 +23,7 @@
     </el-col>
     <el-col :xs="8" :sm="8" :md="6" :lg="6" :xl="6" class="htpm-header-actions">
         <el-button type="primary" @click="upgradeToPro" v-if="!isPro">
-          <el-icon><Top /></el-icon>
+          <el-icon><Trophy /></el-icon>
           <span class="hidden-sm-and-down">{{ labels_texts?.upgrade_to_pro }} </span>
         </el-button>
         <div class="notification-btn-wrapper">
@@ -40,7 +40,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import { Key, Grid, Setting, Document, Service, Promotion, Top, Bell } from '@element-plus/icons-vue'
+import { Key, Grid, Setting, Document, Service, Promotion, Trophy, Bell } from '@element-plus/icons-vue'
 import { usePluginStore } from '../store/plugins'
 import NotificationDrawer from './NotificationDrawer.vue'
 const store = usePluginStore()
@@ -60,7 +60,7 @@ const icons = {
   Service,
   Key,
   Promotion,
-  Top,
+  Trophy,
   Bell
 }
 

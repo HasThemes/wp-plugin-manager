@@ -66,7 +66,8 @@ class HTPM_Option_Page {
 			'manage_options',
 			'htpm-options',
 			[$this, 'page_render'],
-			'dashicons-admin-plugins',
+			HTPM_ROOT_URL.'/assets/images/icon/dashboard-menu-logo.png',
+			//'dashicons-admin-plugins',
 			65
 		);
 
@@ -103,7 +104,7 @@ class HTPM_Option_Page {
 	public function pro_menu_scripts() {
 		printf( 
 			'<style>%s</style>', 
-			'#adminmenu #toplevel_page_htpm-options a.htpm-upgrade-pro { font-weight: 600; background-color: #ff6e30; color: #ffffff; text-align: left; margin-top: 5px; margin-bottom: 5px; }'
+			'#adminmenu #toplevel_page_htpm-options a.htpm-upgrade-pro { font-weight: 600; background-color: #f56c6c; color: #ffffff; text-align: left; margin-top: 5px; margin-bottom: 5px; }'
 		);
 		printf( 
 			'<script>%s</script>', 

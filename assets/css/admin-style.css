@@ -150,18 +150,18 @@ top: 32px !important;
     align-items: center;
     gap: 8px;
     background: transparent;
-    color: #FF6067;
+    color: #f56c6c;
     padding: 12px 20px;
     border-radius: 6px;
     text-decoration: none;
     font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
-    border: 1.5px solid #FF6067;
+    border: 1.5px solid #f56c6c;
     box-shadow: none;
   }
   .upgrade-button svg path{
-    fill: #FF6067;
+    fill: #f56c6c;
     transition: all 0.3s ease;
   }
   .upgrade-button:hover {
@@ -170,6 +170,9 @@ top: 32px !important;
     box-shadow: none;
     border-color: #3489FE;
     color: #fff;
+  }
+  .upgrade-button:hover svg path{
+    fill: #fff;
   }
   .htoption-rating-area {
     padding: 30px;

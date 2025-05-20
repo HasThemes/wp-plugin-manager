@@ -1,5 +1,5 @@
 <template>
-  <el-card class="plugin-recommendation-skeleton" shadow="never">
+  <el-card class="plugin-recommendation-skeleton" shadow="never" body-style="padding: 0px; border: none;" style="box-shadow: none; padding: 0px; border: none;" >
     <el-tabs v-model="activeTab">
       <el-tab-pane label="Recommended" name="recommended" style="color: #2271b1;" />
       <el-tab-pane label="WooCommerce" name="woocommerce" />
@@ -8,10 +8,10 @@
 
     <el-row :gutter="20" class="plugin-grid">
       <el-col :xs="24" :sm="12" v-for="n in 6" :key="n">
-        <el-card class="plugin-card-skeleton" shadow="hover" style="box-shadow: none;">
+        <el-card class="plugin-card-skeleton" shadow="never" style="box-shadow: none;" >
           <el-skeleton animated>
             <template #template>
-              <div class="card-body">
+              <div class="card-body" style="padding: 0px;">
                 <div class="header">
                   <el-skeleton-item variant="image" style="width: 50px; height: 50px; border-radius: 6px;" />
                   <div class="plugin-info">

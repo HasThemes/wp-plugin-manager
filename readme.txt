@@ -87,7 +87,7 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 
-= Version: 1.3.2 Date: 19 May 2025 =
+= Version: 1.3.2 Date: 21 May 2025 =
 * Improved: UI/UX for better user experience.
 * Tested: Compatibility with the latest version of WordPress.
 
