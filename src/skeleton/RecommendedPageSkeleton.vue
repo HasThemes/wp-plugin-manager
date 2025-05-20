@@ -2,11 +2,12 @@
   <el-card class="plugin-recommendation-skeleton" shadow="never">
     <el-tabs v-model="activeTab">
       <el-tab-pane label="Recommended" name="recommended" style="color: #2271b1;" />
-      <el-tab-pane label="You May Also Like" name="you-may-also-like" />
+      <el-tab-pane label="WooCommerce" name="woocommerce" />
+      <el-tab-pane label="Others" name="others" />
     </el-tabs>
 
     <el-row :gutter="20" class="plugin-grid">
-      <el-col :xs="24" :sm="12" v-for="n in 4" :key="n">
+      <el-col :xs="24" :sm="12" v-for="n in 6" :key="n">
         <el-card class="plugin-card-skeleton" shadow="hover" style="box-shadow: none;">
           <el-skeleton animated>
             <template #template>
