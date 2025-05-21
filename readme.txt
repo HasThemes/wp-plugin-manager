@@ -227,6 +227,6 @@ iii. A new option page called "Plugin Manager" will be appear in your dashboard 
 iv. Use the options and that's all!
 
 == Screenshots ==
-1. Plugin Manager Menu
-2. Plugin List
-3. Plugin Manager Conditional Option page
+1. Plugin Dashboard
+2. Plugin Disable Condition Settings Modal
+3. Plugin Dashboard Settings page
