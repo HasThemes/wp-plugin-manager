@@ -430,7 +430,9 @@ if ( ! class_exists( 'HTPM_Trial' ) ) {
         
             /* Custom CSS */
             #wpbody .htiop-bar-notice{
-                margin-bottom: 0 !important;
+                margin: 15px !important;
+                margin-bottom: 5px !important;
+                border: none !important;
             }
         </style>
             <?php

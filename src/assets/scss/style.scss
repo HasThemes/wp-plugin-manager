@@ -1,0 +1,146 @@
+// Base styles
+:root {
+  --htpm-primary-color: #409EFF;
+  --htpm-success-color: #67C23A;
+  --htpm-warning-color: #E6A23C;
+  --htpm-danger-color: #F56C6C;
+  --htpm-info-color: #909399;
+  --htpm-text-color: #303133;
+  --htpm-text-color-secondary: #606266;
+  --htpm-border-color: #DCDFE6;
+  --htpm-border-color-light: #E4E7ED;
+  --htpm-background-color: #F5F7FA;
+}
+
+// WordPress Admin Integration
+#wpcontent {
+  padding-left: 0;
+}
+
+#wpbody-content {
+  padding-bottom: 0;
+}
+
+// Global Styles
+.htpm-dashboard {
+  background: var(--htpm-background-color);
+  min-height: calc(100vh - 32px);
+  
+  .htpm-header-row {
+    background: #fff;
+    border-bottom: 1px solid var(--htpm-border-color-light);
+    margin-bottom: 20px;
+    padding: 0 20px;
+    position: sticky;
+    top: 32px;
+    z-index: 100;
+  }
+}
+
+// Card Styles
+.el-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Button Styles
+.el-button {
+  &--primary {
+    background-color: var(--htpm-primary-color);
+    border-color: var(--htpm-primary-color);
+  }
+
+  &--success {
+    background-color: var(--htpm-success-color);
+    border-color: var(--htpm-success-color);
+  }
+
+  &--warning {
+    background-color: var(--htpm-warning-color);
+    border-color: var(--htpm-warning-color);
+  }
+
+  &--danger {
+    background-color: var(--htpm-danger-color);
+    border-color: var(--htpm-danger-color);
+  }
+}
+
+// Dialog Styles
+.el-dialog {
+  border-radius: 8px;
+  
+  &__header {
+    border-bottom: 1px solid var(--htpm-border-color-light);
+    margin: 0;
+    padding: 20px;
+  }
+
+  &__body {
+    padding: 20px;
+  }
+
+  &__footer {
+    border-top: 1px solid var(--htpm-border-color-light);
+    padding: 20px;
+  }
+}
+
+// Form Styles
+.el-form {
+  &-item {
+    margin-bottom: 20px;
+
+    &__label {
+      color: var(--htpm-text-color);
+      font-weight: 500;
+    }
+  }
+}
+
+// Table Styles
+.el-table {
+  border-radius: 8px;
+  overflow: hidden;
+
+  th {
+    background-color: var(--htpm-background-color);
+    color: var(--htpm-text-color);
+    font-weight: 600;
+  }
+
+  td {
+    color: var(--htpm-text-color-secondary);
+  }
+}
+
+// Notification Badge
+.notification-badge {
+  .el-badge__content {
+    background-color: var(--htpm-danger-color);
+  }
+}
+
+// Documentation Dialog
+.documentation-dialog {
+  .el-dialog__body {
+    padding: 0;
+  }
+
+  .doc-sidebar {
+    background: var(--htpm-background-color);
+    border-right: 1px solid var(--htpm-border-color-light);
+    height: calc(80vh - 100px);
+  }
+
+  .doc-content {
+    padding: 24px;
+    height: calc(80vh - 100px);
+    overflow-y: auto;
+  }
+}

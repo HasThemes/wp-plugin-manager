@@ -3,7 +3,7 @@
 * Plugin Name: WP Plugin Manager
 * Plugin URI: https://hasthemes.com/plugins/
 * Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-* Version: 1.3.1
+* Version: 1.4.0
 * Author: HasThemes
 * Author URI: https://hasthemes.com/
 * Text Domain: wp-plugin-manager
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
-define( 'HTPM_PLUGIN_VERSION', '1.3.1' );
+define( 'HTPM_PLUGIN_VERSION', '1.4.0' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );
@@ -63,9 +63,8 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
 
-
     }
-        
+
     /**
      * Remove all Notices on admin pages.
      * @return void
@@ -78,10 +77,10 @@ class HTPM_Main {
             remove_all_actions('all_admin_notices');
         }
     }
-    
+
     /**
      * Plugin activation hook
-    */
+     */
     function activation(){
         if ( ! get_option( 'htpm_installed' ) ) {
             update_option( 'htpm_installed', time() );
@@ -136,16 +135,26 @@ class HTPM_Main {
      */
     function include_files() {
         require_once HTPM_ROOT_DIR . '/includes/helper_functions.php';
-        require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/class.recommended-plugins.php';
-        add_action('init', function() {
-            require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
-        });
+        //require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/class.recommended-plugins.php';
+        // add_action('init', function() {
+        //     require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
+        // });
         require_once HTPM_ROOT_DIR . '/includes/plugin-options-page.php';
         if(is_admin()){
             include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
             include_once( HTPM_ROOT_DIR . '/includes/class.notices.php');
             include_once( HTPM_ROOT_DIR . '/includes/HTPM_Trial.php');
         }
+        include_once( HTPM_ROOT_DIR . '/includes/api/admin-dashboard-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/changelog-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/recommended-plugins-api.php');
+        include_once( HTPM_ROOT_DIR . '/includes/api/admin-settings.php');
+
+        // Initialize REST API endpoints
+        add_action('rest_api_init', function() {
+            $plugins_api = new \HTPM\Api\Plugins();
+            $plugins_api->register_routes();
+        });
     }
 
     /**
@@ -153,24 +162,44 @@ class HTPM_Main {
      */
     function admin_scripts( $hook_suffix ) {
         if( $hook_suffix ==  'toplevel_page_htpm-options' ){
-            wp_enqueue_style( 'wp-jquery-ui-dialog' );
-            wp_enqueue_style( 'select2', HTPM_ROOT_URL . '/assets/css/select2.min.css', [], HTPM_PLUGIN_VERSION );
+            
             wp_enqueue_style( 'htpm-admin', HTPM_ROOT_URL . '/assets/css/admin-style.css', [], HTPM_PLUGIN_VERSION );
-            wp_enqueue_style( 'jquery-ui', HTPM_ROOT_URL . '/assets/css/jquery-ui.css', [], HTPM_PLUGIN_VERSION );
-            wp_enqueue_style( 'admin-options', HTPM_ROOT_URL . '/assets/css/admin-options.css', [], HTPM_PLUGIN_VERSION );
-    
-            // wp core scripts
-            wp_enqueue_script( 'jquery-ui-dialog' );
-            wp_enqueue_script( 'jquery-ui-accordion');
-            wp_enqueue_script( 'select2', HTPM_ROOT_URL . '/assets/js/select2.min.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
             wp_enqueue_script( 'htpm-admin', HTPM_ROOT_URL . '/assets/js/admin.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
-            // wp_enqueue_script( 'install-manager', HTPM_ROOT_URL . '/assets/js/install_manager.js', array('jquery', 'wp-util', 'updates'), HTPM_PLUGIN_VERSION, true );
-    
+            
+            // Localize the script with new data
+            $localize_data = [
+                'ajaxurl'          => admin_url( 'admin-ajax.php' ),
+                'adminURL'         => admin_url(),
+                'pluginURL'        => plugin_dir_url( __FILE__ ),
+                'assetsURL'        => plugin_dir_url( __FILE__ ) . 'assets/',
+                'restUrl'          => rest_url(),
+                'nonce'            => wp_create_nonce('wp_rest'),
+                'message'          => [
+                    'packagedesc'  => esc_html__( 'in this package', 'wp-plugin-manager' ),
+                    'allload'      => esc_html__( 'All Items have been Loaded', 'wp-plugin-manager' ),
+                    'notfound'     => esc_html__( 'Nothing Found', 'wp-plugin-manager' ),
+                ],
+                'buttontxt'        => [
+                    'tmplibrary'   => esc_html__( 'Import to Library', 'wp-plugin-manager' ),
+                    'tmppage'      => esc_html__( 'Import to Page', 'wp-plugin-manager' ),
+                    'import'       => esc_html__( 'Import', 'wp-plugin-manager' ),
+                    'buynow'       => esc_html__( 'Buy Now', 'wp-plugin-manager' ),
+                    'buynow_link'  => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
+                    'preview'      => esc_html__( 'Preview', 'wp-plugin-manager' ),
+                    'installing'   => esc_html__( 'Installing..', 'wp-plugin-manager' ),
+                ],
+            ];
+            wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
+            
+            $admin_settings = WP_Plugin_Manager_Settings::get_instance();
             if( is_admin() ){
                 $localize_data = [
                     'ajaxurl'          => admin_url( 'admin-ajax.php' ),
                     'adminURL'         => admin_url(),
                     'pluginURL'        => plugin_dir_url( __FILE__ ),
+                    'assetsURL'        => plugin_dir_url( __FILE__ ) . 'assets/',
+                    'restUrl' => rest_url(),  // This will include the wp-json prefix
+                    'nonce' => wp_create_nonce('wp_rest'),
                     'message'          =>[
                         'packagedesc'=> esc_html__( 'in this package', 'wp-plugin-manager' ),
                         'allload'    => esc_html__( 'All Items have been Loaded', 'wp-plugin-manager' ),
@@ -181,10 +210,39 @@ class HTPM_Main {
                         'tmppage'    => esc_html__( 'Import to Page', 'wp-plugin-manager' ),
                         'import'     => esc_html__( 'Import', 'wp-plugin-manager' ),
                         'buynow'     => esc_html__( 'Buy Now', 'wp-plugin-manager' ),
+                        'buynow_link' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
                         'preview'    => esc_html__( 'Preview', 'wp-plugin-manager' ),
                         'installing' => esc_html__( 'Installing..', 'wp-plugin-manager' ),
                         'activating' => esc_html__( 'Activating..', 'wp-plugin-manager' ),
                         'active'     => esc_html__( 'Active', 'wp-plugin-manager' ),
+                        'pro' => __( 'Pro', 'wp-plugin-manager' ),
+                        'modal' => [
+                            'title' => __( 'BUY PRO', 'wp-plugin-manager' ),
+                            'desc' => __( 'Our free version is great, but it doesn\'t have all our advanced features. The best way to unlock all of the features in our plugin is by purchasing the pro version.', 'wp-plugin-manager' )
+                        ],
+                    ],
+                    'existingData' => get_option('htpm_options'),
+                    'helpSection' => [
+                        'title' => esc_html__('Need Help with Plugin Manager?', 'wp-plugin-manager'),
+                        'description' => esc_html__('Our comprehensive documentation provides detailed information on how to use Plugin Manager effectively to improve your websites performance.', 'wp-plugin-manager'),
+                        'documentation' => esc_html__('Documentation', 'wp-plugin-manager'),
+                        'videoTutorial' => esc_html__('Video Tutorial', 'wp-plugin-manager'),
+                        'support' => esc_html__('Support', 'wp-plugin-manager'),
+                        'docLink' => 'https://hasthemes.com/docs/wp-plugin-manager/',
+                        'videoLink' => 'https://www.youtube.com/watch?v=u94hkbTzKFU',
+                        'supportLink' => 'https://hasthemes.com/contact-us/',
+                        'upgradeLink' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
+                        'licenseLink' => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
+                        'recommendedPluginsLink' => 'https://hasthemes.com/plugins/',
+                    ],
+                    'adminSettings' => [
+                        'modal_settings_fields' => $admin_settings->get_modal_settings_fields(),
+                        'is_pro' => $admin_settings->is_pro(),
+                        'labels_texts' => $admin_settings->get_labels_texts(),
+                        'dashboard_settings' => $admin_settings->get_dashboard_settings(),
+                        'menu_settings' => $admin_settings->get_menu_settings(),
+                        'recommendations_plugins' => $admin_settings->get_recommendations_plugins(),
+                        'allSettings' => get_option('htpm_options') ? get_option('htpm_options') : [],
                     ],
                 ];
                 wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
@@ -338,4 +396,5 @@ class HTPM_Main {
     }
 
 }
+
 HTPM_Main::instance();
