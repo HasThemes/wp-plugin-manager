@@ -13,7 +13,7 @@
       <div class="form-field">
         <label>{{ modalSettingsFields?.device_types?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{proLabel}}</span></label>
         <el-select v-model="pluginSettings.device_type" class="w-full" @change="(value) => handleProFeatureSelect('device_types', value)">
-          <el-option v-for="(label, value) in modalSettingsFields?.device_types?.options" :key="value" :label="label + (modalSettingsFields?.device_types?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" />
+          <el-option v-for="(label, value) in modalSettingsFields?.device_types?.options" :key="value" :label="label + (modalSettingsFields?.device_types?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.device_types?.pro?.includes(value)" />
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.device_types?.description }}</div>
       </div>
@@ -22,7 +22,7 @@
       <div class="form-field">
         <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{proLabel}}</span></label>
         <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
-          <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" />
+          <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
       </div>
@@ -45,9 +45,9 @@
 
       <!-- Post Types Selection -->
       <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
-        <label>{{ labels_texts?.select_post_types }}</label>
+        <label v-if="labels_texts?.select_post_types">{{ labels_texts?.select_post_types }}</label>
         <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange" style="display: flex;gap: 10px;">
-          <el-checkbox v-for="postType in filteredPostTypes" :key="postType.name" :label="postType.name" :disabled="!isPro" @click="!isPro && openProModal()">
+          <el-checkbox v-for="postType in filteredPostTypes" :key="postType.name" :label="postType.name" :disabled="!isPro" @click="!isPro && openProModal()" style="margin-bottom: 0;">
             {{ postType.label }}
           </el-checkbox>
         </el-checkbox-group>
@@ -96,7 +96,7 @@
           :key="postType"
           class="form-field"
         >
-          <label>{{ labels_texts?.select }} {{ formatPostTypeName(postType) }}s:</label>
+          <label>{{ labels_texts?.select }} {{ formatPostTypeName(postType) }}:</label>
           <el-select 
             v-model="pluginSettings[postType + 's']" 
             multiple 
@@ -161,7 +161,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="dialogVisible = false">{{labels_texts?.cancel}}</el-button>
-        <el-button type="primary" @click="saveSettings" :loading="saving">{{labels_texts?.save_enable}}</el-button>
+        <el-button type="primary" @click="saveSettings" :loading="saving">{{pluginSettings.enable_deactivation == 'yes' ? 'Save' :  labels_texts?.save_enable}}</el-button>
       </div>
     </template>
   </el-dialog>
@@ -553,6 +553,7 @@ const saveSettings = async () => {
 }
 .el-checkbox{
   margin-right: 0;
+  height: auto;
 }
 .form-field {
   margin-bottom: 20px;

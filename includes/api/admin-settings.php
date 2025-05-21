@@ -138,7 +138,7 @@ class WP_Plugin_Manager_Settings {
             'post_typs_settings' => [
                 'custom_post_types' => [
                     'label' => __('Select Post Types', 'wp-plugin-manager'),
-                    'options'=>htpm_get_all_post_types(['post','page']),
+                    'options'=>htpm_get_all_post_types(['post','page','attachment','e-floating-buttons']),
                     'isPro' => true,
                     'proBadge' => true,
                     'desc' => __('Select the custom post types where you want to disable plugins.', 'wp-plugin-manager'),

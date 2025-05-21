@@ -4,7 +4,7 @@ Tags: plugin manager, disable plugins, performance optimization, selective loadi
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 5.4
-Stable tag: 1.3.2
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,7 +87,7 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 
-= Version: 1.3.2 Date: 21 May 2025 =
+= Version: 1.4.0 Date: 21 May 2025 =
 * Improved: UI/UX for better user experience.
 * Tested: Compatibility with the latest version of WordPress.
 
