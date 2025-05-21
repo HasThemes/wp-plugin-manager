@@ -158,9 +158,8 @@ const openProModal = () => {
     border: none;
     
     :deep(.el-menu-item) {
-      height: 50px;
-      line-height: 50px;
-      
+      height: auto;
+      line-height: normal;
       &.is-active {
         font-weight: 600;
       }

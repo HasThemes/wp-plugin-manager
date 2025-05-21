@@ -164,14 +164,14 @@ top: 32px !important;
     fill: #f56c6c;
     transition: all 0.3s ease;
   }
-  .upgrade-button:hover {
+  .upgrade-button:hover,.upgrade-button:focus {
     background: #3489FE;
     transform: none;
     box-shadow: none;
     border-color: #3489FE;
     color: #fff;
   }
-  .upgrade-button:hover svg path{
+  .upgrade-button:hover svg path,.upgrade-button:focus svg path{
     fill: #fff;
   }
   .htoption-rating-area {
@@ -206,7 +206,9 @@ top: 32px !important;
     color: #434343;
   }
 
-  .htpm-admin-pro-rating-bution:hover {
+  .htpm-admin-pro-rating-bution:hover,
+  .htpm-admin-pro-rating-bution:focus,
+  .htpm-admin-pro-rating-bution:active {
     background: #3489FE;
     color: #fff;
     border-color: #3489FE;

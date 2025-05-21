@@ -182,8 +182,8 @@ class ChangeLog extends WP_REST_Controller {
     private function get_changelog_data() {
         return [
             [
-                'version' => '1.3.2',
-                'date'    => '2025-05-19',
+                'version' => '1.4.0',
+                'date'    => '2025-05-21',
                 'changes' => [
                     'Improvements' => [
                         'Enhanced dashboard performance.',
