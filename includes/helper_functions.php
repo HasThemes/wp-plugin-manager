@@ -140,3 +140,22 @@ if( !function_exists('htpm_generate_list') ){
         }
     }
 }
+/*
+ * Get Post Types
+ * return array
+ */
+function htpm_get_all_post_types($exclude=[]){
+    $post_types = get_post_types(['public' => true], 'objects');
+    $result = [];
+    
+    foreach ($post_types as $post_type) {
+        // Only include post types that make sense for this context
+        if (!in_array($post_type->name, ['revision', 'nav_menu_item', 'custom_css', 'customize_changeset', 'oembed_cache',...$exclude])) {
+            $result[] = [
+                'name' => $post_type->name,
+                'label' => $post_type->label
+            ];
+        }
+    }
+    return $result;
+}

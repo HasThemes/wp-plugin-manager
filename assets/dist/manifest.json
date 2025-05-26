@@ -1,0 +1,11 @@
+{
+  "src/main.js": {
+    "file": "js/main.js",
+    "isEntry": true,
+    "src": "src/main.js"
+  },
+  "style.css": {
+    "file": "css/style.css",
+    "src": "style.css"
+  }
+}
