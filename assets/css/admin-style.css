@@ -23,6 +23,7 @@
     box-shadow: none;
     padding: 0;
     border-width: 0 !important;
+    min-height: auto;
 }
 .el-notification{
 top: 35px!important; 

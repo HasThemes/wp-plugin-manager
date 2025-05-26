@@ -4,6 +4,15 @@
     <div class="htpm-plugins-header">
       <h3>Manage Plugins</h3>
       <div class="htpm-plugins-actions">
+        <el-select
+          v-model="filterStatus"
+          placeholder="Filter by status"
+          class="filter-select"
+        >
+          <el-option label="All Plugins" value="all" />
+          <el-option label="Optimized" value="optimized" />
+          <el-option label="Not Optimized" value="unoptimized" />
+        </el-select>
         <el-input
           v-model="searchQuery"
           placeholder="Search plugins..."
@@ -112,6 +121,7 @@ import { debounce } from 'lodash-es'
 const store = usePluginStore()
 const searchQuery = ref('')
 const debouncedSearchQuery = ref('')
+const filterStatus = ref('all')
 const showSettings = ref(false)
 const selectedPlugin = ref(null)
 const loading = ref(true)
@@ -169,22 +179,34 @@ watch(() => store.plugins, async (newPlugins) => {
 
     // Filter plugins based on search query
     const filteredPlugins = computed(() => {
-      // First filter only active WordPress plugins
-      const activePlugins = plugins.value.filter(plugin => plugin.wpActive)
+      let filtered = plugins.value;
       
-      // Then apply search filter if there's a query
-      const searchFilteredPlugins = !debouncedSearchQuery.value 
-        ? activePlugins 
-        : activePlugins.filter(plugin => 
-            plugin.name.toLowerCase().includes(debouncedSearchQuery.value.toLowerCase())
-          )
+      // Apply status filter
+      if (filterStatus.value !== 'all') {
+        filtered = filtered.filter(plugin => {
+          if (filterStatus.value === 'optimized') {
+            return plugin.enable_deactivation === 'yes';
+          } else {
+            return plugin.enable_deactivation !== 'yes';
+          }
+        });
+      }
       
-      // Update total for pagination
-      pagination.total = searchFilteredPlugins.length
+      // Apply search filter
+      if (debouncedSearchQuery.value) {
+        const searchLower = debouncedSearchQuery.value.toLowerCase();
+        filtered = filtered.filter(plugin => 
+          plugin.name.toLowerCase().includes(searchLower)
+        );
+      }
+      
+      // Update pagination total
+      pagination.total = filtered.length;
       
       // Apply pagination
-      const startIndex = (pagination.currentPage - 1) * pagination.pageSize
-      return searchFilteredPlugins.slice(startIndex, startIndex + pagination.pageSize)
+      const start = (pagination.currentPage - 1) * pagination.pageSize;
+      const end = start + pagination.pageSize;
+      return filtered.slice(start, end);
     })
 
     // Handle the toggle click
@@ -364,8 +386,12 @@ watch(() => store.plugins, async (newPlugins) => {
 
     .htpm-plugins-actions {
       display: flex;
+      gap: 1rem;
       align-items: center;
-      gap: 12px;
+      
+      .filter-select {
+        width: 150px;
+      }
     }
   }
 
