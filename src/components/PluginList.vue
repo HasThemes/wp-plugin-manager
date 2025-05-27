@@ -85,18 +85,16 @@
                 :model-value="plugin.enable_deactivation == 'yes'"
                 @click="handleToggle(plugin)"
                 class="plugin-switch"
+                :loading="isPluginLoading(plugin.id)"
               />
             </template>
           </el-popconfirm>
           <el-button
             type="default"
-            :icon="isPluginLoading(plugin.id) ? Loading : Setting"
+            :icon="Setting"
             circle
             class="settings-button"
-            :class="{ 
-              'active-settings': plugin.enable_deactivation == 'yes',
-              'is-loading': isPluginLoading(plugin.id)
-            }"
+            :class="{ 'active-settings': plugin.enable_deactivation == 'yes' }"
             @click="openSettings(plugin)"
           />
         </div>
