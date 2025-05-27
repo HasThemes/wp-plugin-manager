@@ -78,10 +78,13 @@
           </el-popconfirm>
           <el-button
             type="default"
-            :icon="Setting"
+            :icon="isPluginLoading(plugin.id) ? Loading : Setting"
             circle
             class="settings-button"
-            :class="{ 'active-settings': plugin.enable_deactivation == 'yes' }"
+            :class="{ 
+              'active-settings': plugin.enable_deactivation == 'yes',
+              'is-loading': isPluginLoading(plugin.id)
+            }"
             @click="openSettings(plugin)"
           />
         </div>
@@ -111,7 +114,7 @@
 
 <script setup>
 import { ref, computed, watch, reactive } from 'vue'
-import { Search, Setting, QuestionFilled } from '@element-plus/icons-vue'
+import { Search, Setting, QuestionFilled, Loading } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
@@ -132,6 +135,7 @@ const pagination = reactive({
   total: 0
 })
 const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
+const loadingPlugins = ref(new Set()) // Track which plugins are currently saving
 
 // Create debounced search handler
 const updateDebouncedSearch = debounce((value) => {
@@ -179,7 +183,8 @@ watch(() => store.plugins, async (newPlugins) => {
 
     // Filter plugins based on search query
     const filteredPlugins = computed(() => {
-      let filtered = plugins.value;
+      //const activePlugins = plugins.value.filter(plugin => plugin.wpActive)
+      let filtered = plugins.value.filter(plugin => plugin.wpActive)
       
       // Apply status filter
       if (filterStatus.value !== 'all') {
@@ -209,6 +214,11 @@ watch(() => store.plugins, async (newPlugins) => {
       return filtered.slice(start, end);
     })
 
+    // Add computed property for checking loading state
+    const isPluginLoading = computed(() => {
+      return (pluginId) => loadingPlugins.value?.has(pluginId) || false
+    })
+
     // Handle the toggle click
     const handleToggle = (plugin) => {
       const newState = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
@@ -224,9 +234,10 @@ watch(() => store.plugins, async (newPlugins) => {
     // Handle the optimize now action
     const handleOptimizeNow = async (plugin) => {
       try {
-        // Set both the plugin state and settings to enabled
-        plugin.enable_deactivation = 'yes';
-        const existingSettings = store.settings[plugin.id] || {
+        loadingPlugins.value.add(plugin.id)
+        
+        // Create default settings for the plugin
+        const defaultSettings = {
           enable_deactivation: 'yes',
           device_type: 'all',
           condition_type: 'disable_on_selected',
@@ -238,33 +249,47 @@ watch(() => store.plugins, async (newPlugins) => {
             name: ['uri_equals'],
             value: [''],
           }
-        };
+        }
         
-        existingSettings.enable_deactivation = 'yes';
-        await store.updatePluginSettings(plugin.id, existingSettings);
-        ElNotification({
-          title: "Success",
-          message: 'Plugin optimized successfully',
-          type: 'success',
-          position: 'top-right',
-          duration: 3000
-        });
+        // Update plugin settings
+        const response = await store.updatePluginSettings(plugin.id, defaultSettings)
+        
+        if (response) {
+          ElNotification({
+            title: 'Success',
+            message: 'Plugin optimized successfully',
+            type: 'success',
+          })
+          
+          // Update local plugin data
+          const pluginIndex = plugins.value.findIndex(p => p.id === plugin.id)
+          if (pluginIndex !== -1) {
+            plugins.value[pluginIndex] = {
+              ...plugins.value[pluginIndex],
+              enable_deactivation: 'yes',
+              settings: defaultSettings
+            }
+          }
+        }
       } catch (error) {
-        plugin.enable_deactivation = 'no';
+        console.error('Error enabling plugin:', error)
         ElNotification({
-          title: "Error",
-          message: 'Failed to optimize plugin',
+          title: 'Error',
+          message: error.message || 'Failed to enable plugin',
           type: 'error',
-          position: 'top-right',
-          duration: 3000
-        });
-        console.error('Error optimizing plugin:', error);
+        })
+        // Revert the state on error
+        plugin.enable_deactivation = 'no'
+      } finally {
+        loadingPlugins.value.delete(plugin.id)
       }
     };
 
     // Toggle plugin loading status (now only handles disable)
     const togglePluginLoading = async (plugin) => {
       try {
+        loadingPlugins.value.add(plugin.id)
+        
         // Only handle disabling here
         plugin.enable_deactivation = 'no';
         
@@ -314,6 +339,8 @@ watch(() => store.plugins, async (newPlugins) => {
           duration: 3000
         });
         console.error('Error toggling plugin loading:', error);
+      } finally {
+        loadingPlugins.value.delete(plugin.id)
       }
     }
 
@@ -326,6 +353,8 @@ watch(() => store.plugins, async (newPlugins) => {
     // Save plugin settings 
     const savePluginSettings = async (data) => {
       try {
+        loadingPlugins.value.add(data.plugin.id)
+        
         const { plugin, settings } = data
         
         // Always enable the plugin when saving settings from modal
@@ -355,6 +384,8 @@ watch(() => store.plugins, async (newPlugins) => {
           duration: 3000
         });
         console.error('Error saving plugin settings:', error)
+      } finally {
+        loadingPlugins.value.delete(data.plugin.id)
       }
     }
 
@@ -495,6 +526,12 @@ watch(() => store.plugins, async (newPlugins) => {
           &:hover {
             color: #409eff;
             border-color: #409eff;
+          }
+
+          &.is-loading {
+            .el-icon {
+              animation: spin 1s linear infinite;
+            }
           }
         }
       }
@@ -695,6 +732,15 @@ watch(() => store.plugins, async (newPlugins) => {
         }
       }
     }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 </style>
