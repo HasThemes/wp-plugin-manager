@@ -775,6 +775,10 @@ watch(() => store.plugins, async (newPlugins) => {
 .settings-button.is-loading .el-icon {
   animation: spin 1s linear infinite;
 }
+.el-icon.is-loading svg path{
+  stroke: #409eff;
+  fill: #409eff;
+}
 @keyframes spin {
   from {
     transform: rotate(0deg);
