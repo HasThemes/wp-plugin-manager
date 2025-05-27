@@ -22,14 +22,26 @@
     </div>
     
     <!-- Loading indicator shown until plugins are fully loaded -->
-    <!-- <div v-if="loading" class="loading-indicator">
-      <el-skeleton :rows="5" animated />
-    </div> -->
     <PluginListSkeleton v-if="loading" />
     <!-- Only show plugin list when loading is complete -->
     <div v-else class="plugin-list">
+      <!-- Show empty state when no plugins are found -->
+      <div v-if="filteredPlugins.length === 0" class="empty-state">
+        <el-empty
+          :image-size="200"
+          class="custom-empty"
+        >
+          <template #description>
+            <h3>No Plugins Found</h3>
+            <p class="empty-description">
+              {{ searchQuery || filterStatus !== 'all' ? 'Try adjusting your search or filter criteria' : 'No plugins are available at the moment' }}
+            </p>
+          </template>
+        </el-empty>
+      </div>
       <!-- Show only WordPress-activated plugins -->
       <div 
+        v-else
         v-for="plugin in filteredPlugins" 
         :key="plugin.id" 
         class="plugin-item"
@@ -574,6 +586,33 @@ watch(() => store.plugins, async (newPlugins) => {
           &:hover:not(.is-active) {
             background-color: #f0f2f5;
           }
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    background: #ffffff;
+    border-radius: 4px;
+    margin: 20px 0;
+    padding: 40px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .custom-empty {
+      :deep(.el-empty__description) {
+        margin-top: 0px;
+        
+        h3 {
+          font-size: 16px;
+          font-weight: 500;
+          color: #1f2937;
+          margin: 0 0 8px;
+        }
+
+        .empty-description {
+          font-size: 14px;
+          color: #6b7280;
+          margin: 0;
         }
       }
     }
