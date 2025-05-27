@@ -290,9 +290,6 @@ watch(() => store.plugins, async (newPlugins) => {
       try {
         loadingPlugins.value.add(plugin.id)
         
-        // Only handle disabling here
-        plugin.enable_deactivation = 'no';
-        
         // Get existing settings
         let existingSettings = store.settings[plugin.id];
         
@@ -320,7 +317,7 @@ watch(() => store.plugins, async (newPlugins) => {
         
         // Update the plugin's local settings
         plugin.settings = existingSettings;
-        
+        plugin.enable_deactivation = 'no';
         ElNotification({
           title: "Success",
           message: 'Plugin optimization disabled successfully',
@@ -328,6 +325,8 @@ watch(() => store.plugins, async (newPlugins) => {
           position: 'top-right',
           duration: 3000
         });
+        // Only handle disabling here
+
       } catch (error) {
         // Revert the UI change if the API call fails
         plugin.enable_deactivation = 'yes';
@@ -734,7 +733,11 @@ watch(() => store.plugins, async (newPlugins) => {
     }
   }
 }
-
+</style>
+<style lang="scss">
+.settings-button.is-loading .el-icon {
+  animation: spin 1s linear infinite;
+}
 @keyframes spin {
   from {
     transform: rotate(0deg);
