@@ -409,10 +409,11 @@ function htpm_get_plugin_settings($request) {
     // Check if plugin is active in WordPress
     $is_wp_active = in_array($plugin_path, $active_plugins);
     
-    // Create default settings if none exist - DEFAULT TO DISABLED
+    // Create default settings if none exist - INCLUDING BACKEND FIELDS
     if (empty($plugin_settings)) {
         $plugin_settings = [
-            'enable_deactivation' => 'no', // Default to disabled
+            // Frontend settings
+            'enable_deactivation' => 'no',
             'device_type' => 'all',
             'condition_type' => 'disable_on_selected',
             'uri_type' => 'page',
@@ -422,13 +423,37 @@ function htpm_get_plugin_settings($request) {
             'condition_list' => [
                 'name' => ['uri_equals'],
                 'value' => [''],
-            ]
+            ],
+            // Backend settings
+            'admin_scope' => 'all_admin',
+            'backend_pages' => [],
+            'backend_condition_list' => [
+                'name' => ['admin_page_equals'],
+                'value' => [''],
+            ],
+            'backend_user_roles' => []
         ];
+    } else {
+        // Ensure backend fields exist in existing settings
+        if (!isset($plugin_settings['admin_scope'])) {
+            $plugin_settings['admin_scope'] = 'all_admin';
+        }
+        if (!isset($plugin_settings['backend_pages'])) {
+            $plugin_settings['backend_pages'] = [];
+        }
+        if (!isset($plugin_settings['backend_condition_list'])) {
+            $plugin_settings['backend_condition_list'] = [
+                'name' => ['admin_page_equals'],
+                'value' => [''],
+            ];
+        }
+        if (!isset($plugin_settings['backend_user_roles'])) {
+            $plugin_settings['backend_user_roles'] = [];
+        }
     }
     
     return new WP_REST_Response($plugin_settings, 200);
 }
-
 /**
  * Update plugin settings
  */
@@ -468,11 +493,14 @@ function htpm_update_plugin_settings($request) {
     // Sanitize and validate the settings
     $sanitized_settings = [];
     
-    // Basic settings
+    // Basic frontend settings
     $sanitized_settings['enable_deactivation'] = sanitize_text_field($settings['enable_deactivation'] ?? 'no');
     $sanitized_settings['device_type'] = sanitize_text_field($settings['device_type'] ?? 'all');
     $sanitized_settings['condition_type'] = sanitize_text_field($settings['condition_type'] ?? 'disable_on_selected');
     $sanitized_settings['uri_type'] = sanitize_text_field($settings['uri_type'] ?? 'page');
+    
+    // Backend specific settings
+    $sanitized_settings['admin_scope'] = sanitize_text_field($settings['admin_scope'] ?? 'all_admin');
     
     // Arrays need special handling
     if (isset($settings['post_types']) && is_array($settings['post_types'])) {
@@ -493,6 +521,20 @@ function htpm_update_plugin_settings($request) {
         $sanitized_settings['posts'] = [];
     }
     
+    // Backend pages array
+    if (isset($settings['backend_pages']) && is_array($settings['backend_pages'])) {
+        $sanitized_settings['backend_pages'] = array_map('sanitize_text_field', $settings['backend_pages']);
+    } else {
+        $sanitized_settings['backend_pages'] = [];
+    }
+    
+    // Backend user roles array
+    if (isset($settings['backend_user_roles']) && is_array($settings['backend_user_roles'])) {
+        $sanitized_settings['backend_user_roles'] = array_map('sanitize_text_field', $settings['backend_user_roles']);
+    } else {
+        $sanitized_settings['backend_user_roles'] = [];
+    }
+    
     // Handle custom post types
     $post_types = get_post_types(['public' => true], 'names');
     foreach ($post_types as $post_type) {
@@ -504,14 +546,13 @@ function htpm_update_plugin_settings($request) {
         }
     }
     
-    // Handle condition list
+    // Handle frontend condition list
     if (isset($settings['condition_list']) && is_array($settings['condition_list'])) {
         $sanitized_settings['condition_list'] = [
             'name' => [],
             'value' => []
         ];
         
-        // Ensure both arrays exist
         if (isset($settings['condition_list']['name']) && is_array($settings['condition_list']['name'])) {
             $sanitized_settings['condition_list']['name'] = array_map('sanitize_text_field', $settings['condition_list']['name']);
         } else {
@@ -526,6 +567,31 @@ function htpm_update_plugin_settings($request) {
     } else {
         $sanitized_settings['condition_list'] = [
             'name' => ['uri_equals'],
+            'value' => ['']
+        ];
+    }
+    
+    // Handle backend condition list
+    if (isset($settings['backend_condition_list']) && is_array($settings['backend_condition_list'])) {
+        $sanitized_settings['backend_condition_list'] = [
+            'name' => [],
+            'value' => []
+        ];
+        
+        if (isset($settings['backend_condition_list']['name']) && is_array($settings['backend_condition_list']['name'])) {
+            $sanitized_settings['backend_condition_list']['name'] = array_map('sanitize_text_field', $settings['backend_condition_list']['name']);
+        } else {
+            $sanitized_settings['backend_condition_list']['name'] = ['admin_page_equals'];
+        }
+        
+        if (isset($settings['backend_condition_list']['value']) && is_array($settings['backend_condition_list']['value'])) {
+            $sanitized_settings['backend_condition_list']['value'] = array_map('sanitize_text_field', $settings['backend_condition_list']['value']);
+        } else {
+            $sanitized_settings['backend_condition_list']['value'] = [''];
+        }
+    } else {
+        $sanitized_settings['backend_condition_list'] = [
+            'name' => ['admin_page_equals'],
             'value' => ['']
         ];
     }

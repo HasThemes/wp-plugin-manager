@@ -165,6 +165,7 @@ const labels_texts = HTPMM.adminSettings.labels_texts
 
 // Default settings structure matching PHP - default to disabled
 const pluginSettings = ref({
+  // Frontend settings
   enable_deactivation: 'yes', // Default to 'yes' (disabled)
   device_type: 'all',
   condition_type: 'disable_on_selected',
@@ -175,7 +176,15 @@ const pluginSettings = ref({
   condition_list: {
     name: ['uri_equals'],
     value: [''],
-  }
+  },
+  // Backend settings
+  admin_scope: 'all_admin',
+  backend_pages: [],
+  backend_condition_list: {
+    name: ['admin_page_equals'],
+    value: [''],
+  },
+  backend_user_roles: []
 })
 
 // Post types from API
@@ -251,11 +260,9 @@ const loadPluginSettings = async () => {
     const settings = await store.fetchPluginSettings(props.plugin.id)
     
     if (settings) {
-      // Ensure we have proper structure
+      // Ensure we have proper structure including backend fields
       const defaultSettings = {
-        // We keep the enable_deactivation setting to maintain compatibility
-        // but it will be controlled by the plugin list switcher
-        // Default to 'yes' (disabled) unless explicitly set to enabled
+        // Frontend settings
         enable_deactivation: props.plugin.enable_deactivation ? 'yes' : 'no',
         device_type: 'all',
         condition_type: 'disable_on_selected',
@@ -266,23 +273,50 @@ const loadPluginSettings = async () => {
         condition_list: {
           name: ['uri_equals'],
           value: [''],
-        }
+        },
+        // Backend settings
+        admin_scope: 'all_admin',
+        backend_pages: [],
+        backend_condition_list: {
+          name: ['admin_page_equals'],
+          value: [''],
+        },
+        backend_user_roles: []
       }
       
       // Merge with default settings to ensure all properties exist
       pluginSettings.value = { ...defaultSettings, ...settings }
       
-      // Initialize post_types array if it doesn't exist
+      // Initialize arrays if they don't exist
       if (!pluginSettings.value.post_types) {
         pluginSettings.value.post_types = ['page', 'post']
       }
       
-      // Initialize condition_list if needed
       if (!pluginSettings.value.condition_list) {
         pluginSettings.value.condition_list = {
           name: ['uri_equals'],
           value: [''],
         }
+      }
+      
+      // Initialize backend fields if they don't exist
+      if (!pluginSettings.value.admin_scope) {
+        pluginSettings.value.admin_scope = 'all_admin'
+      }
+      
+      if (!pluginSettings.value.backend_pages) {
+        pluginSettings.value.backend_pages = []
+      }
+      
+      if (!pluginSettings.value.backend_condition_list) {
+        pluginSettings.value.backend_condition_list = {
+          name: ['admin_page_equals'],
+          value: [''],
+        }
+      }
+      
+      if (!pluginSettings.value.backend_user_roles) {
+        pluginSettings.value.backend_user_roles = []
       }
     }
   } catch (error) {
@@ -425,6 +459,26 @@ const saveSettings = async () => {
         name: ['uri_equals'],
         value: [''],
       }
+    }
+    
+    // Initialize backend fields if they don't exist
+    if (!pluginSettings.value.admin_scope) {
+      pluginSettings.value.admin_scope = 'all_admin'
+    }
+    
+    if (!Array.isArray(pluginSettings.value.backend_pages)) {
+      pluginSettings.value.backend_pages = []
+    }
+    
+    if (!pluginSettings.value.backend_condition_list) {
+      pluginSettings.value.backend_condition_list = {
+        name: ['admin_page_equals'],
+        value: [''],
+      }
+    }
+    
+    if (!Array.isArray(pluginSettings.value.backend_user_roles)) {
+      pluginSettings.value.backend_user_roles = []
     }
     
     // Prepare data for API - create a full, deep copy

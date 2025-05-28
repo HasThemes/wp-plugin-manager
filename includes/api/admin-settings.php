@@ -85,16 +85,16 @@ class WP_Plugin_Manager_Settings {
     public function get_backend_modal_settings() {
         return [
             'page_selection' => [
-                'label' => __('Select Pages', 'wp-plugin-manager'),
-                'description' => __('Choose specific pages where you want to apply these settings.', 'wp-plugin-manager'),
+                'label' => __('Select Admin Pages', 'wp-plugin-manager'),
+                'description' => __('Choose specific admin pages where you want to apply these settings.', 'wp-plugin-manager'),
                 'type' => 'grouped_select',
                 'groups' => $this->get_wordpress_page_groups(),
                 'pro' => false,
                 'proBadge' => false
             ],
-            'backend_conditions' => [
-                'label' => __('Backend Conditions', 'wp-plugin-manager'),
-                'description' => __('Set conditions for when this plugin should be active in the WordPress admin area.', 'wp-plugin-manager'),
+            'admin_scope' => [
+                'label' => __('Admin Area Scope', 'wp-plugin-manager'),
+                'description' => __('Choose which section of WordPress admin this rule should apply to.', 'wp-plugin-manager'),
                 'options' => [
                     'all_admin' => __('All Admin Pages', 'wp-plugin-manager'),
                     'dashboard_only' => __('Dashboard Only', 'wp-plugin-manager'),
@@ -107,8 +107,22 @@ class WP_Plugin_Manager_Settings {
                     'tools' => __('Tools', 'wp-plugin-manager'),
                     'settings' => __('Settings', 'wp-plugin-manager'),
                 ],
-                'pro' => ['dashboard_only', 'posts_pages', 'media_library', 'comments', 'appearance', 'plugins', 'users', 'tools', 'settings'],
-                'proBadge' => true
+                'pro' => [],
+                'proBadge' => false
+            ],
+            'custom_conditions' => [
+                'label' => __('Custom Page Conditions', 'wp-plugin-manager'),
+                'description' => __('Define specific conditions for targeting exact admin pages or screens.', 'wp-plugin-manager'),
+                'options' => [
+                    'admin_page_equals' => __('Admin Page Equals', 'wp-plugin-manager'),
+                    'admin_page_not_equals' => __('Admin Page Not Equals', 'wp-plugin-manager'),
+                    'admin_page_contains' => __('Admin Page Contains', 'wp-plugin-manager'),
+                    'admin_page_not_contains' => __('Admin Page Not Contains', 'wp-plugin-manager'),
+                    'screen_id_equals' => __('Screen ID Equals', 'wp-plugin-manager'),
+                    'hook_name_equals' => __('Hook Name Equals', 'wp-plugin-manager'),
+                ],
+                'pro' => [],
+                'proBadge' => false
             ]
         ];
     }

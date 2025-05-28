@@ -1,18 +1,18 @@
 <template>
   <div class="backend-modal-content">
-    <!-- Backend Conditions -->
+    <!-- Admin Area Scope (Broad Categories) -->
     <div class="form-field">
-      <label>{{ modalSettingsFields?.backend_conditions?.label }} <span v-if="modalSettingsFields?.backend_conditions?.proBadge" class="pro-badge">{{proLabel}}</span></label>
-      <el-select v-model="pluginSettings.backend_condition_type" class="w-full" @change="(value) => handleProFeatureSelect('backend_conditions', value)">
+      <label>{{ modalSettingsFields?.admin_scope?.label }} <span v-if="modalSettingsFields?.admin_scope?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+      <el-select v-model="pluginSettings.admin_scope" class="w-full" @change="(value) => handleProFeatureSelect('admin_scope', value)">
         <el-option 
-          v-for="(label, value) in modalSettingsFields?.backend_conditions?.options" 
+          v-for="(label, value) in modalSettingsFields?.admin_scope?.options" 
           :key="value" 
-          :label="label + (modalSettingsFields?.backend_conditions?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" 
+          :label="label + (modalSettingsFields?.admin_scope?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" 
           :value="value" 
-          :disabled="modalSettingsFields?.backend_conditions?.pro?.includes(value)" 
+          :disabled="modalSettingsFields?.admin_scope?.pro?.includes(value)" 
         />
       </el-select>
-      <div class="field-desc">{{ modalSettingsFields?.backend_conditions?.description }}</div>
+      <div class="field-desc">{{ modalSettingsFields?.admin_scope?.description }}</div>
     </div>
 
     <!-- Backend Page Selection with Grouped Options -->
@@ -55,24 +55,22 @@
       <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
     </div>
 
-    <!-- Custom URI Conditions for Backend -->
+    <!-- Custom Page Conditions (Specific Targeting) -->
     <div class="form-field">
-      <label>{{ labels_texts?.backend_conditions || 'Backend Conditions:' }}</label>
+      <label>{{ labels_texts?.custom_page_conditions || 'Custom Page Conditions:' }}</label>
       <div v-for="(condition, index) in pluginSettings.backend_condition_list.name" :key="index" class="uri-condition">
         <el-select v-model="pluginSettings.backend_condition_list.name[index]" class="condition-type">
-          <el-option label="Admin Page Equals" value="admin_page_equals" />
-          <el-option label="Admin Page Not Equals" value="admin_page_not_equals" />
-          <el-option label="Admin Page Contains" value="admin_page_contains" />
-          <el-option label="Admin Page Not Contains" value="admin_page_not_contains" />
-          <el-option label="Screen ID Equals" value="screen_id_equals" />
-          <el-option label="Hook Name Equals" value="hook_name_equals" />
+          <el-option 
+            v-for="(label, value) in modalSettingsFields?.custom_conditions?.options" 
+            :key="value" 
+            :label="label" 
+            :value="value" 
+          />
         </el-select>
         <el-input 
           v-model="pluginSettings.backend_condition_list.value[index]" 
           placeholder="e.g: edit.php, post.php, index.php"
           class="condition-value"
-          :disabled="!isPro"
-          @click="!isPro && openProModal()"
         />
         <div class="condition-actions">
           <el-button 
@@ -84,15 +82,15 @@
           >
             <el-icon><Delete /></el-icon>
           </el-button>
-          <el-button type="primary" circle size="small" @click="cloneBackendCondition(index)" :disabled="!isPro">
+          <el-button type="primary" circle size="small" @click="cloneBackendCondition(index)">
             <el-icon><CopyDocument /></el-icon>
           </el-button>
         </div>
       </div>
-      <el-button type="primary" plain size="small" @click="addBackendCondition" class="mt-3 add-condition" color="#fff" :disabled="!isPro">
+      <el-button type="primary" plain size="small" @click="addBackendCondition" class="mt-3 add-condition" color="#fff">
         <el-icon><Plus /></el-icon> {{ labels_texts?.add_condition || 'Add Condition' }}
       </el-button>
-      <div class="field-desc">Configure conditions for WordPress admin area. E.g., use 'edit.php' for Posts page, 'post.php' for Edit Post page.</div>
+      <div class="field-desc">{{ modalSettingsFields?.custom_conditions?.description || 'Define specific conditions for targeting exact admin pages or screens. E.g., use "edit.php" for Posts page, "post.php" for Edit Post page.' }}</div>
     </div>
   </div>
 </template>
@@ -147,8 +145,8 @@ const emit = defineEmits([
 
 // Initialize backend-specific settings if they don't exist
 onMounted(() => {
-  if (!props.pluginSettings.backend_condition_type) {
-    props.pluginSettings.backend_condition_type = 'all_admin'
+  if (!props.pluginSettings.admin_scope) {
+    props.pluginSettings.admin_scope = 'all_admin'
   }
   
   if (!props.pluginSettings.backend_pages) {
@@ -183,10 +181,10 @@ const removeBackendCondition = (index) => {
 }
 
 const cloneBackendCondition = (index) => {
-  if (!props.isPro) {
-    openProModal()
-    return
-  }
+  // if (!props.isPro) {
+  //   openProModal()
+  //   return
+  // }
   
   const name = props.pluginSettings.backend_condition_list.name[index]
   const value = props.pluginSettings.backend_condition_list.value[index]
@@ -196,10 +194,10 @@ const cloneBackendCondition = (index) => {
 }
 
 const addBackendCondition = () => {
-  if (!props.isPro) {
-    openProModal()
-    return
-  }
+  // if (!props.isPro) {
+  //   openProModal()
+  //   return
+  // }
   
   props.pluginSettings.backend_condition_list.name.push('admin_page_equals')
   props.pluginSettings.backend_condition_list.value.push('')
