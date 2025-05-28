@@ -42,7 +42,6 @@
           <BackendModalContent
             :plugin-settings="pluginSettings"
             :modal-settings-fields="modalSettingsFields"
-            :labels-texts="labels_texts"
             :pro-label="proLabel"
             :is-pro="isPro"
             :pages="pages"

@@ -163,10 +163,6 @@
       type: Object,
       required: true
     },
-    labels_texts: {
-      type: Object,
-      required: true
-    },
     proLabel: {
       type: String,
       required: true
@@ -216,7 +212,7 @@
     'cloneCondition',
     'addCondition'
   ])
-  
+  const labels_texts = HTPMM.adminSettings.labels_texts;
   const handleProFeatureSelect = (field, value) => {
     emit('handleProFeatureSelect', field, value)
   }

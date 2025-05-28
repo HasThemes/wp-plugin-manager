@@ -75,10 +75,6 @@
       type: Object,
       required: true
     },
-    labels_texts: {
-      type: Object,
-      required: true
-    },
     proLabel: {
       type: String,
       required: true
@@ -96,7 +92,7 @@
       default: false
     }
   })
-  
+  const labels_texts = HTPMM.adminSettings.labels_texts
   const emit = defineEmits([
     'handleProFeatureSelect',
     'openProModal',
