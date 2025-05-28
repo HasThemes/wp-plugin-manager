@@ -1,5 +1,13 @@
 <template>
   <div class="backend-modal-content">
+      <!-- Action Type (same as frontend) -->
+      <div class="form-field">
+      <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.action?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+      <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
+        <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
+      </el-select>
+      <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
+    </div>
     <!-- Admin Area Scope (Broad Categories) -->
     <div class="form-field">
       <label>{{ modalSettingsFields?.admin_scope?.label }} <span v-if="modalSettingsFields?.admin_scope?.proBadge" class="pro-badge">{{proLabel}}</span></label>
@@ -44,15 +52,6 @@
         </template>
       </el-select>
       <div class="field-desc">{{ modalSettingsFields?.page_selection?.description || 'Choose specific admin pages where you want to apply these settings.' }}</div>
-    </div>
-
-    <!-- Action Type (same as frontend) -->
-    <div class="form-field">
-      <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.action?.proBadge" class="pro-badge">{{proLabel}}</span></label>
-      <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
-        <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
-      </el-select>
-      <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
     </div>
 
     <!-- Custom Page Conditions (Specific Targeting) -->

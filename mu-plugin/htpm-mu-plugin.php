@@ -1,6 +1,6 @@
 <?php
 /**
-*Version: 1.0.9
+*Version: 1.0.11
 */
 
 if(get_option('htpm_status') != 'active'){
@@ -52,6 +52,79 @@ function htpm_get_current_admin_page_info() {
 }
 
 /**
+ * Get current screen ID safely
+ */
+function htpm_get_current_screen_id() {
+    // Check if get_current_screen function exists and is available
+    if (!function_exists('get_current_screen')) {
+        return '';
+    }
+    
+    // Check if we're in a context where get_current_screen is available
+    if (!did_action('current_screen')) {
+        return '';
+    }
+    
+    $screen = get_current_screen();
+    return $screen ? $screen->id : '';
+}
+
+/**
+ * Generate screen ID from current page info (fallback method)
+ */
+function htpm_generate_screen_id_fallback() {
+    global $pagenow;
+    
+    $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+    $post_type = isset($_GET['post_type']) ? sanitize_text_field($_GET['post_type']) : '';
+    $taxonomy = isset($_GET['taxonomy']) ? sanitize_text_field($_GET['taxonomy']) : '';
+    
+    // Generate screen ID based on current page context
+    $screen_id = '';
+    
+    switch ($pagenow) {
+        case 'index.php':
+            $screen_id = 'dashboard';
+            break;
+        case 'edit.php':
+            $screen_id = $post_type ? "edit-{$post_type}" : 'edit-post';
+            break;
+        case 'post.php':
+            $screen_id = $post_type ? $post_type : 'post';
+            break;
+        case 'post-new.php':
+            $screen_id = $post_type ? $post_type : 'post';
+            break;
+        case 'admin.php':
+            $screen_id = $page ? $page : 'admin';
+            break;
+        case 'plugins.php':
+            $screen_id = 'plugins';
+            break;
+        case 'themes.php':
+            $screen_id = 'themes';
+            break;
+        case 'users.php':
+            $screen_id = 'users';
+            break;
+        case 'upload.php':
+            $screen_id = 'upload';
+            break;
+        case 'edit-comments.php':
+            $screen_id = 'edit-comments';
+            break;
+        case 'edit-tags.php':
+            $screen_id = $taxonomy ? "edit-{$taxonomy}" : 'edit-tags';
+            break;
+        default:
+            $screen_id = str_replace('.php', '', $pagenow);
+            break;
+    }
+    
+    return $screen_id;
+}
+
+/**
  * Check if current admin page matches backend conditions
  */
 function htpm_check_backend_conditions($plugin_settings) {
@@ -61,6 +134,10 @@ function htpm_check_backend_conditions($plugin_settings) {
     
     $page_info = htpm_get_current_admin_page_info();
     $should_disable = false;
+    
+    // Get the full request URI for better matching
+    $request_uri = $_SERVER['REQUEST_URI'];
+    $query_string = $_SERVER['QUERY_STRING'] ?? '';
     
     // Check admin scope
     if (isset($plugin_settings['admin_scope'])) {
@@ -133,34 +210,92 @@ function htpm_check_backend_conditions($plugin_settings) {
             
             switch ($condition_name) {
                 case 'admin_page_equals':
-                    if ($page_info['pagenow'] === $condition_value || $page_info['page'] === $condition_value) {
+                    // Check pagenow, page parameter, and full query string
+                    if ($page_info['pagenow'] === $condition_value || 
+                        $page_info['page'] === $condition_value ||
+                        $query_string === $condition_value) {
                         $should_disable = true;
                     }
                     break;
                     
                 case 'admin_page_not_equals':
-                    if ($page_info['pagenow'] !== $condition_value && $page_info['page'] !== $condition_value) {
+                    // Check if none of the page identifiers match
+                    if ($page_info['pagenow'] !== $condition_value && 
+                        $page_info['page'] !== $condition_value &&
+                        $query_string !== $condition_value) {
                         $should_disable = true;
                     }
                     break;
                     
                 case 'admin_page_contains':
-                    if (strpos($page_info['pagenow'], $condition_value) !== false || 
-                        strpos($page_info['page'], $condition_value) !== false) {
+                    // Check if any of the page identifiers contain the value
+                    $found_match = false;
+                    
+                    // Check in pagenow
+                    if (strpos($page_info['pagenow'], $condition_value) !== false) {
+                        $found_match = true;
+                    }
+                    
+                    // Check in page parameter
+                    if (!$found_match && strpos($page_info['page'], $condition_value) !== false) {
+                        $found_match = true;
+                    }
+                    
+                    // Check in full query string
+                    if (!$found_match && strpos($query_string, $condition_value) !== false) {
+                        $found_match = true;
+                    }
+                    
+                    // Check in full request URI
+                    if (!$found_match && strpos($request_uri, $condition_value) !== false) {
+                        $found_match = true;
+                    }
+                    
+                    if ($found_match) {
                         $should_disable = true;
                     }
                     break;
                     
                 case 'admin_page_not_contains':
-                    if (strpos($page_info['pagenow'], $condition_value) === false && 
-                        strpos($page_info['page'], $condition_value) === false) {
+                    // Check if none of the page identifiers contain the value
+                    $found_match = false;
+                    
+                    // Check in pagenow
+                    if (strpos($page_info['pagenow'], $condition_value) !== false) {
+                        $found_match = true;
+                    }
+                    
+                    // Check in page parameter
+                    if (!$found_match && strpos($page_info['page'], $condition_value) !== false) {
+                        $found_match = true;
+                    }
+                    
+                    // Check in full query string
+                    if (!$found_match && strpos($query_string, $condition_value) !== false) {
+                        $found_match = true;
+                    }
+                    
+                    // Check in full request URI
+                    if (!$found_match && strpos($request_uri, $condition_value) !== false) {
+                        $found_match = true;
+                    }
+                    
+                    // If no match found, then condition is met (not contains)
+                    if (!$found_match) {
                         $should_disable = true;
                     }
                     break;
                     
                 case 'screen_id_equals':
-                    $current_screen = get_current_screen();
-                    if ($current_screen && $current_screen->id === $condition_value) {
+                    // First try to get the actual screen ID
+                    $current_screen_id = htpm_get_current_screen_id();
+                    
+                    // If not available, use fallback method
+                    if (empty($current_screen_id)) {
+                        $current_screen_id = htpm_generate_screen_id_fallback();
+                    }
+                    
+                    if ($current_screen_id === $condition_value) {
                         $should_disable = true;
                     }
                     break;
@@ -171,6 +306,11 @@ function htpm_check_backend_conditions($plugin_settings) {
                         $should_disable = true;
                     }
                     break;
+            }
+            
+            // Break early if we found a match
+            if ($should_disable) {
+                break;
             }
         }
     }

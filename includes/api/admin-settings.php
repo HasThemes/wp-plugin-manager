@@ -112,7 +112,7 @@ class WP_Plugin_Manager_Settings {
             ],
             'custom_conditions' => [
                 'label' => __('Custom Page Conditions', 'wp-plugin-manager'),
-                'description' => __('Define specific conditions for targeting exact admin pages or screens.', 'wp-plugin-manager'),
+                'description' => __("Configure conditions for WordPress admin area. E.g., use 'edit.php' for Posts page, 'post.php' for Edit Post page.", "wp-plugin-manager"),
                 'options' => [
                     'admin_page_equals' => __('Admin Page Equals', 'wp-plugin-manager'),
                     'admin_page_not_equals' => __('Admin Page Not Equals', 'wp-plugin-manager'),
