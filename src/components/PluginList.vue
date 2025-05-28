@@ -246,23 +246,44 @@ watch(() => store.plugins, async (newPlugins) => {
       try {
         loadingPlugins.value.add(plugin.id)
         
-        // Create default settings for the plugin
-        const defaultSettings = {
-          enable_deactivation: 'yes',
-          device_type: 'all',
-          condition_type: 'disable_on_selected',
-          uri_type: 'page',
-          post_types: ['page', 'post'],
-          posts: [],
-          pages: [],
-          condition_list: {
-            name: ['uri_equals'],
-            value: [''],
+        // First, try to fetch existing settings from the store
+        let existingSettings = store.settings[plugin.id];
+        
+        // If no settings in store, try to fetch from API
+        if (!existingSettings || Object.keys(existingSettings).length === 0) {
+          try {
+            existingSettings = await store.fetchPluginSettings(plugin.id);
+          } catch (error) {
+            console.log('No existing settings found, will create default ones');
+          }
+        }
+        
+        // If existing settings exist, preserve them and just enable
+        if (existingSettings && Object.keys(existingSettings).length > 0) {
+          // Preserve all existing settings, just change the enable_deactivation flag
+          existingSettings = {
+            ...existingSettings,
+            enable_deactivation: 'yes'
+          }
+        } else {
+          // Only create default settings if no settings exist at all
+          existingSettings = {
+            enable_deactivation: 'yes',
+            device_type: 'all',
+            condition_type: 'disable_on_selected',
+            uri_type: 'page',
+            post_types: ['page', 'post'],
+            posts: [],
+            pages: [],
+            condition_list: {
+              name: ['uri_equals'],
+              value: [''],
+            }
           }
         }
         
         // Update plugin settings
-        const response = await store.updatePluginSettings(plugin.id, defaultSettings)
+        const response = await store.updatePluginSettings(plugin.id, existingSettings)
         
         if (response) {
           ElNotification({
@@ -277,7 +298,7 @@ watch(() => store.plugins, async (newPlugins) => {
             plugins.value[pluginIndex] = {
               ...plugins.value[pluginIndex],
               enable_deactivation: 'yes',
-              settings: defaultSettings
+              settings: existingSettings
             }
           }
         }
@@ -294,7 +315,6 @@ watch(() => store.plugins, async (newPlugins) => {
         loadingPlugins.value.delete(plugin.id)
       }
     };
-
     // Toggle plugin loading status (now only handles disable)
     const togglePluginLoading = async (plugin) => {
       try {
@@ -362,7 +382,8 @@ watch(() => store.plugins, async (newPlugins) => {
     // Save plugin settings 
     const savePluginSettings = async (data) => {
       try {
-        loadingPlugins.value.add(data.plugin.id)
+        // Don't add to loadingPlugins here since the modal handles its own loading state
+        // loadingPlugins.value.add(data.plugin.id) // Remove this line
         
         const { plugin, settings } = data
         
@@ -374,6 +395,7 @@ watch(() => store.plugins, async (newPlugins) => {
         const pluginIndex = plugins.value.findIndex(p => p.id === plugin.id)
         if (pluginIndex !== -1) {
           plugins.value[pluginIndex].settings = { ...settings }
+          plugins.value[pluginIndex].enable_deactivation = 'yes'
         }
         
         ElNotification({
@@ -383,7 +405,7 @@ watch(() => store.plugins, async (newPlugins) => {
           position: 'top-right',
           duration: 3000
         });
-        showSettings.value = false; // Close the modal after saving
+        
       } catch (error) {
         ElNotification({
           title: "Error",
@@ -393,8 +415,6 @@ watch(() => store.plugins, async (newPlugins) => {
           duration: 3000
         });
         console.error('Error saving plugin settings:', error)
-      } finally {
-        loadingPlugins.value.delete(data.plugin.id)
       }
     }
 
@@ -775,7 +795,7 @@ watch(() => store.plugins, async (newPlugins) => {
 .settings-button.is-loading .el-icon {
   animation: spin 1s linear infinite;
 }
-.el-icon.is-loading svg path{
+.plugin-switch .el-icon.is-loading svg path{
   stroke: #409eff;
   fill: #409eff;
 }

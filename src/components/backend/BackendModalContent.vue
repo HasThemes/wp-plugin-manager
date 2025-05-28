@@ -1,111 +1,72 @@
-// PluginSettingsModal.vue
 <template>
-  <el-dialog
-    v-model="dialogVisible"
-    :title="plugin?.name + ' Settings'"
-    width="650px"
-    class="plugin-settings-modal"
-    destroy-on-close
-  >
-    <ModalSettingsSkeleton v-if="loading" />
-    <el-form label-position="top" v-else>
-      <el-tabs v-model="activeTab" class="modern-tabs">
-        <!-- Frontend Tab -->
-        <el-tab-pane label="Frontend" name="frontend">
-          <FrontendModalContent
-            :plugin-settings="pluginSettings"
-            :modal-settings-fields="modalSettingsFields"
-            :labels-texts="labels_texts"
-            :pro-label="proLabel"
-            :is-pro="isPro"
-            :filtered-post-types="filteredPostTypes"
-            :selected-custom-post-types="selectedCustomPostTypes"
-            :pages="pages"
-            :posts="posts"
-            :loading-pages="loadingPages"
-            :loading-posts="loadingPosts"
-            :loading-custom-posts="loadingCustomPosts"
-            @handle-pro-feature-select="handleProFeatureSelect"
-            @handle-uri-type-change="handleUriTypeChange"
-            @handle-post-types-change="handlePostTypesChange"
-            @open-pro-modal="openProModal"
-            @format-post-type-name="formatPostTypeName"
-            @get-custom-post-type-items="getCustomPostTypeItems"
-            @remove-condition="removeCondition"
-            @clone-condition="cloneCondition"
-            @add-condition="addCondition"
-          />
-        </el-tab-pane>
-
-        <!-- Backend Tab -->
-        <el-tab-pane label="Backend" name="backend">
-          <BackendModalContent
-            :plugin-settings="pluginSettings"
-            :modal-settings-fields="modalSettingsFields"
-            :labels-texts="labels_texts"
-            :pro-label="proLabel"
-            :is-pro="isPro"
-            :pages="pages"
-            :loading-pages="loadingPages"
-            @handle-pro-feature-select="handleProFeatureSelect"
-            @open-pro-modal="openProModal"
-            @remove-condition="removeCondition"
-            @clone-condition="cloneCondition"
-            @add-condition="addCondition"
-          />
-        </el-tab-pane>
-
-        <!-- Conflict Tab -->
-        <el-tab-pane label="Conflict" name="conflict">
-          <ConflictModalContent
-            :pro-label="proLabel"
-            :is-pro="isPro"
-            :available-plugins="availablePlugins"
-            @open-pro-modal="openProModal"
-          />
-        </el-tab-pane>
-
-        <!-- Login Status Tab -->
-        <el-tab-pane label="Login Status" name="login_status">
-          <LoginStatusModalContent
-            :pro-label="proLabel"
-            :is-pro="isPro"
-            @open-pro-modal="openProModal"
-          />
-        </el-tab-pane>
-      </el-tabs>
-    </el-form>
-    <template #footer>
-      <div class="dialog-footer">
-        <el-button @click="dialogVisible = false" :disabled="saving">
-          {{labels_texts?.cancel}}
-        </el-button>
+  <!-- Condition Type Selector -->
+  <div class="form-field">
+    <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+    <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
+      <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
+    </el-select>
+    <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
+  </div>
+  <!-- Pages Selection -->
+  <div 
+    class="form-field">
+    <label>{{ labels_texts?.select_pages }}</label>
+    <el-select v-model="pluginSettings.pages" multiple filterable class="w-full" :loading="loadingPages" :disabled="pluginSettings.uri_type === 'page_post_cpt' && !isPro" @click="pluginSettings.uri_type === 'page_post_cpt' && !isPro && openProModal()">
+      <el-option label="All Pages" value="all_pages,all_pages" />
+      <el-option 
+        v-for="page in pages" 
+        :key="page.id" 
+        :label="page.title" 
+        :value="`${page.id},${page.url}`" 
+      />
+    </el-select>
+  </div>
+  <!-- Custom URI Conditions -->
+  <div class="form-field">
+    <label>{{ labels_texts?.uri_conditions }}</label>
+    <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
+      <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type">
+        <el-option label="URI Equals" value="uri_equals" />
+        <el-option label="URI Not Equals" value="uri_not_equals" />
+        <el-option label="URI Contains" value="uri_contains" />
+        <el-option label="URI Not Contains" value="uri_not_contains" />
+      </el-select>
+      <el-input 
+        v-model="pluginSettings.condition_list.value[index]" 
+        placeholder="e.g: contact-us or leave blank for homepage"
+        class="condition-value"
+        :disabled="!isPro"
+        @click="!isPro && openProModal()"
+      />
+      <div class="condition-actions">
         <el-button 
-          type="primary" 
-          @click="saveSettings" 
-          :loading="saving"
-          :disabled="saving"
+          type="danger" 
+          circle 
+          size="small" 
+          @click="removeCondition(index)" 
+          :disabled="pluginSettings.condition_list.name.length <= 1"
         >
-          {{pluginSettings.enable_deactivation == 'yes' ? 'Save' : labels_texts?.save_enable}}
+          <el-icon><Delete /></el-icon>
+        </el-button>
+        <el-button type="primary" circle size="small" @click="cloneCondition(index)" :disabled="!isPro">
+          <el-icon><CopyDocument /></el-icon>
         </el-button>
       </div>
-    </template>
-  </el-dialog>
-
-  <!-- Pro Modal -->
-  <ProModal ref="proModal" />
+    </div>
+    <el-button type="primary" plain size="small" @click="addCondition" class="mt-3 add-condition" color="#fff" :disabled="!isPro">
+      <el-icon><Plus /></el-icon> {{labels_texts?.add_condition }}
+    </el-button>
+    <div class="field-desc">{{ labels_texts?.field_desc_uri }}</div>
+  </div>
 </template>
 
 <script setup>
 import { ref, defineProps, defineEmits, watch, computed, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
 import { usePluginStore } from '../store/plugins'
 import ProModal from './ProModal.vue'
 import ModalSettingsSkeleton from '../skeleton/ModalSettingsSkeleton.vue'
-import FrontendModalContent from './FrontendModalContent.vue'
-import BackendModalContent from './BackendModalContent.vue'
-import ConflictModalContent from './ConflictModalContent.vue'
-import LoginStatusModalContent from './LoginStatusModalContent.vue'
 
 const props = defineProps({
   visible: Boolean,
@@ -155,7 +116,6 @@ const handleProFeatureSelect = (field, value) => {
     proModal.value?.show();
   }
 }
-
 const openProModal = () => {
   proModal.value?.show();
 }
@@ -163,7 +123,6 @@ const openProModal = () => {
 const modalSettingsFields = HTPMM.adminSettings.modal_settings_fields
 const isPro = HTPMM.adminSettings.is_pro
 const labels_texts = HTPMM.adminSettings.labels_texts
-
 // Default settings structure matching PHP - default to disabled
 const pluginSettings = ref({
   enable_deactivation: 'yes', // Default to 'yes' (disabled)
@@ -193,7 +152,6 @@ const selectedCustomPostTypes = computed(() => {
 // Pages and posts data from store
 const pages = computed(() => store.pages)
 const posts = computed(() => store.posts)
-
 // Load data when the component is mounted
 onMounted(async () => {
   if (props.plugin) {
@@ -405,7 +363,7 @@ const cloneCondition = (index) => {
 
 // Save settings and close modal
 const saveSettings = async () => {
-  saving.value = true // Set loading state immediately
+  saving.value = true
   try {
     
     // First make sure all required arrays are properly initialized
@@ -451,7 +409,7 @@ const saveSettings = async () => {
     console.error('Error saving settings:', error)
     ElMessage.error('Failed to save settings')
   } finally {
-    saving.value = false // Always reset loading state
+    saving.value = false
   }
 }
 </script>
@@ -523,7 +481,82 @@ const saveSettings = async () => {
     border-top: 1px solid #eee;
   }
 }
+.pro-badge {
+  background-color: rgba(214, 54, 56, 0.1);
+  border: 1px solid #d636386b;
+  color: #d63638;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.el-checkbox-group{
+  flex-wrap: wrap;
+}
+.el-checkbox{
+  margin-right: 0;
+  height: auto;
+}
+.form-field {
+  margin-bottom: 20px;
+  position: relative;
 
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #606266;
+  }
+
+  .field-desc {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #909399;
+  }
+  
+  .info-icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: #409EFF;
+    font-size: 18px;
+    cursor: help;
+  }
+}
+
+.uri-condition {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+
+  .condition-type {
+    width: 150px;
+  }
+
+  .condition-value {
+    flex: 1;
+  }
+
+  .condition-actions {
+    display: flex;
+    gap: 5px;
+  }
+}
+
+.w-full {
+  width: 100%;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+.add-condition:hover{
+  background-color: rgb(121.3,187.1,255);
+  cursor: pointer;
+}
 .dialog-footer {
   display: flex;
   justify-content: flex-end;
