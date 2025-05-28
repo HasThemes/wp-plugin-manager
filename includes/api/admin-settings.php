@@ -68,14 +68,6 @@ class WP_Plugin_Manager_Settings {
                 'visible' => true,
                 'target' => '_blank'
             ],
-            // 'recommended_plugins' => [
-            //     'label' => __('Recommended Plugins', 'wp-plugin-manager'),
-            //     'icon' => 'Promotion',
-            //     'link' => $this->get_help_section()['recommendedPluginsLink'],
-            //     'order' => 6,
-            //     'visible' => true,
-            //     'target' => '_self'
-            // ],
             'recommended_plugins' => [
                 'label' => __('Recommended Plugins', 'wp-plugin-manager'),
                 'icon' => 'Promotion',
@@ -85,6 +77,181 @@ class WP_Plugin_Manager_Settings {
                 'isRouter' => true
             ],
         ];
+    }
+
+    /**
+     * Get Backend Modal Settings - Dynamic select options for pages
+     */
+    public function get_backend_modal_settings() {
+        return [
+            'page_selection' => [
+                'label' => __('Select Pages', 'wp-plugin-manager'),
+                'description' => __('Choose specific pages where you want to apply these settings.', 'wp-plugin-manager'),
+                'type' => 'grouped_select',
+                'groups' => $this->get_wordpress_page_groups(),
+                'pro' => false,
+                'proBadge' => false
+            ],
+            'backend_conditions' => [
+                'label' => __('Backend Conditions', 'wp-plugin-manager'),
+                'description' => __('Set conditions for when this plugin should be active in the WordPress admin area.', 'wp-plugin-manager'),
+                'options' => [
+                    'all_admin' => __('All Admin Pages', 'wp-plugin-manager'),
+                    'dashboard_only' => __('Dashboard Only', 'wp-plugin-manager'),
+                    'posts_pages' => __('Posts & Pages', 'wp-plugin-manager'),
+                    'media_library' => __('Media Library', 'wp-plugin-manager'),
+                    'comments' => __('Comments', 'wp-plugin-manager'),
+                    'appearance' => __('Appearance', 'wp-plugin-manager'),
+                    'plugins' => __('Plugins', 'wp-plugin-manager'),
+                    'users' => __('Users', 'wp-plugin-manager'),
+                    'tools' => __('Tools', 'wp-plugin-manager'),
+                    'settings' => __('Settings', 'wp-plugin-manager'),
+                ],
+                'pro' => ['dashboard_only', 'posts_pages', 'media_library', 'comments', 'appearance', 'plugins', 'users', 'tools', 'settings'],
+                'proBadge' => true
+            ]
+        ];
+    }
+
+    /**
+     * Get WordPress page groups for select dropdown
+     */
+    private function get_wordpress_page_groups() {
+        return [
+            [
+                'label' => __('Dashboard', 'wp-plugin-manager'),
+                'options' => [
+                    [
+                        'value' => 'dashboard_home',
+                        'label' => __('Home', 'wp-plugin-manager'),
+                        'url' => admin_url()
+                    ],
+                    [
+                        'value' => 'dashboard_updates',
+                        'label' => __('Updates', 'wp-plugin-manager'),
+                        'url' => admin_url('update-core.php')
+                    ]
+                ]
+            ],
+            [
+                'label' => __('Library', 'wp-plugin-manager'),
+                'options' => [
+                    [
+                        'value' => 'media_library',
+                        'label' => __('Library', 'wp-plugin-manager'),
+                        'url' => admin_url('upload.php')
+                    ],
+                    [
+                        'value' => 'media_add_new',
+                        'label' => __('Add Media File', 'wp-plugin-manager'),
+                        'url' => admin_url('media-new.php')
+                    ]
+                ]
+            ],
+            [
+                'label' => __('All Comments', 'wp-plugin-manager'),
+                'options' => [
+                    [
+                        'value' => 'comments_all',
+                        'label' => __('All Comments', 'wp-plugin-manager'),
+                        'url' => admin_url('edit-comments.php')
+                    ]
+                ]
+            ],
+            [
+                'label' => __('Posts', 'wp-plugin-manager'),
+                'options' => [
+                    [
+                        'value' => 'posts_all',
+                        'label' => __('All Posts', 'wp-plugin-manager'),
+                        'url' => admin_url('edit.php')
+                    ],
+                    [
+                        'value' => 'posts_edit_single',
+                        'label' => __('Edit Single Post', 'wp-plugin-manager'),
+                        'url' => admin_url('post.php')
+                    ],
+                    [
+                        'value' => 'posts_add_new',
+                        'label' => __('Add Post', 'wp-plugin-manager'),
+                        'url' => admin_url('post-new.php')
+                    ],
+                    [
+                        'value' => 'posts_categories',
+                        'label' => __('Categories', 'wp-plugin-manager'),
+                        'url' => admin_url('edit-tags.php?taxonomy=category')
+                    ],
+                    [
+                        'value' => 'posts_tags',
+                        'label' => __('Tags', 'wp-plugin-manager'),
+                        'url' => admin_url('edit-tags.php?taxonomy=post_tag')
+                    ]
+                ]
+            ],
+            [
+                'label' => __('All Pages', 'wp-plugin-manager'),
+                'options' => [
+                    [
+                        'value' => 'pages_all',
+                        'label' => __('All Pages', 'wp-plugin-manager'),
+                        'url' => admin_url('edit.php?post_type=page')
+                    ],
+                    [
+                        'value' => 'pages_edit_single',
+                        'label' => __('Edit Single Page', 'wp-plugin-manager'),
+                        'url' => admin_url('post.php?post_type=page')
+                    ],
+                    [
+                        'value' => 'pages_add_new',
+                        'label' => __('Add Page', 'wp-plugin-manager'),
+                        'url' => admin_url('post-new.php?post_type=page')
+                    ]
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * Get all available WordPress admin pages dynamically
+     */
+    public function get_all_admin_pages() {
+        global $menu, $submenu;
+        
+        $admin_pages = [];
+        
+        if (!empty($menu)) {
+            foreach ($menu as $menu_item) {
+                if (empty($menu_item[0]) || $menu_item[0] === '') continue;
+                
+                $menu_slug = $menu_item[2];
+                $menu_title = strip_tags($menu_item[0]);
+                
+                // Skip separators
+                if (strpos($menu_slug, 'separator') !== false) continue;
+                
+                $admin_pages[] = [
+                    'value' => $menu_slug,
+                    'label' => $menu_title,
+                    'type' => 'main_menu'
+                ];
+                
+                // Add submenu items
+                if (!empty($submenu[$menu_slug])) {
+                    foreach ($submenu[$menu_slug] as $submenu_item) {
+                        if (empty($submenu_item[0])) continue;
+                        
+                        $admin_pages[] = [
+                            'value' => $submenu_item[2],
+                            'label' => $menu_title . ' > ' . strip_tags($submenu_item[0]),
+                            'type' => 'submenu',
+                            'parent' => $menu_slug
+                        ];
+                    }
+                }
+            }
+        }
+        
+        return $admin_pages;
     }
 
     public function get_feature_settings() {
@@ -178,6 +345,7 @@ class WP_Plugin_Manager_Settings {
             ],
         ];
     }
+
     public function get_labels_texts() {
         return [
             'upgrade_to_pro' => __('Upgrade to Pro', 'wp-plugin-manager'),
@@ -203,20 +371,30 @@ class WP_Plugin_Manager_Settings {
             'number_of_posts' => __('Number of Posts to Load', 'wp-plugin-manager'),
             'number_of_posts_desc' => __('Default: 150 posts. Adjust if you have more posts to manage.', 'wp-plugin-manager'),
             'save_settings_note' => '',
+            // Backend specific labels
+            'backend_page_selection' => __('Backend Page Selection', 'wp-plugin-manager'),
+            'select_admin_pages' => __('Select Admin Pages:', 'wp-plugin-manager'),
+            'backend_conditions' => __('Backend Conditions:', 'wp-plugin-manager'),
         ];
     }
 
     public function get_modal_settings_fields() {
-        return $this->get_feature_settings();
+        $feature_settings = $this->get_feature_settings();
+        $backend_settings = $this->get_backend_modal_settings();
+        
+        // Merge frontend and backend settings
+        return array_merge($feature_settings, $backend_settings);
     }
 
     public function get_modal_settings_field($field) {
         $settings = $this->get_modal_settings_fields();
         return isset($settings[$field]) ? $settings[$field] : null;
     }
+
     public function is_pro() {
         return $this->is_pro;
     }
+
     public function get_recommendations_plugins() {
         $recommendations_plugins = array();
         // Recommended Tab
@@ -228,7 +406,7 @@ class WP_Plugin_Manager_Settings {
                     'slug'        => 'woolentor-addons',
                     'location'    => 'woolentor_addons_elementor.php',
                     'name'        => esc_html__( 'WooLentor', 'wp-plugin-manager' ),
-                    'description' => esc_html__( 'If you own a WooCommerce website, you’ll almost certainly want to use these capabilities: Woo Builder (Elementor WooCommerce Builder), WooCommerce Templates, WooCommerce Widgets,...', 'wp-plugin-manager' ),
+                    'description' => esc_html__( 'If you own a WooCommerce website, you ll almost certainly want to use these capabilities: Woo Builder (Elementor WooCommerce Builder), WooCommerce Templates, WooCommerce Widgets,...', 'wp-plugin-manager' ),
                     'status'     => 'inactive',
                     'isLoading'  => false,
                     'icon'       => null,

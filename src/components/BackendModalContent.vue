@@ -1,188 +1,318 @@
 <template>
-    <div class="backend-modal-content">
-      <!-- Condition Type Selector -->
-      <div class="form-field">
-        <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{proLabel}}</span></label>
-        <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
-          <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
-        </el-select>
-        <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
-      </div>
-  
-      <!-- Pages Selection -->
-      <div class="form-field">
-        <label>{{ labels_texts?.select_pages }}</label>
-        <el-select v-model="pluginSettings.pages" multiple filterable class="w-full" :loading="loadingPages" :disabled="pluginSettings.uri_type === 'page_post_cpt' && !isPro" @click="pluginSettings.uri_type === 'page_post_cpt' && !isPro && openProModal()">
-          <el-option label="All Pages" value="all_pages,all_pages" />
-          <el-option 
-            v-for="page in pages" 
-            :key="page.id" 
-            :label="page.title" 
-            :value="`${page.id},${page.url}`" 
-          />
-        </el-select>
-      </div>
-  
-      <!-- Custom URI Conditions -->
-      <div class="form-field">
-        <label>{{ labels_texts?.uri_conditions }}</label>
-        <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
-          <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type">
-            <el-option label="URI Equals" value="uri_equals" />
-            <el-option label="URI Not Equals" value="uri_not_equals" />
-            <el-option label="URI Contains" value="uri_contains" />
-            <el-option label="URI Not Contains" value="uri_not_contains" />
-          </el-select>
-          <el-input 
-            v-model="pluginSettings.condition_list.value[index]" 
-            placeholder="e.g: contact-us or leave blank for homepage"
-            class="condition-value"
-            :disabled="!isPro"
-            @click="!isPro && openProModal()"
-          />
-          <div class="condition-actions">
-            <el-button 
-              type="danger" 
-              circle 
-              size="small" 
-              @click="removeCondition(index)" 
-              :disabled="pluginSettings.condition_list.name.length <= 1"
-            >
-              <el-icon><Delete /></el-icon>
-            </el-button>
-            <el-button type="primary" circle size="small" @click="cloneCondition(index)" :disabled="!isPro">
-              <el-icon><CopyDocument /></el-icon>
-            </el-button>
-          </div>
-        </div>
-        <el-button type="primary" plain size="small" @click="addCondition" class="mt-3 add-condition" color="#fff" :disabled="!isPro">
-          <el-icon><Plus /></el-icon> {{labels_texts?.add_condition }}
-        </el-button>
-        <div class="field-desc">{{ labels_texts?.field_desc_uri }}</div>
-      </div>
+  <div class="backend-modal-content">
+    <!-- Backend Conditions -->
+    <div class="form-field">
+      <label>{{ modalSettingsFields?.backend_conditions?.label }} <span v-if="modalSettingsFields?.backend_conditions?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+      <el-select v-model="pluginSettings.backend_condition_type" class="w-full" @change="(value) => handleProFeatureSelect('backend_conditions', value)">
+        <el-option 
+          v-for="(label, value) in modalSettingsFields?.backend_conditions?.options" 
+          :key="value" 
+          :label="label + (modalSettingsFields?.backend_conditions?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" 
+          :value="value" 
+          :disabled="modalSettingsFields?.backend_conditions?.pro?.includes(value)" 
+        />
+      </el-select>
+      <div class="field-desc">{{ modalSettingsFields?.backend_conditions?.description }}</div>
     </div>
-  </template>
+
+    <!-- Backend Page Selection with Grouped Options -->
+    <div class="form-field">
+      <label>{{ labels_texts?.select_admin_pages || 'Select Admin Pages:' }}</label>
+      <el-select 
+        v-model="pluginSettings.backend_pages" 
+        multiple 
+        filterable 
+        class="w-full" 
+        :loading="loadingBackendPages"
+        placeholder="Select admin pages..."
+      >
+        <!-- Group by WordPress admin sections -->
+        <template v-for="group in backendPageGroups" :key="group.label">
+          <el-option-group :label="group.label">
+            <el-option 
+              v-for="option in group.options" 
+              :key="option.value" 
+              :label="option.label" 
+              :value="option.value"
+            >
+              <div class="admin-page-option">
+                <span class="page-title">{{ option.label }}</span>
+                <span class="page-url" v-if="option.url">{{ option.url }}</span>
+              </div>
+            </el-option>
+          </el-option-group>
+        </template>
+      </el-select>
+      <div class="field-desc">{{ modalSettingsFields?.page_selection?.description || 'Choose specific admin pages where you want to apply these settings.' }}</div>
+    </div>
+
+    <!-- Action Type (same as frontend) -->
+    <div class="form-field">
+      <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.action?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+      <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
+        <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
+      </el-select>
+      <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
+    </div>
+
+    <!-- Custom URI Conditions for Backend -->
+    <div class="form-field">
+      <label>{{ labels_texts?.backend_conditions || 'Backend Conditions:' }}</label>
+      <div v-for="(condition, index) in pluginSettings.backend_condition_list.name" :key="index" class="uri-condition">
+        <el-select v-model="pluginSettings.backend_condition_list.name[index]" class="condition-type">
+          <el-option label="Admin Page Equals" value="admin_page_equals" />
+          <el-option label="Admin Page Not Equals" value="admin_page_not_equals" />
+          <el-option label="Admin Page Contains" value="admin_page_contains" />
+          <el-option label="Admin Page Not Contains" value="admin_page_not_contains" />
+          <el-option label="Screen ID Equals" value="screen_id_equals" />
+          <el-option label="Hook Name Equals" value="hook_name_equals" />
+        </el-select>
+        <el-input 
+          v-model="pluginSettings.backend_condition_list.value[index]" 
+          placeholder="e.g: edit.php, post.php, index.php"
+          class="condition-value"
+          :disabled="!isPro"
+          @click="!isPro && openProModal()"
+        />
+        <div class="condition-actions">
+          <el-button 
+            type="danger" 
+            circle 
+            size="small" 
+            @click="removeBackendCondition(index)" 
+            :disabled="pluginSettings.backend_condition_list.name.length <= 1"
+          >
+            <el-icon><Delete /></el-icon>
+          </el-button>
+          <el-button type="primary" circle size="small" @click="cloneBackendCondition(index)" :disabled="!isPro">
+            <el-icon><CopyDocument /></el-icon>
+          </el-button>
+        </div>
+      </div>
+      <el-button type="primary" plain size="small" @click="addBackendCondition" class="mt-3 add-condition" color="#fff" :disabled="!isPro">
+        <el-icon><Plus /></el-icon> {{ labels_texts?.add_condition || 'Add Condition' }}
+      </el-button>
+      <div class="field-desc">Configure conditions for WordPress admin area. E.g., use 'edit.php' for Posts page, 'post.php' for Edit Post page.</div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { Delete, Plus, CopyDocument } from '@element-plus/icons-vue'
+import { ref, computed, onMounted } from 'vue'
+
+const props = defineProps({
+  pluginSettings: {
+    type: Object,
+    required: true
+  },
+  modalSettingsFields: {
+    type: Object,
+    required: true
+  },
+  proLabel: {
+    type: String,
+    required: true
+  },
+  isPro: {
+    type: Boolean,
+    required: true
+  },
+  pages: {
+    type: Array,
+    required: true
+  },
+  loadingPages: {
+    type: Boolean,
+    default: false
+  }
+})
+
+const labels_texts = HTPMM.adminSettings.labels_texts
+const loadingBackendPages = ref(false)
+
+// Get backend page groups from the localized settings
+const backendPageGroups = computed(() => {
+  return props.modalSettingsFields?.page_selection?.groups || 
+         HTPMM?.adminSettings?.backend_modal_settings?.page_selection?.groups || []
+})
+
+const emit = defineEmits([
+  'handleProFeatureSelect',
+  'openProModal',
+  'removeCondition',
+  'cloneCondition',
+  'addCondition'
+])
+
+// Initialize backend-specific settings if they don't exist
+onMounted(() => {
+  if (!props.pluginSettings.backend_condition_type) {
+    props.pluginSettings.backend_condition_type = 'all_admin'
+  }
   
-  <script setup>
-  import { Delete, Plus, CopyDocument } from '@element-plus/icons-vue'
+  if (!props.pluginSettings.backend_pages) {
+    props.pluginSettings.backend_pages = []
+  }
   
-  const props = defineProps({
-    pluginSettings: {
-      type: Object,
-      required: true
-    },
-    modalSettingsFields: {
-      type: Object,
-      required: true
-    },
-    proLabel: {
-      type: String,
-      required: true
-    },
-    isPro: {
-      type: Boolean,
-      required: true
-    },
-    pages: {
-      type: Array,
-      required: true
-    },
-    loadingPages: {
-      type: Boolean,
-      default: false
+  if (!props.pluginSettings.backend_condition_list) {
+    props.pluginSettings.backend_condition_list = {
+      name: ['admin_page_equals'],
+      value: [''],
     }
-  })
-  const labels_texts = HTPMM.adminSettings.labels_texts
-  const emit = defineEmits([
-    'handleProFeatureSelect',
-    'openProModal',
-    'removeCondition',
-    'cloneCondition',
-    'addCondition'
-  ])
+  }
+
+  if (!props.pluginSettings.backend_user_roles) {
+    props.pluginSettings.backend_user_roles = []
+  }
+})
+
+const handleProFeatureSelect = (field, value) => {
+  emit('handleProFeatureSelect', field, value)
+}
+
+const openProModal = () => {
+  emit('openProModal')
+}
+
+const removeBackendCondition = (index) => {
+  if (props.pluginSettings.backend_condition_list.name.length <= 1) return
   
-  const handleProFeatureSelect = (field, value) => {
-    emit('handleProFeatureSelect', field, value)
+  props.pluginSettings.backend_condition_list.name.splice(index, 1)
+  props.pluginSettings.backend_condition_list.value.splice(index, 1)
+}
+
+const cloneBackendCondition = (index) => {
+  if (!props.isPro) {
+    openProModal()
+    return
   }
   
-  const openProModal = () => {
-    emit('openProModal')
+  const name = props.pluginSettings.backend_condition_list.name[index]
+  const value = props.pluginSettings.backend_condition_list.value[index]
+  
+  props.pluginSettings.backend_condition_list.name.splice(index + 1, 0, name)
+  props.pluginSettings.backend_condition_list.value.splice(index + 1, 0, value)
+}
+
+const addBackendCondition = () => {
+  if (!props.isPro) {
+    openProModal()
+    return
   }
   
-  const removeCondition = (index) => {
-    emit('removeCondition', index)
+  props.pluginSettings.backend_condition_list.name.push('admin_page_equals')
+  props.pluginSettings.backend_condition_list.value.push('')
+}
+</script>
+
+<style lang="scss" scoped>
+.pro-badge {
+  background-color: rgba(214, 54, 56, 0.1);
+  border: 1px solid #d636386b;
+  color: #d63638;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.form-field {
+  margin-bottom: 20px;
+  position: relative;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #606266;
+  }
+
+  .field-desc {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #909399;
+  }
+}
+
+.admin-page-option {
+  display: flex;
+  flex-direction: column;
+  
+  .page-title {
+    font-weight: 500;
+    color: #303133;
   }
   
-  const cloneCondition = (index) => {
-    emit('cloneCondition', index)
+  .page-url {
+    font-size: 11px;
+    color: #909399;
+    margin-top: 2px;
   }
+}
+
+.pro-feature-placeholder {
+  padding: 30px 20px;
+  text-align: center;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border: 2px dashed #dee2e6;
   
-  const addCondition = () => {
-    emit('addCondition')
+  :deep(.el-empty__description) {
+    margin: 10px 0;
+    font-size: 13px;
   }
-  </script>
-  
-  <style lang="scss" scoped>
-  .pro-badge {
-    background-color: rgba(214, 54, 56, 0.1);
-    border: 1px solid #d636386b;
-    color: #d63638;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 10px;
-    font-weight: 600;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-  
-  .form-field {
-    margin-bottom: 20px;
-    position: relative;
-  
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #606266;
-    }
-  
-    .field-desc {
-      margin-top: 4px;
-      font-size: 12px;
-      color: #909399;
-    }
-  }
-  
-  .uri-condition {
+}
+
+.role-restrictions {
+  .role-checkboxes {
     display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-    align-items: flex-start;
-  
-    .condition-type {
-      width: 150px;
-    }
-  
-    .condition-value {
-      flex: 1;
-    }
-  
-    .condition-actions {
-      display: flex;
-      gap: 5px;
+    flex-direction: column;
+    gap: 8px;
+    
+    :deep(.el-checkbox) {
+      margin: 0;
+      
+      .el-checkbox__label {
+        font-size: 14px;
+        color: #606266;
+      }
     }
   }
-  
-  .w-full {
-    width: 100%;
+}
+
+.uri-condition {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: flex-start;
+
+  .condition-type {
+    width: 180px;
   }
-  
-  .mt-3 {
-    margin-top: 12px;
+
+  .condition-value {
+    flex: 1;
   }
-  
-  .add-condition:hover {
-    background-color: rgb(121.3, 187.1, 255);
-    cursor: pointer;
+
+  .condition-actions {
+    display: flex;
+    gap: 5px;
   }
-  </style>
+}
+
+.w-full {
+  width: 100%;
+}
+
+.mt-3 {
+  margin-top: 12px;
+}
+
+.add-condition:hover {
+  background-color: rgb(121.3, 187.1, 255);
+  cursor: pointer;
+}
+</style>

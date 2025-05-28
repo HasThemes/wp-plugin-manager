@@ -207,68 +207,68 @@ export const usePluginStore = defineStore('plugins', {
     },
     // selected selected AllPost Types
     // Update plugin settings
-// updatePluginSettings method for the store with fixed settings preservation
-async updatePluginSettings(pluginId, settings) {
-  try {
-    // Invalidate cache for this plugin
-    delete this.settings[pluginId];
+    // updatePluginSettings method for the store with fixed settings preservation
+    async updatePluginSettings(pluginId, settings) {
+      try {
+        // Invalidate cache for this plugin
+        delete this.settings[pluginId];
 
-    // Make sure we're sending a complete, valid settings object
-    const completeSettings = { ...settings }
-    
-    // Ensure all required arrays exist and are properly initialized
-    if (!Array.isArray(completeSettings.pages)) {
-      completeSettings.pages = []
-    }
-    
-    if (!Array.isArray(completeSettings.posts)) {
-      completeSettings.posts = []
-    }
-    
-    if (!Array.isArray(completeSettings.post_types)) {
-      completeSettings.post_types = ['page', 'post']
-    }
-    
-    if (!completeSettings.condition_list) {
-      completeSettings.condition_list = {
-        name: ['uri_equals'],
-        value: [''],
+        // Make sure we're sending a complete, valid settings object
+        const completeSettings = { ...settings }
+        
+        // Ensure all required arrays exist and are properly initialized
+        if (!Array.isArray(completeSettings.pages)) {
+          completeSettings.pages = []
+        }
+        
+        if (!Array.isArray(completeSettings.posts)) {
+          completeSettings.posts = []
+        }
+        
+        if (!Array.isArray(completeSettings.post_types)) {
+          completeSettings.post_types = ['page', 'post']
+        }
+        
+        if (!completeSettings.condition_list) {
+          completeSettings.condition_list = {
+            name: ['uri_equals'],
+            value: [''],
+          }
+        } else {
+          if (!Array.isArray(completeSettings.condition_list.name)) {
+            completeSettings.condition_list.name = ['uri_equals']
+          }
+          
+          if (!Array.isArray(completeSettings.condition_list.value)) {
+            completeSettings.condition_list.value = ['']
+          }
+        }
+        
+        // Send the request to the server
+        const response = await api.post(`/htpm/v1/plugins/${pluginId}/settings`, completeSettings)
+        
+        if (response.data.success) {
+          // Update the plugin's enable_deactivation state in the plugins list
+          const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
+          if (pluginIndex !== -1) {
+            this.plugins[pluginIndex].enable_deactivation = completeSettings.enable_deactivation === 'yes'
+          }
+          
+          // Store settings in the store state
+          this.settings[pluginId] = completeSettings
+          
+          // Return the updated settings
+          return completeSettings
+        } else {
+          console.error('Server returned error:', response.data)
+          throw new Error(response.data?.message || 'Failed to update settings')
+        }
+      } catch (error) {
+        this.error = error.message || 'Failed to update plugin settings'
+        console.error('Error updating plugin settings:', error)
+        throw error
       }
-    } else {
-      if (!Array.isArray(completeSettings.condition_list.name)) {
-        completeSettings.condition_list.name = ['uri_equals']
-      }
-      
-      if (!Array.isArray(completeSettings.condition_list.value)) {
-        completeSettings.condition_list.value = ['']
-      }
-    }
-    
-    // Send the request to the server
-    const response = await api.post(`/htpm/v1/plugins/${pluginId}/settings`, completeSettings)
-    
-    if (response.data.success) {
-      // Update the plugin's enable_deactivation state in the plugins list
-      const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
-      if (pluginIndex !== -1) {
-        this.plugins[pluginIndex].enable_deactivation = completeSettings.enable_deactivation === 'yes'
-      }
-      
-      // Store settings in the store state
-      this.settings[pluginId] = completeSettings
-      
-      // Return the updated settings
-      return completeSettings
-    } else {
-      console.error('Server returned error:', response.data)
-      throw new Error(response.data?.message || 'Failed to update settings')
-    }
-  } catch (error) {
-    this.error = error.message || 'Failed to update plugin settings'
-    console.error('Error updating plugin settings:', error)
-    throw error
-  }
-},
+    },
 
     /**
      * Fetch Changelog Data
@@ -399,6 +399,41 @@ async updatePluginSettings(pluginId, settings) {
         console.error(`Error fetching ${postType} items:`, error)
         return []
       }
-    }
+    },
+    // Fetch admin pages for backend modal
+    async fetchAdminPages() {
+      try {
+        const response = await api.get('/htpm/v1/admin-pages')
+        
+        if (response.data && response.data.success) {
+          return response.data.data;
+        } else {
+          throw new Error('Failed to fetch admin pages')
+        }
+      } catch (error) {
+        console.error('Error fetching admin pages:', error)
+        return {
+          grouped_pages: [],
+          all_pages: [],
+          backend_conditions: []
+        }
+      }
+    },
+
+    // Get current admin screen info
+    async fetchAdminScreenInfo() {
+      try {
+        const response = await api.get('/htpm/v1/admin-screen-info')
+        
+        if (response.data && response.data.success) {
+          return response.data.data;
+        } else {
+          throw new Error('Failed to fetch admin screen info')
+        }
+      } catch (error) {
+        console.error('Error fetching admin screen info:', error)
+        return {}
+      }
+    },
   }
 })

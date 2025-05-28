@@ -242,6 +242,7 @@ class HTPM_Main {
                         'dashboard_settings' => $admin_settings->get_dashboard_settings(),
                         'menu_settings' => $admin_settings->get_menu_settings(),
                         'recommendations_plugins' => $admin_settings->get_recommendations_plugins(),
+                        'backend_modal_settings' => $admin_settings->get_backend_modal_settings(),
                         'allSettings' => get_option('htpm_options') ? get_option('htpm_options') : [],
                     ],
                 ];
