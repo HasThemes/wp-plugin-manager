@@ -1,6 +1,6 @@
 <?php
 /**
-*Version: 1.0.11
+*Version: 1.0.12
 */
 
 if(get_option('htpm_status') != 'active'){
@@ -140,49 +140,75 @@ function htpm_check_backend_conditions($plugin_settings) {
     $query_string = $_SERVER['QUERY_STRING'] ?? '';
     
     // Check admin scope
-    if (isset($plugin_settings['admin_scope'])) {
-        $admin_scope = $plugin_settings['admin_scope'];
+    if (isset($plugin_settings['admin_scope']) && !empty($plugin_settings['admin_scope'])) {
+        $admin_scopes = is_array($plugin_settings['admin_scope']) ? $plugin_settings['admin_scope'] : [$plugin_settings['admin_scope']];
         
-        switch ($admin_scope) {
-            case 'all_admin':
-                $should_disable = true;
+        foreach ($admin_scopes as $admin_scope) {
+
+            switch ($admin_scope) {
+                case 'all_admin':
+                    $should_disable = true;
+                    break;
+                    
+                case 'dashboard_only':
+                    if ($page_info['pagenow'] === 'index.php') {
+                        $should_disable = true;
+                    }
+                    break;
+                    
+                case 'posts_pages':
+                    if (in_array($page_info['pagenow'], ['edit.php', 'post.php', 'post-new.php'])) {
+                        $should_disable = true;
+                    }
+                    break;
+                    
+                case 'media_library':
+                    if (in_array($page_info['pagenow'], ['upload.php', 'media-new.php'])) {
+                        $should_disable = true;
+                    }
+                    break;
+                    
+                case 'comments':
+                    if ($page_info['pagenow'] === 'edit-comments.php') {
+                        $should_disable = true;
+                    }
+                    break;
+                    
+                case 'appearance':
+                    if (in_array($page_info['pagenow'], ['themes.php', 'customize.php', 'widgets.php', 'nav-menus.php'])) {
+                        $should_disable = true;
+                    }
+                    break;
+                    
+                case 'plugins':
+                    if (in_array($page_info['pagenow'], ['plugins.php', 'plugin-install.php', 'plugin-editor.php'])) {
+                        $should_disable = true;
+                    }
+                    break;
+                    
+                case 'users':
+                    if (in_array($page_info['pagenow'], ['users.php', 'user-new.php', 'profile.php', 'user-edit.php'])) {
+                        $should_disable = true;
+                    }
+                    break;
+                    
+                case 'tools':
+                    if (in_array($page_info['pagenow'], ['tools.php', 'import.php', 'export.php'])) {
+                        $should_disable = true;
+                    }
+                    break;
+                    
+                case 'settings':
+                    if (in_array($page_info['pagenow'], ['options-general.php', 'options-writing.php', 'options-reading.php', 'options-discussion.php', 'options-media.php', 'options-permalink.php'])) {
+                        $should_disable = true;
+                    }
+                    break;
+            }
+            
+            // If we found a match, no need to check other scopes
+            if ($should_disable) {
                 break;
-                
-            case 'dashboard_only':
-                $should_disable = ($page_info['pagenow'] === 'index.php');
-                break;
-                
-            case 'posts_pages':
-                $should_disable = in_array($page_info['pagenow'], ['edit.php', 'post.php', 'post-new.php']);
-                break;
-                
-            case 'media_library':
-                $should_disable = in_array($page_info['pagenow'], ['upload.php', 'media-new.php']);
-                break;
-                
-            case 'comments':
-                $should_disable = ($page_info['pagenow'] === 'edit-comments.php');
-                break;
-                
-            case 'appearance':
-                $should_disable = in_array($page_info['pagenow'], ['themes.php', 'customize.php', 'widgets.php', 'nav-menus.php']);
-                break;
-                
-            case 'plugins':
-                $should_disable = in_array($page_info['pagenow'], ['plugins.php', 'plugin-install.php', 'plugin-editor.php']);
-                break;
-                
-            case 'users':
-                $should_disable = in_array($page_info['pagenow'], ['users.php', 'user-new.php', 'profile.php', 'user-edit.php']);
-                break;
-                
-            case 'tools':
-                $should_disable = in_array($page_info['pagenow'], ['tools.php', 'import.php', 'export.php']);
-                break;
-                
-            case 'settings':
-                $should_disable = in_array($page_info['pagenow'], ['options-general.php', 'options-writing.php', 'options-reading.php', 'options-discussion.php', 'options-media.php', 'options-permalink.php']);
-                break;
+            }
         }
     }
     

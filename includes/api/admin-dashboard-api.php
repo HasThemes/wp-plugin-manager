@@ -425,7 +425,7 @@ function htpm_get_plugin_settings($request) {
                 'value' => [''],
             ],
             // Backend settings
-            'admin_scope' => 'all_admin',
+            'admin_scope' => [],
             'backend_pages' => [],
             'backend_condition_list' => [
                 'name' => ['admin_page_equals'],
@@ -436,7 +436,12 @@ function htpm_get_plugin_settings($request) {
     } else {
         // Ensure backend fields exist in existing settings
         if (!isset($plugin_settings['admin_scope'])) {
-            $plugin_settings['admin_scope'] = 'all_admin';
+            $plugin_settings['admin_scope'] = [];
+        } else {
+            // Convert string to array for backward compatibility
+            if (is_string($plugin_settings['admin_scope'])) {
+                $plugin_settings['admin_scope'] = [$plugin_settings['admin_scope']];
+            }
         }
         if (!isset($plugin_settings['backend_pages'])) {
             $plugin_settings['backend_pages'] = [];
@@ -500,7 +505,12 @@ function htpm_update_plugin_settings($request) {
     $sanitized_settings['uri_type'] = sanitize_text_field($settings['uri_type'] ?? 'page');
     
     // Backend specific settings
-    $sanitized_settings['admin_scope'] = sanitize_text_field($settings['admin_scope'] ?? 'all_admin');
+    //$sanitized_settings['admin_scope'] = sanitize_text_field($settings['admin_scope'] ?? 'all_admin');
+    if (isset($settings['admin_scope']) && is_array($settings['admin_scope'])) {
+        $sanitized_settings['admin_scope'] = array_map('sanitize_text_field', $settings['admin_scope']);
+    } else {
+        $sanitized_settings['admin_scope'] = [];
+    }
     
     // Arrays need special handling
     if (isset($settings['post_types']) && is_array($settings['post_types'])) {

@@ -86,8 +86,8 @@ class WP_Plugin_Manager_Settings {
         return [
             'page_selection' => [
                 'label' => __('Select Admin Pages', 'wp-plugin-manager'),
-                'description' => __('Choose specific admin pages where you want to apply these settings.', 'wp-plugin-manager'),
-                'type' => 'grouped_select',
+                'type' => 'multi_select',
+                'description' => __('Choose which sections of WordPress admin this rule should apply to. You can select multiple areas.', 'wp-plugin-manager'),
                 'groups' => $this->get_wordpress_page_groups(),
                 'pro' => false,
                 'proBadge' => false

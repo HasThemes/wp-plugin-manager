@@ -11,7 +11,14 @@
     <!-- Admin Area Scope (Broad Categories) -->
     <div class="form-field">
       <label>{{ modalSettingsFields?.admin_scope?.label }} <span v-if="modalSettingsFields?.admin_scope?.proBadge" class="pro-badge">{{proLabel}}</span></label>
-      <el-select v-model="pluginSettings.admin_scope" class="w-full" @change="(value) => handleProFeatureSelect('admin_scope', value)">
+      <el-select 
+          v-model="pluginSettings.admin_scope" 
+          multiple 
+          filterable 
+          class="w-full" 
+          placeholder="Select admin areas..."
+          @change="(value) => handleProFeatureSelect('admin_scope', value)"
+        >
         <el-option 
           v-for="(label, value) in modalSettingsFields?.admin_scope?.options" 
           :key="value" 
@@ -145,7 +152,7 @@ const emit = defineEmits([
 // Initialize backend-specific settings if they don't exist
 onMounted(() => {
   if (!props.pluginSettings.admin_scope) {
-    props.pluginSettings.admin_scope = 'all_admin'
+    props.pluginSettings.admin_scope = []
   }
   
   if (!props.pluginSettings.backend_pages) {
