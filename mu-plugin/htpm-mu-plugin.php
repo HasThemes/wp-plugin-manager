@@ -379,7 +379,12 @@ function htpm_filter_backend_plugins( $plugins ){
     // loop through each active plugin
     foreach($htpm_options as $plugin => $individual_options){
         if(isset($individual_options['enable_deactivation']) && $individual_options['enable_deactivation'] == 'yes'){
+            // Check backend status
+            $backend_enabled = !isset($individual_options['backend_status']) || $individual_options['backend_status'] === true;
             
+            if (!$backend_enabled) {
+                continue; // Skip this plugin if backend is disabled
+            }
             // Check if this plugin should be disabled in backend
             $should_disable_backend = htpm_check_backend_conditions($individual_options);
             
@@ -431,6 +436,12 @@ function htpm_filter_plugins( $plugins ){
 	// loop through each active plugin
 	foreach($htpm_options as $plugin => $individual_options){
 		if(isset($individual_options['enable_deactivation']) && $individual_options['enable_deactivation'] == 'yes'){
+             // Check frontend status
+        $frontend_enabled = !isset($individual_options['frontend_status']) || $individual_options['frontend_status'] === true;
+        
+        if (!$frontend_enabled) {
+            continue; // Skip this plugin if frontend is disabled
+        }
 			$uri_type = $individual_options['uri_type'];
 
 			if($uri_type == 'page'){

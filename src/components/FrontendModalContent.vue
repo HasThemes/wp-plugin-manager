@@ -1,5 +1,17 @@
 <template>
     <div class="frontend-modal-content">
+       <!-- Status Field -->
+       <div class="form-field">
+        <label>{{ modalSettingsFields?.status?.label || 'Status' }}</label>
+        <el-switch
+          v-model="pluginSettings.frontend_status"
+          class="status-switch"
+          :active-text="'Enabled'"
+          :inactive-text="'Disabled'"
+        />
+        <div class="field-desc">{{ modalSettingsFields?.status?.description }}</div>
+      </div>
+
       <!-- Configuration settings for the plugin - Always visible now -->
       <div class="form-field">
         <label>{{ modalSettingsFields?.device_types?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{proLabel}}</span></label>

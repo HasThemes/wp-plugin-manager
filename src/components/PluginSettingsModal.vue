@@ -264,6 +264,7 @@ const loadPluginSettings = async () => {
       const defaultSettings = {
         // Frontend settings
         enable_deactivation: props.plugin.enable_deactivation ? 'yes' : 'no',
+        frontend_status: props.plugin.enable_deactivation ? 'yes' : 'no',
         device_type: 'all',
         condition_type: 'disable_on_selected',
         uri_type: 'page',
@@ -276,12 +277,15 @@ const loadPluginSettings = async () => {
         },
         // Backend settings
         admin_scope: 'all_admin',
+        backend_status: 'no',
         backend_pages: [],
         backend_condition_list: {
           name: ['admin_page_equals'],
           value: [''],
         },
-        backend_user_roles: []
+        backend_user_roles: [],
+        conflict_status: 'no',
+        login_status: 'no',
       }
       
       // Merge with default settings to ensure all properties exist

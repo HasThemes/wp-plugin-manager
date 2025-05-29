@@ -1,5 +1,16 @@
 <template>
     <div class="login-status-modal-content">
+      <!-- Status Field -->
+      <!-- <div class="form-field">
+        <label>{{ modalSettingsFields?.status?.label || 'Status' }}</label>
+        <el-switch
+          v-model="pluginSettings.login_status"
+          class="status-switch"
+          :active-text="'Enabled'"
+          :inactive-text="'Disabled'"
+        />
+        <div class="field-desc">{{ modalSettingsFields?.status?.description }}</div>
+      </div> -->
       <div class="form-field">
         <label>Login Requirement <span v-if="!isPro" class="pro-badge">{{proLabel}}</span></label>
         <div class="field-desc">Configure when the plugin should be active based on user login status.</div>

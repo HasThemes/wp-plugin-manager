@@ -1,5 +1,16 @@
 <template>
     <div class="conflict-modal-content">
+       <!-- Status Field -->
+       <!-- <div class="form-field">
+        <label>{{ modalSettingsFields?.status?.label || 'Status' }}</label>
+        <el-switch
+          v-model="pluginSettings.conflict_status"
+          class="status-switch"
+          :active-text="'Enabled'"
+          :inactive-text="'Disabled'"
+        />
+        <div class="field-desc">{{ modalSettingsFields?.status?.description }}</div>
+      </div> -->
       <div class="form-field">
         <label>Conflicting Plugins <span v-if="!isPro" class="pro-badge">{{proLabel}}</span></label>
         <div class="field-desc">Select plugins that conflict with this plugin. The plugin will be disabled if any of the selected plugins are active.</div>

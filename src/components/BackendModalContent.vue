@@ -1,5 +1,16 @@
 <template>
   <div class="backend-modal-content">
+    <!-- Status Field -->
+    <div class="form-field">
+        <label>{{ modalSettingsFields?.status?.label || 'Status' }}</label>
+        <el-switch
+          v-model="pluginSettings.backend_status"
+          class="status-switch"
+          :active-text="'Enabled'"
+          :inactive-text="'Disabled'"
+        />
+        <div class="field-desc">{{ modalSettingsFields?.status?.description }}</div>
+      </div>
       <!-- Action Type (same as frontend) -->
       <div class="form-field">
       <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.action?.proBadge" class="pro-badge">{{proLabel}}</span></label>

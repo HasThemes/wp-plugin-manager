@@ -84,6 +84,14 @@ class WP_Plugin_Manager_Settings {
      */
     public function get_backend_modal_settings() {
         return [
+            'status' => [
+                'label' => __('Status:', 'wp-plugin-manager'),
+                'type' => 'switch',
+                'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
+                'default' => true,
+                'pro' => false,
+                'proBadge' => false
+            ],
             'page_selection' => [
                 'label' => __('Select Admin Pages', 'wp-plugin-manager'),
                 'type' => 'multi_select',
@@ -270,6 +278,14 @@ class WP_Plugin_Manager_Settings {
 
     public function get_feature_settings() {
         return [
+            'status' => [
+                'label' => __('Status:', 'wp-plugin-manager'),
+                'type' => 'switch',
+                'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
+                'default' => true,
+                'pro' => false,
+                'proBadge' => false
+            ],
             'device_types' => [
                 'label' => __('Disable Plugin on:', 'wp-plugin-manager'),
                 'description' => __('Select the device(s) where this plugin should be disabled.', 'wp-plugin-manager'),
