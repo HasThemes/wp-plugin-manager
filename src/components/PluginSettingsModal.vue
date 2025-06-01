@@ -257,14 +257,15 @@ const loadPluginSettings = async () => {
   try {
     if (!props.plugin) return
     
-    const settings = await store.fetchPluginSettings(props.plugin.id)
+    //const settings = await store.fetchPluginSettings(props.plugin.id)
+    const settings = store.settings[props.plugin.id];
     
     if (settings) {
       // Ensure we have proper structure including backend fields
       const defaultSettings = {
         // Frontend settings
         enable_deactivation: props.plugin.enable_deactivation ? 'yes' : 'no',
-        frontend_status: props.plugin.enable_deactivation ? 'yes' : 'no',
+        frontend_status: false,
         device_type: 'all',
         condition_type: 'disable_on_selected',
         uri_type: 'page',
@@ -277,15 +278,15 @@ const loadPluginSettings = async () => {
         },
         // Backend settings
         admin_scope: 'all_admin',
-        backend_status: 'no',
+        backend_status: false,
         backend_pages: [],
         backend_condition_list: {
           name: ['admin_page_equals'],
           value: [''],
         },
         backend_user_roles: [],
-        conflict_status: 'no',
-        login_status: 'no',
+        conflict_status: false,
+        login_status: false,
       }
       
       // Merge with default settings to ensure all properties exist

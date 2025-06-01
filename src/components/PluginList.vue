@@ -250,13 +250,13 @@ watch(() => store.plugins, async (newPlugins) => {
         let existingSettings = store.settings[plugin.id];
         
         // If no settings in store, try to fetch from API
-        if (!existingSettings || Object.keys(existingSettings).length === 0) {
-          try {
-            existingSettings = await store.fetchPluginSettings(plugin.id);
-          } catch (error) {
-            console.log('No existing settings found, will create default ones');
-          }
-        }
+        // if (!existingSettings || Object.keys(existingSettings).length === 0) {
+        //   try {
+        //     existingSettings = await store.fetchPluginSettings(plugin.id);
+        //   } catch (error) {
+        //     console.log('No existing settings found, will create default ones');
+        //   }
+        // }
         
         // If existing settings exist, preserve them and just enable
         if (existingSettings && Object.keys(existingSettings).length > 0) {

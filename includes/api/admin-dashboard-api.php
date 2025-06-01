@@ -170,11 +170,18 @@ function htpm_get_all_plugin_settings($request) {
     foreach ($all_plugins as $plugin_path => $plugin_data) {
         $index++;
         if (in_array($plugin_path, $active_plugins)) {
+
+
             $plugin_settings = isset($options['htpm_list_plugins'][$plugin_path]) 
                 ? $options['htpm_list_plugins'][$plugin_path] 
                 : [
                     'enable_deactivation' => 'no',
                     'device_type' => 'all',
+                    'frontend_status' => false,
+                    'backend_status' => false,
+                    'backend_user_roles' => [],
+                    'conflict_status' => false,
+                    'login_status' => false,
                     'condition_type' => 'disable_on_selected',
                     'uri_type' => 'page',
                     'post_types' => ['page', 'post'],
@@ -185,6 +192,10 @@ function htpm_get_all_plugin_settings($request) {
                         'value' => [''],
                     ]
                 ];
+
+            if( ! isset( $plugin_settings['frontend_status'] ) && (isset( $plugin_settings['enable_deactivation'] ) && $plugin_settings['enable_deactivation'] == 'yes' ) ) {
+                $plugin_settings['frontend_status'] = true;
+            }
             $all_settings[$index] = $plugin_settings;
         }
     }
@@ -504,10 +515,10 @@ function htpm_update_plugin_settings($request) {
     $sanitized_settings['condition_type'] = sanitize_text_field($settings['condition_type'] ?? 'disable_on_selected');
     $sanitized_settings['uri_type'] = sanitize_text_field($settings['uri_type'] ?? 'page');
     // Status fields
-    $sanitized_settings['frontend_status'] = isset( $settings['frontend_status']) ? (bool)$settings['frontend_status'] : $sanitized_settings['enable_deactivation'];
-    $sanitized_settings['backend_status'] = isset($settings['backend_status']) ? (bool)$settings['backend_status'] : true;
-    $sanitized_settings['conflict_status'] = isset($settings['conflict_status']) ? (bool)$settings['conflict_status'] : true;
-    $sanitized_settings['login_status'] = isset($settings['login_status']) ? (bool)$settings['login_status'] : true;
+    $sanitized_settings['frontend_status'] = isset( $settings['frontend_status']) ? (bool)$settings['frontend_status'] : false;
+    $sanitized_settings['backend_status'] = isset($settings['backend_status']) ? (bool)$settings['backend_status'] : false;
+    $sanitized_settings['conflict_status'] = isset($settings['conflict_status']) ? (bool)$settings['conflict_status'] : false;
+    $sanitized_settings['login_status'] = isset($settings['login_status']) ? (bool)$settings['login_status'] : false;
     // Backend specific settings
     //$sanitized_settings['admin_scope'] = sanitize_text_field($settings['admin_scope'] ?? 'all_admin');
     if (isset($settings['admin_scope']) && is_array($settings['admin_scope'])) {

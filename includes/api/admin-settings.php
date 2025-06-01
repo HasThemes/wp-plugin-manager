@@ -88,7 +88,7 @@ class WP_Plugin_Manager_Settings {
                 'label' => __('Status:', 'wp-plugin-manager'),
                 'type' => 'switch',
                 'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
-                'default' => true,
+                'default' => false,
                 'pro' => false,
                 'proBadge' => false
             ],
