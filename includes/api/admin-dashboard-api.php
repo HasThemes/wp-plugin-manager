@@ -9,27 +9,6 @@ if (!class_exists('WP_REST_Response')) {
  * Register custom REST API endpoints for plugin management
  */
 function htpm_register_rest_routes() {
-    /**
-     * Get admin pages endpoint
-     */
-    register_rest_route('htpm/v1', '/admin-pages', [
-        'methods' => 'GET',
-        'callback' => 'htpm_get_admin_pages',
-        'permission_callback' => function() {
-            return current_user_can('manage_options');
-        }
-    ]);
-
-    /**
-     * Get current admin screen info
-     */
-    register_rest_route('htpm/v1', '/admin-screen-info', [
-        'methods' => 'GET',
-        'callback' => 'htpm_get_admin_screen_info',
-        'permission_callback' => function() {
-            return current_user_can('manage_options');
-        }
-    ]);
 
     // Bulk settings endpoint
     register_rest_route('htpm/v1', '/plugins/settings', [
@@ -143,14 +122,6 @@ function htpm_register_rest_routes() {
             return current_user_can('manage_options');
         }
     ]);
-    // Get all settings endpoint
-    register_rest_route('htpm/v1', '/get-all-settings', [
-        'methods' => 'GET',
-        'callback' => 'htpm_get_all_settings',
-        'permission_callback' => function() {
-            return current_user_can('edit_posts');
-        }
-    ]);
     
 }
 /**
@@ -207,14 +178,6 @@ function htpm_get_all_plugin_settings($request) {
 }
 
 add_action('rest_api_init', 'htpm_register_rest_routes');
-
-/**
- * Get all settings
- */
-function htpm_get_all_settings() {
-    $options = get_option('htpm_options', []);
-    return new WP_REST_Response($options, 200);
-}
 
 
 /**
@@ -763,50 +726,4 @@ function htpm_get_sidebar_content() {
             ['status' => 500]
         );
     }
-}
-
-
-/**
- * Get WordPress admin pages
- */
-function htpm_get_admin_pages() {
-    try {
-        $admin_settings = WP_Plugin_Manager_Settings::get_instance();
-        
-        // Get both grouped and all admin pages
-        $grouped_pages = $admin_settings->get_backend_modal_settings();
-        $all_pages = $admin_settings->get_all_admin_pages();
-        
-        return new WP_REST_Response([
-            'success' => true,
-            'data' => [
-                'grouped_pages' => $grouped_pages['page_selection']['groups'] ?? [],
-                'all_pages' => $all_pages,
-                'backend_conditions' => $grouped_pages['backend_conditions'] ?? []
-            ]
-        ], 200);
-        
-    } catch (Exception $e) {
-        return new WP_Error(
-            'admin_pages_error',
-            $e->getMessage(),
-            ['status' => 500]
-        );
-    }
-}
-
-function htpm_get_admin_screen_info() {
-    $current_screen = get_current_screen();
-    
-    return new WP_REST_Response([
-        'success' => true,
-        'data' => [
-            'screen_id' => $current_screen ? $current_screen->id : '',
-            'screen_base' => $current_screen ? $current_screen->base : '',
-            'screen_post_type' => $current_screen ? $current_screen->post_type : '',
-            'screen_taxonomy' => $current_screen ? $current_screen->taxonomy : '',
-            'pagenow' => $GLOBALS['pagenow'] ?? '',
-            'admin_page' => $_GET['page'] ?? '',
-        ]
-    ], 200);
 }

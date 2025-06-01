@@ -400,40 +400,5 @@ export const usePluginStore = defineStore('plugins', {
         return []
       }
     },
-    // Fetch admin pages for backend modal
-    async fetchAdminPages() {
-      try {
-        const response = await api.get('/htpm/v1/admin-pages')
-        
-        if (response.data && response.data.success) {
-          return response.data.data;
-        } else {
-          throw new Error('Failed to fetch admin pages')
-        }
-      } catch (error) {
-        console.error('Error fetching admin pages:', error)
-        return {
-          grouped_pages: [],
-          all_pages: [],
-          backend_conditions: []
-        }
-      }
-    },
-
-    // Get current admin screen info
-    async fetchAdminScreenInfo() {
-      try {
-        const response = await api.get('/htpm/v1/admin-screen-info')
-        
-        if (response.data && response.data.success) {
-          return response.data.data;
-        } else {
-          throw new Error('Failed to fetch admin screen info')
-        }
-      } catch (error) {
-        console.error('Error fetching admin screen info:', error)
-        return {}
-      }
-    },
   }
 })
