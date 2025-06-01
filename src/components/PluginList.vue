@@ -10,8 +10,10 @@
           class="filter-select"
         >
           <el-option label="All Plugins" value="all" />
-          <el-option label="Optimized" value="optimized" />
-          <el-option label="Not Optimized" value="unoptimized" />
+          <el-option label="All Optimized" value="optimized" />
+          <el-option label="Frontend Optimized" value="frontend_optimized" />
+          <el-option label="Backend Optimized" value="backend_optimized" />
+          <el-option label="Not Optimized Yet" value="unoptimized" />
         </el-select>
         <el-input
           v-model="searchQuery"
@@ -56,9 +58,33 @@
           </div>
           <div class="plugin-details">
             <h3>{{ plugin.name }}</h3>
-            <div class="plugin-status">
-              <span class="status-dot" :class="{ active: (plugin.enable_deactivation == 'yes') }"></span>
-              <span class="status-text">{{ plugin.enable_deactivation == 'yes' ? 'Optimized' : 'Not Optimized Yet' }}</span>
+            <div class="plugin-status-container">
+              <!-- Show frontend status only if optimized -->
+              <div 
+                v-if="(plugin.settings?.frontend_status === true && plugin.settings?.enable_deactivation === 'yes')" 
+                class="plugin-status"
+              >
+                <span class="status-dot active"></span>
+                <span class="status-text">Frontend: Optimized</span>
+              </div>
+              
+              <!-- Show backend status only if optimized -->
+              <div 
+                v-if="(plugin.settings?.backend_status === true && plugin.settings?.enable_deactivation === 'yes')" 
+                class="plugin-status"
+              >
+                <span class="status-dot active"></span>
+                <span class="status-text">Backend: Optimized</span>
+              </div>
+              
+              <!-- Show "Not Optimized Yet" only if both are not optimized -->
+              <div 
+                v-if="((!plugin.settings?.frontend_status && !plugin.settings?.backend_status) || plugin.settings?.enable_deactivation === 'no')" 
+                class="plugin-status"
+              >
+                <span class="status-dot"></span>
+                <span class="status-text">Not Optimized Yet</span>
+              </div>
             </div>
           </div>
         </div>
@@ -193,35 +219,49 @@ watch(() => store.plugins, async (newPlugins) => {
 
     // Filter plugins based on search query
     const filteredPlugins = computed(() => {
-      //const activePlugins = plugins.value.filter(plugin => plugin.wpActive)
       let filtered = plugins.value.filter(plugin => plugin.wpActive)
       
       // Apply status filter
       if (filterStatus.value !== 'all') {
         filtered = filtered.filter(plugin => {
-          if (filterStatus.value === 'optimized') {
-            return plugin.enable_deactivation === 'yes';
-          } else {
-            return plugin.enable_deactivation !== 'yes';
+          const isEnabled = plugin.settings?.enable_deactivation === 'yes'
+          const frontendOptimized = plugin.settings?.frontend_status === true && isEnabled
+          const backendOptimized = plugin.settings?.backend_status === true && isEnabled
+          
+          switch (filterStatus.value) {
+            case 'optimized': // All Optimized
+              return frontendOptimized || backendOptimized
+            
+            case 'frontend_optimized': // Frontend Optimized only
+              return frontendOptimized
+            
+            case 'backend_optimized': // Backend Optimized only
+              return backendOptimized
+            
+            case 'unoptimized': // Not Yet Optimized
+              return !frontendOptimized && !backendOptimized
+            
+            default:
+              return true
           }
-        });
+        })
       }
       
       // Apply search filter
       if (debouncedSearchQuery.value) {
-        const searchLower = debouncedSearchQuery.value.toLowerCase();
+        const searchLower = debouncedSearchQuery.value.toLowerCase()
         filtered = filtered.filter(plugin => 
           plugin.name.toLowerCase().includes(searchLower)
-        );
+        )
       }
       
       // Update pagination total
-      pagination.total = filtered.length;
+      pagination.total = filtered.length
       
       // Apply pagination
-      const start = (pagination.currentPage - 1) * pagination.pageSize;
-      const end = start + pagination.pageSize;
-      return filtered.slice(start, end);
+      const start = (pagination.currentPage - 1) * pagination.pageSize
+      const end = start + pagination.pageSize
+      return filtered.slice(start, end)
     })
 
     // Add computed property for checking loading state
@@ -328,6 +368,8 @@ watch(() => store.plugins, async (newPlugins) => {
           existingSettings = {
             enable_deactivation: 'no',
             device_type: 'all',
+            frontend_status: false,
+            backend_status: false,
             condition_type: 'disable_on_selected',
             uri_type: 'page',
             post_types: ['page', 'post'],
@@ -805,6 +847,33 @@ watch(() => store.plugins, async (newPlugins) => {
   }
   to {
     transform: rotate(360deg);
+  }
+}
+.plugin-status-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.plugin-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #909399;
+
+    &.active {
+      background: #10b981;
+    }
+  }
+
+  .status-text {
+    font-size: 11px;
+    color: #909399;
   }
 }
 </style>
