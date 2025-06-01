@@ -502,7 +502,7 @@ const saveSettings = async () => {
     })
     
     // Close the dialog
-    dialogVisible.value = false
+   // dialogVisible.value = false
 
   } catch (error) {
     console.error('Error saving settings:', error)

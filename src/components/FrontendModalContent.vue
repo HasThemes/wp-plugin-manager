@@ -1,15 +1,17 @@
 <template>
     <div class="frontend-modal-content">
        <!-- Status Field -->
-       <div class="form-field">
-        <label>{{ modalSettingsFields?.status?.label || 'Status' }}</label>
-        <el-switch
-          v-model="pluginSettings.frontend_status"
-          class="status-switch"
-          :active-text="'Enabled'"
-          :inactive-text="'Disabled'"
-        />
-        <div class="field-desc">{{ modalSettingsFields?.status?.description }}</div>
+       <div class="form-field status-field">
+        <div class="status-control">
+          <el-switch
+            v-model="pluginSettings.frontend_status"
+            class="status-switch"
+          />
+          <span class="status-label">
+            {{ pluginSettings.frontend_status ? 'Enabled' : 'Disabled' }}
+          </span>
+        </div>
+        <div class="field-desc">{{ modalSettingsFields?.status?.description || 'Enable or disable this configuration. When disabled, settings are saved but not applied.' }}</div>
       </div>
 
       <!-- Configuration settings for the plugin - Always visible now -->
@@ -343,4 +345,58 @@
     background-color: rgb(121.3, 187.1, 255);
     cursor: pointer;
   }
+  .status-field {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ebeef5;
+  
+  .status-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .status-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #303133;
+    
+    &.enabled {
+      color: #67c23a;
+    }
+    
+    &.disabled {
+      color: #909399;
+    }
+  }
+}
+
+.status-switch {
+  &.el-switch {
+    --el-switch-on-color: #409eff;
+    --el-switch-off-color: #dcdfe6;
+    
+    .el-switch__core {
+      min-width: 50px;
+      height: 28px;
+      border-radius: 14px;
+      
+      .el-switch__action {
+        width: 24px;
+        height: 24px;
+        top: 2px;
+        border-radius: 50%;
+      }
+    }
+    
+    &.is-checked .el-switch__core {
+      background-color: #409eff;
+    }
+    
+    &:not(.is-checked) .el-switch__core {
+      background-color: #dcdfe6;
+    }
+  }
+}
   </style>
