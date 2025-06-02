@@ -146,6 +146,59 @@ class WP_Plugin_Manager_Settings {
     }
 
     /**
+     * Get Conflict field
+     */
+    public function get_conflict_modal_settings() {
+        return [
+            'status' => [
+                'label' => __('Status: ', 'wp-plugin-manager'),
+                'type' => 'switch',
+                'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
+                'default' => false,
+                'pro' => true,
+                'proBadge' => true
+            ],
+            'conflict_plugins' => [
+                'label' => __('Conflicting Plugins: ', 'wp-plugin-manager'),
+                'type' => 'multi_select',
+                'description' => __('Select plugins that conflict with this plugin. The plugin will be disabled if any of the selected plugins are active.', 'wp-plugin-manager'),
+                'options' => [
+                    'all_items' => __('All Items', 'wp-plugin-manager'),
+                ],
+                'pro' => true,
+                'proBadge' => true
+            ]
+        ];
+    }
+    /**
+     * Get Login Satus field
+     */
+    public function get_login_status_modal_settings() {
+        return [
+            'status' => [
+                'label' => __('Status: ', 'wp-plugin-manager'),
+                'type' => 'switch',
+                'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
+                'default' => false,
+                'pro' => true,
+                'proBadge' => true
+            ],
+            'login_status_control' => [
+                'label' => __('Login Status Control: ', 'wp-plugin-manager'),
+                'type' => 'multi_select',
+                'description' => __('Configure when the plugin should be active based on user login status and roles.', 'wp-plugin-manager'),
+                'options' => [
+                    'all_items' => __('All Items', 'wp-plugin-manager'),
+                    'logged_in' => __('Logged In', 'wp-plugin-manager'),
+                    'not_logged_in' => __('Not Logged In', 'wp-plugin-manager'),
+                    'specific_roles' => __('Specific Roles', 'wp-plugin-manager'),
+                ],
+                'pro' => true,
+                'proBadge' => true
+            ]
+        ];
+    }
+    /**
      * Get WordPress page groups for select dropdown
      */
     private function get_wordpress_page_groups() {
@@ -430,12 +483,9 @@ class WP_Plugin_Manager_Settings {
             'backend_page_selection' => __('Backend Page Selection', 'wp-plugin-manager'),
             'select_admin_pages' => __('Select Admin Pages:', 'wp-plugin-manager'),
             'backend_conditions' => __('Backend Conditions:', 'wp-plugin-manager'),
-            'plugin_filter_options' => [
-                'all' => __('All Plugins', 'wp-plugin-manager'),
-                'optimized' => __('All Optimized', 'wp-plugin-manager'),
-                'frontend_optimized' => __('Frontend Optimized', 'wp-plugin-manager'),
-                'backend_optimized_p' => __('Backend Optimized (Pro)', 'wp-plugin-manager'),
-                'unoptimized' => __('Not Optimized Yet', 'wp-plugin-manager'),
+            'coming_soon' => [
+                'title' => __('Coming Soon', 'wp-plugin-manager'),
+                'desc' => __('This feature is coming soon! We are working on it and it will be available in the Pro version.', 'wp-plugin-manager'),
             ]
         ];
     }
@@ -443,9 +493,11 @@ class WP_Plugin_Manager_Settings {
     public function get_modal_settings_fields() {
         $feature_settings = $this->get_feature_settings();
         $backend_settings = $this->get_backend_modal_settings();
+        $conflict_settings = $this->get_conflict_modal_settings();
+        $login_status_settings = $this->get_login_status_modal_settings();
         
         // Merge frontend and backend settings
-        return array_merge($feature_settings, $backend_settings);
+        return array_merge($feature_settings, $backend_settings, $conflict_settings, $login_status_settings);
     }
 
     public function get_modal_settings_field($field) {

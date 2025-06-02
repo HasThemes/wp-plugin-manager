@@ -48,7 +48,7 @@
 
     <!-- Backend Page Selection with Grouped Options -->
     <div class="form-field">
-      <label>{{ labels_texts?.select_admin_pages || 'Select Admin Pages:' }}<span v-if="modalSettingsFields?.select_admin_pages?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+      <label>{{ modalSettingsFields?.page_selection?.label || 'Select Admin Pages: ' }}<span v-if="modalSettingsFields?.page_selection?.proBadge" class="pro-badge">{{proLabel}}</span></label>
       <el-select 
         v-model="pluginSettings.backend_pages" 
         multiple 
@@ -68,7 +68,7 @@
               :disabled="modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value)"
             >
               <div class="admin-page-option">
-                <span class="page-title">{{ option.label + (modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value) ? ' (' + proLabel + ')' : '') }}</span>
+                <span class="page-title" :disabled="modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value)">{{ option.label + (modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value) ? ' (' + proLabel + ')' : '') }}</span>
                 <span class="page-url" v-if="option.url">{{ option.url }}</span>
               </div>
             </el-option>
@@ -268,10 +268,10 @@ const addBackendCondition = () => {
   display: flex;
   flex-direction: column;
   
-  .page-title {
-    font-weight: 500;
-    color: #303133;
-  }
+  // .page-title {
+  //   font-weight: 400;
+  //   color: #303133;
+  // }
   
   .page-url {
     font-size: 11px;

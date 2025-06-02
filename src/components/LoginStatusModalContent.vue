@@ -1,243 +1,174 @@
 <template>
-    <div class="login-status-modal-content">
-      <!-- Status Field -->
-      <!-- <div class="form-field">
-        <label>{{ modalSettingsFields?.status?.label || 'Status' }}</label>
-        <el-switch
-          v-model="pluginSettings.login_status"
-          class="status-switch"
-          :active-text="'Enabled'"
-          :inactive-text="'Disabled'"
-        />
-        <div class="field-desc">{{ modalSettingsFields?.status?.description }}</div>
-      </div> -->
-      <div class="form-field">
-        <label>Login Requirement <span v-if="!isPro" class="pro-badge">{{proLabel}}</span></label>
-        <div class="field-desc">Configure when the plugin should be active based on user login status.</div>
-        
-        <!-- Pro feature placeholder - will be implemented in future -->
-        <div class="pro-feature-placeholder" v-if="!isPro">
-          <el-empty 
-            :image-size="100"
-            description="This feature is available in the Pro version"
-          >
-            <el-button type="primary" @click="openProModal">
-              Upgrade to Pro
-            </el-button>
-          </el-empty>
-        </div>
-        
-        <!-- Pro version content -->
-        <div v-else class="login-status-options">
-          <el-radio-group v-model="loginRequirement" class="login-options">
-            <el-radio label="always" size="large">
-              <div class="radio-content">
-                <div class="radio-title">Always Active</div>
-                <div class="radio-desc">Plugin is active regardless of user login status</div>
-              </div>
-            </el-radio>
-            
-            <el-radio label="logged_in_only" size="large">
-              <div class="radio-content">
-                <div class="radio-title">Logged In Users Only</div>
-                <div class="radio-desc">Plugin is only active for logged in users</div>
-              </div>
-            </el-radio>
-            
-            <el-radio label="logged_out_only" size="large">
-              <div class="radio-content">
-                <div class="radio-title">Logged Out Users Only</div>
-                <div class="radio-desc">Plugin is only active for visitors who are not logged in</div>
-              </div>
-            </el-radio>
-            
-            <el-radio label="specific_roles" size="large">
-              <div class="radio-content">
-                <div class="radio-title">Specific User Roles</div>
-                <div class="radio-desc">Plugin is active only for users with specific roles</div>
-              </div>
-            </el-radio>
-          </el-radio-group>
-          
-          <!-- User Roles Selection -->
-          <div v-if="loginRequirement === 'specific_roles'" class="form-field role-selection">
-            <label>Select User Roles:</label>
-            <el-checkbox-group v-model="selectedRoles" class="role-checkboxes">
-              <el-checkbox v-for="role in userRoles" :key="role.value" :label="role.value">
-                <div class="role-option">
-                  <span class="role-name">{{ role.label }}</span>
-                  <span class="role-desc">{{ role.description }}</span>
-                </div>
-              </el-checkbox>
-            </el-checkbox-group>
+  <div class="login-status-modal-content">
+    <div class="form-field">
+      <label> {{ modalSettingsFields?.login_status_control?.label }} <span class="pro-badge" v-if="modalSettingsFields?.login_status_control.pro">{{proLabel}}</span></label>
+      <div class="field-desc">{{ modalSettingsFields?.login_status_control?.description }}</div>
+      
+      <!-- Coming Soon feature placeholder -->
+      <div class="coming-soon-placeholder">
+        <div class="coming-soon-content">
+          <div class="coming-soon-icon">
+            <el-icon size="48"><Clock /></el-icon>
           </div>
+          <h3>{{ lebelsText?.coming_soon?.title }}</h3>
+          <p>{{ lebelsText?.coming_soon?.desc }}</p>
         </div>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue'
-  
-  const props = defineProps({
-    proLabel: {
-      type: String,
-      required: true
-    },
-    isPro: {
-      type: Boolean,
-      required: true
-    }
-  })
-  
-  const emit = defineEmits(['openProModal'])
-  
-  const loginRequirement = ref('always')
-  const selectedRoles = ref([])
-  
-  // Common WordPress user roles
-  const userRoles = ref([
-    {
-      value: 'administrator',
-      label: 'Administrator',
-      description: 'Full access to all features'
-    },
-    {
-      value: 'editor',
-      label: 'Editor',
-      description: 'Can publish and manage posts and pages'
-    },
-    {
-      value: 'author',
-      label: 'Author',
-      description: 'Can publish and manage own posts'
-    },
-    {
-      value: 'contributor',
-      label: 'Contributor',
-      description: 'Can write and manage own posts but cannot publish'
-    },
-    {
-      value: 'subscriber',
-      label: 'Subscriber',
-      description: 'Can only manage profile and read content'
-    }
-  ])
-  
-  const openProModal = () => {
-    emit('openProModal')
+  </div>
+</template>
+
+<script setup>
+import { Clock, Trophy } from '@element-plus/icons-vue'
+import { usePluginStore } from '../store/plugins'
+import { ref } from 'vue'
+const store = usePluginStore()
+const props = defineProps({
+  pluginSettings: {
+    type: Object,
+    required: true
+  },
+  modalSettingsFields: {
+    type: Object,
+    required: true
+  },
+  proLabel: {
+    type: String,
+    required: true
+  },
+  isPro: {
+    type: Boolean,
+    required: true
   }
-  </script>
-  
-  <style lang="scss" scoped>
-  .pro-badge {
-    background-color: rgba(214, 54, 56, 0.1);
-    border: 1px solid #d636386b;
-    color: #d63638;
-    padding: 2px 6px;
-    border-radius: 3px;
-    font-size: 10px;
-    font-weight: 600;
-    line-height: 1;
-    text-transform: uppercase;
+})
+
+const emit = defineEmits(['openProModal'])
+const lebelsText = ref(store.labels_texts);
+const openProModal = () => {
+  emit('openProModal')
+}
+</script>
+
+<style lang="scss" scoped>
+.pro-badge {
+  background-color: rgba(214, 54, 56, 0.1);
+  border: 1px solid #d636386b;
+  color: #d63638;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.form-field {
+  margin-bottom: 20px;
+  position: relative;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #606266;
   }
-  
-  .form-field {
-    margin-bottom: 20px;
+
+  .field-desc {
+    margin-top: 4px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    color: #909399;
+  }
+}
+
+.coming-soon-placeholder {
+  padding: 40px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+  border-radius: 16px;
+  border: 2px dashed #e6ebf5;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    
+  &::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.03) 0%, rgba(99, 102, 241, 0) 70%);
+    animation: pulse 3s ease-in-out infinite;
+  }
+    
+  .coming-soon-content {
     position: relative;
-  
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: #606266;
-    }
-  
-    .field-desc {
-      margin-top: 4px;
-      margin-bottom: 16px;
-      font-size: 12px;
-      color: #909399;
-    }
-  }
-  
-  .pro-feature-placeholder {
-    padding: 40px 20px;
-    text-align: center;
-    background: #f8f9fa;
-    border-radius: 8px;
-    border: 2px dashed #dee2e6;
-  }
-  
-  .login-status-options {
-    .login-options {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    
+    .coming-soon-icon {
+      margin-bottom: 10px;
+      color: #6366f1;
+      opacity: 0.9;
+      transform-origin: center;
+      animation: float 3s ease-in-out infinite;
       
-      :deep(.el-radio) {
-        margin: 0;
-        align-items: flex-start;
-        
-        .el-radio__input {
-          margin-top: 4px;
-        }
+      .el-icon {
+        filter: drop-shadow(0 4px 12px rgba(99, 102, 241, 0.2));
       }
     }
     
-    .radio-content {
-      margin-left: 8px;
-      
-      .radio-title {
-        font-weight: 500;
-        color: #303133;
-        margin-bottom: 4px;
-      }
-      
-      .radio-desc {
-        font-size: 12px;
-        color: #909399;
-        line-height: 1.4;
-      }
+    h3 {
+      margin: 0 0 16px 0;
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+    
+    > p {
+      margin: 0 0 32px 0;
+      font-size: 16px;
+      color: #64748b;
+      line-height: 1.6;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
     }
   }
   
-  .role-selection {
-    margin-top: 20px;
-    padding: 16px;
-    background: #f8f9fa;
-    border-radius: 6px;
-    border-left: 3px solid #409eff;
+  .el-button {
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 24px;
+    height: auto;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    border: none;
+    transition: all 0.3s ease;
     
-    .role-checkboxes {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      
-      :deep(.el-checkbox) {
-        margin: 0;
-        align-items: flex-start;
-        
-        .el-checkbox__input {
-          margin-top: 2px;
-        }
-      }
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
     }
     
-    .role-option {
-      margin-left: 8px;
-      
-      .role-name {
-        font-weight: 500;
-        color: #303133;
-        display: block;
-      }
-      
-      .role-desc {
-        font-size: 11px;
-        color: #909399;
-        line-height: 1.3;
-      }
+    .el-icon {
+      margin-right: 8px;
     }
   }
-  </style>
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.02); opacity: 0.3; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+</style>

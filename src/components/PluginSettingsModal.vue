@@ -60,6 +60,8 @@
             :pro-label="proLabel"
             :is-pro="isPro"
             :available-plugins="availablePlugins"
+            :modal-settings-fields="modalSettingsFields"
+            :plugin-settings="pluginSettings"            
             @open-pro-modal="openProModal"
           />
         </el-tab-pane>
@@ -70,6 +72,8 @@
             :pro-label="proLabel"
             :is-pro="isPro"
             @open-pro-modal="openProModal"
+            :plugin-settings="pluginSettings"
+            :modal-settings-fields="modalSettingsFields"
           />
         </el-tab-pane>
       </el-tabs>
