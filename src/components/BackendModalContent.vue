@@ -19,7 +19,7 @@
       <!-- Action Type (same as frontend) -->
       <div class="form-field">
       <label>{{ modalSettingsFields?.action_backend?.label }} <span v-if="modalSettingsFields?.action_backend?.proBadge" class="pro-badge">{{proLabel}}</span></label>
-      <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)" :disabled="modalSettingsFields?.action_backend?.proBadge">
+      <el-select v-model="pluginSettings.backend_condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)" :disabled="modalSettingsFields?.action_backend?.proBadge">
         <el-option v-for="(label, value) in modalSettingsFields?.action_backend?.options" :key="value" :label="label + (modalSettingsFields?.action_backend?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action_backend?.pro?.includes(value)" />
       </el-select>
       <div class="field-desc">{{ modalSettingsFields?.action_backend?.description }}</div>
