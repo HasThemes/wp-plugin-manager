@@ -154,6 +154,7 @@ function htpm_get_all_plugin_settings($request) {
                     'conflict_status' => false,
                     'login_status' => false,
                     'condition_type' => 'disable_on_selected',
+                    'backend_condition_type' => 'disable_on_selected',
                     'uri_type' => 'page',
                     'post_types' => ['page', 'post'],
                     'posts' => [],
@@ -390,6 +391,7 @@ function htpm_get_plugin_settings($request) {
             'enable_deactivation' => 'no',
             'device_type' => 'all',
             'condition_type' => 'disable_on_selected',
+            'backend_condition_type' => 'disable_on_selected',
             'uri_type' => 'page',
             'post_types' => ['page', 'post'],
             'posts' => [],
@@ -476,6 +478,7 @@ function htpm_update_plugin_settings($request) {
     $sanitized_settings['enable_deactivation'] = sanitize_text_field($settings['enable_deactivation'] ?? 'no');
     $sanitized_settings['device_type'] = sanitize_text_field($settings['device_type'] ?? 'all');
     $sanitized_settings['condition_type'] = sanitize_text_field($settings['condition_type'] ?? 'disable_on_selected');
+    $sanitized_settings['backend_condition_type'] = sanitize_text_field($settings['backend_condition_type'] ?? 'disable_on_selected');
     $sanitized_settings['uri_type'] = sanitize_text_field($settings['uri_type'] ?? 'page');
     // Status fields
     $sanitized_settings['frontend_status'] = isset( $settings['frontend_status']) ? (bool)$settings['frontend_status'] : false;

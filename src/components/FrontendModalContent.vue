@@ -167,6 +167,7 @@
   
   <script setup>
   import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
+  import { onMounted } from 'vue'
   
   const props = defineProps({
     pluginSettings: {
@@ -262,6 +263,14 @@
   const addCondition = () => {
     emit('addCondition')
   }
+  onMounted(() => {
+   if (!props.isPro) {
+    props.pluginSettings.device_type = 'all'
+    props.pluginSettings.condition_type = 'disable_on_selected'
+  }
+})
+
+
   </script>
   
   <style lang="scss" scoped>

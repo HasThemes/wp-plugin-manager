@@ -9,11 +9,9 @@
           placeholder="Filter by status"
           class="filter-select"
         >
-          <el-option label="All Plugins" value="all" />
-          <el-option label="All Optimized" value="optimized" />
-          <el-option label="Frontend Optimized" value="frontend_optimized" />
-          <el-option label="Backend Optimized" value="backend_optimized" />
-          <el-option label="Not Optimized Yet" value="unoptimized" />
+        <template v-for="(label, value) in managePluginsFields.plugin_filter_options.options" :key="value">
+          <el-option :label="label" :value="value" :disabled="managePluginsFields.plugin_filter_options.isPro.includes(value)" />
+        </template>
         </el-select>
         <el-input
           v-model="searchQuery"
@@ -70,7 +68,7 @@
               
               <!-- Show backend status only if optimized -->
               <div 
-                v-if="(plugin.settings?.backend_status === true && plugin.settings?.enable_deactivation === 'yes')" 
+                v-if="(plugin.settings?.backend_status === true && plugin.settings?.enable_deactivation === 'yes' && isPro)" 
                 class="plugin-status"
               >
                 <span class="status-dot active"></span>
@@ -172,6 +170,8 @@ const pagination = reactive({
 })
 const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
 const loadingPlugins = ref(new Set()) // Track which plugins are currently saving
+const isPro = ref(store?.isPro);
+const managePluginsFields = ref(store?.dashboardSettingsFields.manage_plugins);
 
 // Create debounced search handler
 const updateDebouncedSearch = debounce((value) => {
@@ -235,6 +235,8 @@ watch(() => store.plugins, async (newPlugins) => {
             case 'frontend_optimized': // Frontend Optimized only
               return frontendOptimized
             
+            case 'backend_optimized': // Backend Optimized only
+              return backendOptimized
             case 'backend_optimized': // Backend Optimized only
               return backendOptimized
             
@@ -371,6 +373,7 @@ watch(() => store.plugins, async (newPlugins) => {
             frontend_status: false,
             backend_status: false,
             condition_type: 'disable_on_selected',
+            backend_condition_type: 'disable_on_selected',
             uri_type: 'page',
             post_types: ['page', 'post'],
             posts: [],

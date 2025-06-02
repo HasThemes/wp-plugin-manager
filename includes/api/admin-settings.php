@@ -85,23 +85,33 @@ class WP_Plugin_Manager_Settings {
     public function get_backend_modal_settings() {
         return [
             'status' => [
-                'label' => __('Status:', 'wp-plugin-manager'),
+                'label' => __('Status: ', 'wp-plugin-manager'),
                 'type' => 'switch',
                 'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
                 'default' => false,
-                'pro' => false,
-                'proBadge' => false
+                'pro' => true,
+                'proBadge' => true
+            ],
+            'action_backend' => [
+                'label' => __('Action: ', 'wp-plugin-manager'),
+                'description' => __('Disable on Selected Pages refers to the pages where the plugin will be disabled and enabled elsewhere.', 'wp-plugin-manager'),
+                'pro' => ['enable_on_selected','disable_on_selected'],
+                'options' => [
+                    'disable_on_selected' => __('Disable on Selected Pages', 'wp-plugin-manager'),
+                    'enable_on_selected' => __('Enable on Selected Pages', 'wp-plugin-manager'),
+                ],
+                'proBadge' => true
             ],
             'page_selection' => [
-                'label' => __('Select Admin Pages', 'wp-plugin-manager'),
+                'label' => __('Select Admin Pages: ', 'wp-plugin-manager'),
                 'type' => 'multi_select',
                 'description' => __('Choose which sections of WordPress admin this rule should apply to. You can select multiple areas.', 'wp-plugin-manager'),
                 'groups' => $this->get_wordpress_page_groups(),
-                'pro' => false,
-                'proBadge' => false
+                'pro' => ['all_items'],
+                'proBadge' => true
             ],
             'admin_scope' => [
-                'label' => __('Admin Area Scope', 'wp-plugin-manager'),
+                'label' => __('Admin Area Scope: ', 'wp-plugin-manager'),
                 'description' => __('Choose which section of WordPress admin this rule should apply to.', 'wp-plugin-manager'),
                 'options' => [
                     'all_admin' => __('All Admin Pages', 'wp-plugin-manager'),
@@ -115,11 +125,11 @@ class WP_Plugin_Manager_Settings {
                     'tools' => __('Tools', 'wp-plugin-manager'),
                     'settings' => __('Settings', 'wp-plugin-manager'),
                 ],
-                'pro' => [],
-                'proBadge' => false
+                'pro' => ['all_admin', 'dashboard_only', 'posts_pages', 'media_library', 'comments', 'appearance', 'plugins', 'users', 'tools', 'settings'],
+                'proBadge' => true
             ],
             'custom_conditions' => [
-                'label' => __('Custom Page Conditions', 'wp-plugin-manager'),
+                'label' => __('Custom Page Conditions: ', 'wp-plugin-manager'),
                 'description' => __("Configure conditions for WordPress admin area. E.g., use 'edit.php' for Posts page, 'post.php' for Edit Post page.", "wp-plugin-manager"),
                 'options' => [
                     'admin_page_equals' => __('Admin Page Equals', 'wp-plugin-manager'),
@@ -129,8 +139,8 @@ class WP_Plugin_Manager_Settings {
                     'screen_id_equals' => __('Screen ID Equals', 'wp-plugin-manager'),
                     'hook_name_equals' => __('Hook Name Equals', 'wp-plugin-manager'),
                 ],
-                'pro' => [],
-                'proBadge' => false
+                'pro' => ['admin_page_equals', 'admin_page_not_equals', 'admin_page_contains', 'admin_page_not_contains', 'screen_id_equals', 'hook_name_equals'],
+                'proBadge' => true
             ]
         ];
     }
@@ -279,15 +289,15 @@ class WP_Plugin_Manager_Settings {
     public function get_feature_settings() {
         return [
             'status' => [
-                'label' => __('Status:', 'wp-plugin-manager'),
+                'label' => __('Status: ', 'wp-plugin-manager'),
                 'type' => 'switch',
                 'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
-                'default' => true,
+                'default' => false,
                 'pro' => false,
                 'proBadge' => false
             ],
             'device_types' => [
-                'label' => __('Disable Plugin on:', 'wp-plugin-manager'),
+                'label' => __('Disable Plugin on: ', 'wp-plugin-manager'),
                 'description' => __('Select the device(s) where this plugin should be disabled.', 'wp-plugin-manager'),
                 'pro' => ['desktop', 'tablet', 'mobile', 'desktop_plus_tablet', 'tablet_plus_mobile'],
                 'options' => [
@@ -317,8 +327,8 @@ class WP_Plugin_Manager_Settings {
                 'options' => [
                     'post' => __('Posts', 'wp-plugin-manager'),
                     'page' => __('Pages', 'wp-plugin-manager'),
-                    'page_post' => __('Page & Post', 'wp-plugin-manager'),
-                    'page_post_cpt' => __('Post, Pages & Custom Post Type', 'wp-plugin-manager'),
+                    'page_post' => __('Pages & Posts', 'wp-plugin-manager'),
+                    'page_post_cpt' => __('Posts, Pages & Custom Post Types', 'wp-plugin-manager'),
                     'custom' => __('Custom', 'wp-plugin-manager'),
                 ],
                 'toopTip' => [
@@ -373,6 +383,21 @@ class WP_Plugin_Manager_Settings {
                     'proBadge' => true,
                 ],
             ],
+            'manage_plugins' => [
+                'plugin_filter_options' => [
+                    'label' => __('Filter Plugins', 'wp-plugin-manager'),
+                    'options'=>[
+                        'all' => __('All Plugins', 'wp-plugin-manager'),
+                        'optimized' => __('All Optimized', 'wp-plugin-manager'),
+                        'frontend_optimized' => __('Frontend Optimized', 'wp-plugin-manager'),
+                        'backend_optimized' => __('Backend Optimized (Pro)', 'wp-plugin-manager'),
+                        'unoptimized' => __('Not Optimized Yet', 'wp-plugin-manager'),
+                    ],
+                    'isPro' => ['backend_optimized'],
+                    'proBadge' => false,
+                    'type' => 'select',
+                ],
+            ],
         ];
     }
 
@@ -405,6 +430,13 @@ class WP_Plugin_Manager_Settings {
             'backend_page_selection' => __('Backend Page Selection', 'wp-plugin-manager'),
             'select_admin_pages' => __('Select Admin Pages:', 'wp-plugin-manager'),
             'backend_conditions' => __('Backend Conditions:', 'wp-plugin-manager'),
+            'plugin_filter_options' => [
+                'all' => __('All Plugins', 'wp-plugin-manager'),
+                'optimized' => __('All Optimized', 'wp-plugin-manager'),
+                'frontend_optimized' => __('Frontend Optimized', 'wp-plugin-manager'),
+                'backend_optimized_p' => __('Backend Optimized (Pro)', 'wp-plugin-manager'),
+                'unoptimized' => __('Not Optimized Yet', 'wp-plugin-manager'),
+            ]
         ];
     }
 
@@ -624,5 +656,4 @@ class WP_Plugin_Manager_Settings {
         ));
         return $recommendations_plugins;
     }
-    
 }

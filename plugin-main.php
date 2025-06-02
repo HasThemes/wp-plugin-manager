@@ -187,7 +187,7 @@ class HTPM_Main {
                     'buynow_link'  => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
                     'preview'      => esc_html__( 'Preview', 'wp-plugin-manager' ),
                     'installing'   => esc_html__( 'Installing..', 'wp-plugin-manager' ),
-                ],
+                ]
             ];
             wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
             

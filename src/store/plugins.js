@@ -2,14 +2,6 @@
 import { defineStore } from 'pinia'
 import api from '../utils/axios'
 
-// Default dashboard settings
-const defaultDashboardSettings = {
-  selectedPostTypes: [],
-  numberOfPosts: 150,
-  showThumbnails: false,
-  itemsPerPage: 10
-}
-
 // Create an axios instance with WordPress REST API base URL and nonce
 
 export const usePluginStore = defineStore('plugins', {
@@ -18,9 +10,6 @@ export const usePluginStore = defineStore('plugins', {
     plugins: [],
     allSettings: window.HTPMM?.adminSettings?.allSettings || {},
     adminURL: window.HTPMM?.adminURL || '',
-    dashboardSettings: {
-      htpm_dashboard_settings: { ...defaultDashboardSettings }
-    },
     loading: false,
     error: null,
     settings: {},
@@ -33,6 +22,9 @@ export const usePluginStore = defineStore('plugins', {
     changelogLoading: false,
     changelogRead: false,
     notificationStatus: false,
+    isPro: window.HTPMM.adminSettings?.is_pro,
+    labels_texts: window.HTPMM?.adminSettings?.labels_texts,
+    dashboardSettingsFields: window.HTPMM?.adminSettings?.dashboard_settings
   }),
 
   getters: {
@@ -137,37 +129,6 @@ export const usePluginStore = defineStore('plugins', {
       } catch (error) {
         console.error(`Error fetching settings for plugin ${pluginId}:`, error)
         return null
-      }
-    },
-    // Fetch dashboard settings
-    async fetchDashboardSettings() {
-      try {
-        const response = await api.get('/htpm/v1/get-dashboard-settings')
-        console.log('API Response:', response.data)
-        
-        // Get settings from response or use defaults
-        const settings = response.data?.htpm_dashboard_settings || { ...defaultDashboardSettings }
-        
-        // Create a new settings object with proper type handling
-        const newSettings = {
-          selectedPostTypes: Array.isArray(settings.selectedPostTypes) ? [...settings.selectedPostTypes] : [],
-          numberOfPosts: parseInt(settings.numberOfPosts) || 150,
-          showThumbnails: typeof settings.showThumbnails === 'boolean' ? settings.showThumbnails : true,
-          itemsPerPage: parseInt(settings.itemsPerPage) || 10
-        }
-
-        // Update state
-        this.dashboardSettings = {
-          htpm_dashboard_settings: newSettings
-        }
-        return this.dashboardSettings
-      } catch (error) {
-        console.error('Error fetching dashboard settings:', error)
-        // Reset to default settings on error
-        this.dashboardSettings = {
-          htpm_dashboard_settings: { ...defaultDashboardSettings }
-        }
-        return this.dashboardSettings
       }
     },
     // Update dashboard settings

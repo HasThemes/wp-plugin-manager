@@ -6,20 +6,23 @@
           <el-switch
             v-model="pluginSettings.backend_status"
             class="status-switch"
+            :disabled="modalSettingsFields?.status?.proBadge"
+            @click="modalSettingsFields?.status?.proBadge && openProModal()"
           />
           <span class="status-label">
             {{ pluginSettings.backend_status ? 'Enabled' : 'Disabled' }}
           </span>
+          <span v-if="modalSettingsFields?.status?.proBadge" class="pro-badge">{{proLabel}}</span>
         </div>
         <div class="field-desc">{{ modalSettingsFields?.status?.description || 'Enable or disable this configuration. When disabled, settings are saved but not applied.' }}</div>
       </div>
       <!-- Action Type (same as frontend) -->
       <div class="form-field">
-      <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.action?.proBadge" class="pro-badge">{{proLabel}}</span></label>
-      <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
-        <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
+      <label>{{ modalSettingsFields?.action_backend?.label }} <span v-if="modalSettingsFields?.action_backend?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+      <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)" :disabled="modalSettingsFields?.action_backend?.proBadge">
+        <el-option v-for="(label, value) in modalSettingsFields?.action_backend?.options" :key="value" :label="label + (modalSettingsFields?.action_backend?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action_backend?.pro?.includes(value)" />
       </el-select>
-      <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
+      <div class="field-desc">{{ modalSettingsFields?.action_backend?.description }}</div>
     </div>
     <!-- Admin Area Scope (Broad Categories) -->
     <div class="form-field">
@@ -45,7 +48,7 @@
 
     <!-- Backend Page Selection with Grouped Options -->
     <div class="form-field">
-      <label>{{ labels_texts?.select_admin_pages || 'Select Admin Pages:' }}</label>
+      <label>{{ labels_texts?.select_admin_pages || 'Select Admin Pages:' }}<span v-if="modalSettingsFields?.select_admin_pages?.proBadge" class="pro-badge">{{proLabel}}</span></label>
       <el-select 
         v-model="pluginSettings.backend_pages" 
         multiple 
@@ -62,9 +65,10 @@
               :key="option.value" 
               :label="option.label" 
               :value="option.value"
+              :disabled="modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value)"
             >
               <div class="admin-page-option">
-                <span class="page-title">{{ option.label }}</span>
+                <span class="page-title">{{ option.label + (modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value) ? ' (' + proLabel + ')' : '') }}</span>
                 <span class="page-url" v-if="option.url">{{ option.url }}</span>
               </div>
             </el-option>
@@ -76,7 +80,7 @@
 
     <!-- Custom Page Conditions (Specific Targeting) -->
     <div class="form-field">
-      <label>{{ labels_texts?.custom_page_conditions || 'Custom Page Conditions:' }}</label>
+      <label>{{ labels_texts?.custom_page_conditions || 'Custom Page Conditions:' }}<span v-if="modalSettingsFields?.custom_conditions?.proBadge" class="pro-badge">{{proLabel}}</span></label>
       <div v-for="(condition, index) in pluginSettings.backend_condition_list.name" :key="index" class="uri-condition">
         <el-select v-model="pluginSettings.backend_condition_list.name[index]" class="condition-type">
           <el-option 
@@ -84,12 +88,14 @@
             :key="value" 
             :label="label" 
             :value="value" 
+            :disabled="modalSettingsFields?.custom_conditions?.proBadge"
           />
         </el-select>
         <el-input 
           v-model="pluginSettings.backend_condition_list.value[index]" 
           placeholder="e.g: edit.php, post.php, index.php"
           class="condition-value"
+          :disabled="modalSettingsFields?.custom_conditions?.proBadge"
         />
         <div class="condition-actions">
           <el-button 
@@ -182,6 +188,10 @@ onMounted(() => {
   if (!props.pluginSettings.backend_user_roles) {
     props.pluginSettings.backend_user_roles = []
   }
+  if (!props.isPro) {
+    props.pluginSettings.backend_status = false
+  }
+
 })
 
 const handleProFeatureSelect = (field, value) => {
@@ -200,10 +210,10 @@ const removeBackendCondition = (index) => {
 }
 
 const cloneBackendCondition = (index) => {
-  // if (!props.isPro) {
-  //   openProModal()
-  //   return
-  // }
+  if (!props.isPro) {
+    openProModal()
+    return
+  }
   
   const name = props.pluginSettings.backend_condition_list.name[index]
   const value = props.pluginSettings.backend_condition_list.value[index]
@@ -213,10 +223,10 @@ const cloneBackendCondition = (index) => {
 }
 
 const addBackendCondition = () => {
-  // if (!props.isPro) {
-  //   openProModal()
-  //   return
-  // }
+  if (!props.isPro) {
+    openProModal()
+    return
+  }
   
   props.pluginSettings.backend_condition_list.name.push('admin_page_equals')
   props.pluginSettings.backend_condition_list.value.push('')

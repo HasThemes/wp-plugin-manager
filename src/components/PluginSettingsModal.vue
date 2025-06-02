@@ -145,6 +145,9 @@ const handleProFeatureSelect = (field, value) => {
       case 'action':
         pluginSettings.condition_type = 'disable_on_selected';
         break;
+      case 'action_backend':
+        pluginSettings.backend_condition_type = 'disable_on_selected';
+        break;
       case 'page_types':
         pluginSettings.uri_type = 'page';
         break;
@@ -169,6 +172,7 @@ const pluginSettings = ref({
   enable_deactivation: 'yes', // Default to 'yes' (disabled)
   device_type: 'all',
   condition_type: 'disable_on_selected',
+  backend_condition_type: 'disable_on_selected',
   uri_type: 'page',
   post_types: [],
   posts: [],
@@ -268,6 +272,7 @@ const loadPluginSettings = async () => {
         frontend_status: false,
         device_type: 'all',
         condition_type: 'disable_on_selected',
+        backend_condition_type: 'disable_on_selected',
         uri_type: 'page',
         post_types: ['page', 'post'],
         posts: [],
