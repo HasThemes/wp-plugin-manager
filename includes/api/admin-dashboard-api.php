@@ -338,14 +338,34 @@ function htpm_get_plugins() {
         $icon_url = htpm_get_plugin_icon($plugin_path, isset($htpm_options['showThumbnails']) && $htpm_options['showThumbnails'] == true);
         
         // Get plugin settings
-        $plugin_settings = isset($htpm_list_plugins[$plugin_path]) ? $htpm_list_plugins[$plugin_path] : [];
+        $plugin_settings = isset($htpm_list_plugins[$plugin_path]) ? $htpm_list_plugins[$plugin_path] : [
+            'enable_deactivation' => 'no',
+            'device_type' => 'all',
+            'frontend_status' => false,
+            'backend_status' => false,
+            'backend_user_roles' => [],
+            'conflict_status' => false,
+            'login_status' => false,
+            'condition_type' => 'disable_on_selected',
+            'backend_condition_type' => 'disable_on_selected',
+            'uri_type' => 'page',
+            'post_types' => ['page', 'post'],
+            'posts' => [],
+            'pages' => [],
+            'condition_list' => [
+                'name' => ['uri_equals'],
+                'value' => [''],
+            ],
+            'conflicting_plugins' => []
+        ];
+        
         $is_htpm_disabled = !empty($plugin_settings['enable_deactivation']) && $plugin_settings['enable_deactivation'] === 'yes';
         
         // Check if plugin is disabled due to conflicts
         $is_conflict_disabled = false;
         $conflicting_with = [];
         
-        // Check conflicts regardless of WordPress active status
+        // Check if this plugin should be disabled due to any active conflicting plugin
         if (isset($plugin_settings['conflict_status']) && $plugin_settings['conflict_status']) {
             if (isset($plugin_settings['conflicting_plugins']) && !empty($plugin_settings['conflicting_plugins'])) {
                 foreach ($plugin_settings['conflicting_plugins'] as $conflicting_plugin) {
@@ -356,6 +376,22 @@ function htpm_get_plugins() {
                             $conflicting_with[] = $all_plugins[$conflicting_plugin]['Name'];
                         }
                     }
+                }
+            }
+        }
+
+        // Also check if this plugin is listed as a conflicting plugin in any active plugin's settings
+        foreach ($htpm_list_plugins as $other_plugin_path => $other_settings) {
+            if (
+                in_array($other_plugin_path, $active_plugins) && 
+                isset($other_settings['conflict_status']) && 
+                $other_settings['conflict_status'] && 
+                isset($other_settings['conflicting_plugins']) && 
+                in_array($plugin_path, $other_settings['conflicting_plugins'])
+            ) {
+                $is_conflict_disabled = true;
+                if (isset($all_plugins[$other_plugin_path])) {
+                    $conflicting_with[] = $all_plugins[$other_plugin_path]['Name'];
                 }
             }
         }
@@ -377,12 +413,12 @@ function htpm_get_plugins() {
             'file' => $plugin_path,
             'active' => $actual_active_status,
             'wpActive' => $is_wp_active,
-            'enable_deactivation' => $is_htmp_disabled,
+            'enable_deactivation' => $is_htpm_disabled,
             'hasUpdate' => $has_update,
             'icon' => $icon_url,
-            // NEW: Add conflict information
             'isConflictDisabled' => $is_conflict_disabled,
-            'conflictingWith' => $conflicting_with
+            'conflictingWith' => $conflicting_with,
+            'settings' => $plugin_settings  // Add full settings to help with debugging
         ];
     }
     $all_settings = [];
