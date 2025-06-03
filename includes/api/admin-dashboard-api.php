@@ -140,36 +140,32 @@ function htpm_get_all_plugin_settings($request) {
     $index = 0;
     foreach ($all_plugins as $plugin_path => $plugin_data) {
         $index++;
-        if (in_array($plugin_path, $active_plugins)) {
+        $plugin_settings = isset($options['htpm_list_plugins'][$plugin_path]) 
+            ? $options['htpm_list_plugins'][$plugin_path] 
+            : [
+                'enable_deactivation' => 'no',
+                'device_type' => 'all',
+                'frontend_status' => false,
+                'backend_status' => false,
+                'backend_user_roles' => [],
+                'conflict_status' => false,
+                'login_status' => false,
+                'condition_type' => 'disable_on_selected',
+                'backend_condition_type' => 'disable_on_selected',
+                'uri_type' => 'page',
+                'post_types' => ['page', 'post'],
+                'posts' => [],
+                'pages' => [],
+                'condition_list' => [
+                    'name' => ['uri_equals'],
+                    'value' => [''],
+                ]
+            ];
 
-
-            $plugin_settings = isset($options['htpm_list_plugins'][$plugin_path]) 
-                ? $options['htpm_list_plugins'][$plugin_path] 
-                : [
-                    'enable_deactivation' => 'no',
-                    'device_type' => 'all',
-                    'frontend_status' => false,
-                    'backend_status' => false,
-                    'backend_user_roles' => [],
-                    'conflict_status' => false,
-                    'login_status' => false,
-                    'condition_type' => 'disable_on_selected',
-                    'backend_condition_type' => 'disable_on_selected',
-                    'uri_type' => 'page',
-                    'post_types' => ['page', 'post'],
-                    'posts' => [],
-                    'pages' => [],
-                    'condition_list' => [
-                        'name' => ['uri_equals'],
-                        'value' => [''],
-                    ]
-                ];
-
-            if( ! isset( $plugin_settings['frontend_status'] ) && (isset( $plugin_settings['enable_deactivation'] ) && $plugin_settings['enable_deactivation'] == 'yes' ) ) {
-                $plugin_settings['frontend_status'] = true;
-            }
-            $all_settings[$index] = $plugin_settings;
+        if( ! isset( $plugin_settings['frontend_status'] ) && (isset( $plugin_settings['enable_deactivation'] ) && $plugin_settings['enable_deactivation'] == 'yes' ) ) {
+            $plugin_settings['frontend_status'] = true;
         }
+        $all_settings[$index] = $plugin_settings;
     }
     
     return new WP_REST_Response([
@@ -322,29 +318,32 @@ function htpm_get_plugins() {
         $plugin_settings = isset($htpm_list_plugins[$plugin_path]) ? $htpm_list_plugins[$plugin_path] : [];
         $is_htpm_disabled = !empty($plugin_settings['enable_deactivation']) && $plugin_settings['enable_deactivation'] === 'yes';
         
-        // NEW: Check if plugin is disabled due to conflicts
+        // Check if plugin is disabled due to conflicts
         $is_conflict_disabled = false;
         $conflicting_with = [];
         
-        // Only check conflicts if the plugin is managed by HTPM and WordPress-active
-        if ($is_wp_active && $is_htpm_disabled) {
-            if (isset($plugin_settings['conflict_status']) && $plugin_settings['conflict_status']) {
-                if (isset($plugin_settings['conflicting_plugins']) && !empty($plugin_settings['conflicting_plugins'])) {
-                    foreach ($plugin_settings['conflicting_plugins'] as $conflicting_plugin) {
-                        if (in_array($conflicting_plugin, $active_plugins)) {
-                            $is_conflict_disabled = true;
-                            // Get conflicting plugin name
-                            if (isset($all_plugins[$conflicting_plugin])) {
-                                $conflicting_with[] = $all_plugins[$conflicting_plugin]['Name'];
-                            }
+        // Check conflicts regardless of WordPress active status
+        if (isset($plugin_settings['conflict_status']) && $plugin_settings['conflict_status']) {
+            if (isset($plugin_settings['conflicting_plugins']) && !empty($plugin_settings['conflicting_plugins'])) {
+                foreach ($plugin_settings['conflicting_plugins'] as $conflicting_plugin) {
+                    if (in_array($conflicting_plugin, $active_plugins)) {
+                        $is_conflict_disabled = true;
+                        // Get conflicting plugin name
+                        if (isset($all_plugins[$conflicting_plugin])) {
+                            $conflicting_with[] = $all_plugins[$conflicting_plugin]['Name'];
                         }
                     }
                 }
             }
         }
         
-        // Plugin is "functionally active" if it's WP active but not currently disabled by HTPM
-        $actual_active_status = $is_wp_active;
+        // Plugin is "functionally active" if it's WP active and not disabled by any conditions
+        $actual_active_status = $is_wp_active && !(
+            $is_htpm_disabled || 
+            $is_conflict_disabled ||
+            ($plugin_settings['frontend_status'] && !is_admin()) ||
+            ($plugin_settings['backend_status'] && is_admin())
+        );
 
         $plugins[] = [
             'id' => $index,
@@ -413,6 +412,11 @@ function htpm_get_plugin_settings($request) {
             // Frontend settings
             'enable_deactivation' => 'no',
             'device_type' => 'all',
+            'frontend_status' => false,
+            'backend_status' => false,
+            'backend_user_roles' => [],
+            'conflict_status' => false,
+            'login_status' => false,
             'condition_type' => 'disable_on_selected',
             'backend_condition_type' => 'disable_on_selected',
             'uri_type' => 'page',
