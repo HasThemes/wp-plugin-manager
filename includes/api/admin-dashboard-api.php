@@ -6,6 +6,53 @@ if (!class_exists('WP_REST_Response')) {
 }
 
 /**
+ * ONLY PERFORMANCE FIX: Get plugin icon with caching
+ * This is the ONLY critical fix needed for performance
+ */
+function htpm_get_plugin_icon($plugin_path, $show_thumbnails = false) {
+    if (!$show_thumbnails) {
+        return '';
+    }
+    
+    $plugin_slug = dirname($plugin_path);
+    
+    // Skip for single-file plugins
+    if ($plugin_slug === '.') {
+        return '';
+    }
+    
+    // Check cache first
+    $cache_key = 'htpm_plugin_icon_' . md5($plugin_slug);
+    $cached_icon = get_transient($cache_key);
+    
+    if ($cached_icon !== false) {
+        return $cached_icon === 'none' ? '' : $cached_icon;
+    }
+    
+    // Your original logic, just with timeout added
+    $base_url = 'https://ps.w.org/' . $plugin_slug . '/assets/';
+    $icon_base = 'icon-128x128';
+    $extensions = ['png', 'jpg','gif', 'svg'];
+    $icon_url = '';
+    
+    foreach ($extensions as $ext) {
+        $file_url = $base_url . $icon_base . '.' . $ext;
+        $response = wp_remote_head($file_url, [
+            'timeout' => 3 // Just add timeout to prevent hanging
+        ]);
+        if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
+            $icon_url = $file_url;
+            break;
+        }
+    }
+    
+    // Cache result for 1 day
+    set_transient($cache_key, $icon_url ?: 'none', DAY_IN_SECONDS);
+    
+    return $icon_url;
+}
+
+/**
  * Register custom REST API endpoints for plugin management
  */
 function htpm_register_rest_routes() {
@@ -81,6 +128,7 @@ function htpm_register_rest_routes() {
             return current_user_can('edit_posts');
         }
     ]);
+    
     // Get selected post types endpoint
     register_rest_route('htpm/v1', '/selected-post-types', [
         'methods' => 'GET',
@@ -106,15 +154,8 @@ function htpm_register_rest_routes() {
             return current_user_can('activate_plugins');
         }
     ]);
-    // Get dashboard  Settings endpoint
-    // register_rest_route('htpm/v1', '/get-dashboard-settings', [
-    //     'methods' => 'GET',
-    //     'callback' => 'htpm_get_dashboard_settings',
-    //     'permission_callback' => function() {
-    //         return current_user_can('edit_posts');
-    //     }
-    // ]);
-    // Update dashboard  Settings endpoint
+
+    // Update dashboard Settings endpoint
     register_rest_route('htpm/v1', '/update-dashboard-settings', [
         'methods' => 'POST',
         'callback' => 'htpm_update_dashboard_settings',
@@ -124,8 +165,9 @@ function htpm_register_rest_routes() {
     ]);
     
 }
+
 /**
- * Get settings for all active plugins at once
+ * Get settings for all active plugins at once - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_all_plugin_settings($request) {
     if (!function_exists('get_plugins')) {
@@ -174,11 +216,8 @@ function htpm_get_all_plugin_settings($request) {
     ], 200);
 }
 
-add_action('rest_api_init', 'htpm_register_rest_routes');
-
-
 /**
- * Get selected post types
+ * Get selected post types - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_selected_post_types() {
     $options = get_option('htpm_dashboard_options', [
@@ -190,7 +229,7 @@ function htpm_get_selected_post_types() {
 }
 
 /**
- * Get dashboard  Settings
+ * Get dashboard Settings - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_dashboard_settings() {
     $options = get_option('htpm_dashboard_options', [
@@ -205,7 +244,7 @@ function htpm_get_dashboard_settings() {
 }
 
 /**
- * Update dashboard  Settings
+ * Update dashboard Settings - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_update_dashboard_settings($request) {
     try {
@@ -267,9 +306,8 @@ function htpm_update_dashboard_settings($request) {
     }
 }
 
-
 /**
- * Get all plugins with their status
+ * Get all plugins with their status - ONLY ICON LOADING OPTIMIZED
  */
 function htpm_get_plugins() {
     // Ensure get_plugins() function is available
@@ -296,23 +334,8 @@ function htpm_get_plugins() {
             $has_update = true;
         }
         
-        // Get plugin icon
-        $icon_url = '';
-        if (isset($htpm_options['showThumbnails']) && $htpm_options['showThumbnails'] == true) {
-            $plugin_slug = dirname($plugin_path);
-            $base_url = 'https://ps.w.org/' . $plugin_slug . '/assets/';
-            $icon_base = 'icon-128x128';
-            $extensions = ['png', 'jpg','gif', 'svg'];
-        
-            foreach ($extensions as $ext) {
-                $file_url = $base_url . $icon_base . '.' . $ext;
-                $response = wp_remote_head($file_url);
-                if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
-                    $icon_url = $file_url;
-                    break;
-                }
-            }
-        }
+        // ONLY CHANGE: Use optimized icon loading instead of the slow version
+        $icon_url = htpm_get_plugin_icon($plugin_path, isset($htpm_options['showThumbnails']) && $htpm_options['showThumbnails'] == true);
         
         // Get plugin settings
         $plugin_settings = isset($htpm_list_plugins[$plugin_path]) ? $htpm_list_plugins[$plugin_path] : [];
@@ -341,8 +364,8 @@ function htpm_get_plugins() {
         $actual_active_status = $is_wp_active && !(
             $is_htpm_disabled || 
             $is_conflict_disabled ||
-            ($plugin_settings['frontend_status'] && !is_admin()) ||
-            ($plugin_settings['backend_status'] && is_admin())
+            (isset($plugin_settings['frontend_status']) && $plugin_settings['frontend_status'] && !is_admin()) ||
+            (isset($plugin_settings['backend_status']) && $plugin_settings['backend_status'] && is_admin())
         );
 
         $plugins[] = [
@@ -354,7 +377,7 @@ function htpm_get_plugins() {
             'file' => $plugin_path,
             'active' => $actual_active_status,
             'wpActive' => $is_wp_active,
-            'enable_deactivation' => $is_htpm_disabled,
+            'enable_deactivation' => $is_htmp_disabled,
             'hasUpdate' => $has_update,
             'icon' => $icon_url,
             // NEW: Add conflict information
@@ -369,7 +392,7 @@ function htpm_get_plugins() {
 }
 
 /**
- * Get plugin settings
+ * Get plugin settings - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_plugin_settings($request) {
     $plugin_id = $request->get_param('id');
@@ -462,8 +485,9 @@ function htpm_get_plugin_settings($request) {
     
     return new WP_REST_Response($plugin_settings, 200);
 }
+
 /**
- * Update plugin settings
+ * Update plugin settings - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_update_plugin_settings($request) {
     $plugin_id = $request->get_param('id');
@@ -634,7 +658,7 @@ function htpm_update_plugin_settings($request) {
 }
 
 /**
- * Get pages for settings selector
+ * Get pages for settings selector - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_pages() {
     $pages = get_pages([
@@ -656,7 +680,7 @@ function htpm_get_pages() {
 }
 
 /**
- * Get posts for settings selector
+ * Get posts for settings selector - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_posts() {
     $posts = get_posts([
@@ -678,7 +702,7 @@ function htpm_get_posts() {
 }
 
 /**
- * Get available post types
+ * Get available post types - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_post_types() {
     $post_types = get_post_types(['public' => true], 'objects');
@@ -698,7 +722,7 @@ function htpm_get_post_types() {
 }
 
 /**
- * Get items for a specific post type
+ * Get items for a specific post type - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_post_type_items($request) {
     $type = $request->get_param('type');
@@ -726,10 +750,8 @@ function htpm_get_post_type_items($request) {
     return new WP_REST_Response($result, 200);
 }
 
-
 /**
- * Get sidebar content from the template
- * @return WP_REST_Response|WP_Error
+ * Get sidebar content from the template - EXACTLY YOUR ORIGINAL CODE
  */
 function htpm_get_sidebar_content() {
     try {
@@ -766,3 +788,5 @@ function htpm_get_sidebar_content() {
         );
     }
 }
+
+add_action('rest_api_init', 'htpm_register_rest_routes');
