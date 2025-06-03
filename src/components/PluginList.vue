@@ -57,32 +57,50 @@
           <div class="plugin-details">
             <h3>{{ plugin.name }}</h3>
             <div class="plugin-status-container">
-              <!-- Show frontend status only if optimized -->
+              <!-- Show conflict status FIRST if applicable -->
               <div 
-                v-if="(plugin.settings?.frontend_status === true && plugin.settings?.enable_deactivation === 'yes')" 
-                class="plugin-status"
+                v-if="plugin.isConflictDisabled" 
+                class="plugin-status conflict-status"
               >
-                <span class="status-dot active"></span>
-                <span class="status-text">Frontend: Optimized</span>
+                <span class="status-dot conflict"></span>
+                <span class="status-text">Disabled due to conflict</span>
+                <el-tooltip 
+                  :content="`Conflicting with: ${plugin.conflictingWith.join(', ')}`" 
+                  placement="top"
+                >
+                  <el-icon class="info-icon"><InfoFilled /></el-icon>
+                </el-tooltip>
               </div>
               
-              <!-- Show backend status only if optimized -->
-              <div 
-                v-if="(plugin.settings?.backend_status === true && plugin.settings?.enable_deactivation === 'yes' && isPro)" 
-                class="plugin-status"
-              >
-                <span class="status-dot active"></span>
-                <span class="status-text">Backend: Optimized</span>
-              </div>
-              
-              <!-- Show "Not Optimized Yet" only if both are not optimized -->
-              <div 
-                v-if="((!plugin.settings?.frontend_status && !plugin.settings?.backend_status) || plugin.settings?.enable_deactivation === 'no')" 
-                class="plugin-status"
-              >
-                <span class="status-dot"></span>
-                <span class="status-text">Not Optimized Yet</span>
-              </div>
+              <!-- Show other statuses only if NOT conflict disabled -->
+              <template v-else>
+                <!-- Show frontend status only if optimized -->
+                <div 
+                  v-if="(plugin.settings?.frontend_status === true && plugin.settings?.enable_deactivation === 'yes')" 
+                  class="plugin-status"
+                >
+                  <span class="status-dot active"></span>
+                  <span class="status-text">Frontend: Optimized</span>
+                </div>
+                
+                <!-- Show backend status only if optimized -->
+                <div 
+                  v-else-if="(plugin.settings?.backend_status === true && plugin.settings?.enable_deactivation === 'yes' && isPro)" 
+                  class="plugin-status"
+                >
+                  <span class="status-dot active"></span>
+                  <span class="status-text">Backend: Optimized</span>
+                </div>
+                
+                <!-- Show "Not Optimized Yet" only if both are not optimized -->
+                <div 
+                  v-else-if="((!plugin.settings?.frontend_status && !plugin.settings?.backend_status) || plugin.settings?.enable_deactivation === 'no')" 
+                  class="plugin-status"
+                >
+                  <span class="status-dot"></span>
+                  <span class="status-text">Not Optimized Yet</span>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -148,7 +166,7 @@
 
 <script setup>
 import { ref, computed, watch, reactive } from 'vue'
-import { Search, Setting, QuestionFilled, Loading } from '@element-plus/icons-vue'
+import { Search, Setting, QuestionFilled, Loading, InfoFilled } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
@@ -219,29 +237,31 @@ watch(() => store.plugins, async (newPlugins) => {
 
     // Filter plugins based on search query
     const filteredPlugins = computed(() => {
-      let filtered = plugins.value.filter(plugin => plugin.wpActive)
-      
+      let filtered = plugins.value.filter(plugin => {
+          // Show all WordPress-active plugins, including those disabled by conflicts
+          return plugin.wpActive || (plugin.isConflictDisabled && plugin.enable_deactivation === 'yes')
+        })
+          
       // Apply status filter
       if (filterStatus.value !== 'all') {
         filtered = filtered.filter(plugin => {
           const isEnabled = plugin.settings?.enable_deactivation === 'yes'
           const frontendOptimized = plugin.settings?.frontend_status === true && isEnabled
           const backendOptimized = plugin.settings?.backend_status === true && isEnabled
+          const isConflictDisabled = plugin.isConflictDisabled
           
           switch (filterStatus.value) {
             case 'optimized': // All Optimized
-              return frontendOptimized || backendOptimized
+              return (frontendOptimized || backendOptimized) && !isConflictDisabled
             
             case 'frontend_optimized': // Frontend Optimized only
-              return frontendOptimized
+              return frontendOptimized && !isConflictDisabled
             
             case 'backend_optimized': // Backend Optimized only
-              return backendOptimized
-            case 'backend_optimized': // Backend Optimized only
-              return backendOptimized
+              return backendOptimized && !isConflictDisabled
             
             case 'unoptimized': // Not Yet Optimized
-              return !frontendOptimized && !backendOptimized
+              return (!frontendOptimized && !backendOptimized) || isConflictDisabled
             
             default:
               return true
@@ -273,6 +293,18 @@ watch(() => store.plugins, async (newPlugins) => {
 
     // Handle the toggle click
     const handleToggle = (plugin) => {
+      if (plugin.isConflictDisabled) {
+        ElNotification({
+          title: 'Cannot Enable Plugin',
+          message: `This plugin is disabled due to conflicts with: ${plugin.conflictingWith.join(', ')}. Please configure conflict settings first.`,
+          type: 'warning',
+          duration: 5000
+        });
+        // Open settings modal instead of toggling
+        openSettings(plugin);
+        return;
+      }
+      
       const newState = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
       if (newState === 'yes') {
         // Show popconfirm for enabling
@@ -877,6 +909,27 @@ watch(() => store.plugins, async (newPlugins) => {
   .status-text {
     font-size: 11px;
     color: #909399;
+  }
+}
+.plugin-status {
+  &.conflict-status {
+    .status-text {
+      color: #f56c6c;
+      font-weight: 500;
+    }
+    
+    .info-icon {
+      margin-left: 4px;
+      font-size: 14px;
+      color: #f56c6c;
+      cursor: help;
+    }
+  }
+  
+  .status-dot {
+    &.conflict {
+      background: #f56c6c;
+    }
   }
 }
 </style>

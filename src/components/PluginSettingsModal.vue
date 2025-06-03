@@ -60,6 +60,7 @@
             :pro-label="proLabel"
             :is-pro="isPro"
             :available-plugins="availablePlugins"
+            :current-plugin-file="currentPluginFile"
             :modal-settings-fields="modalSettingsFields"
             :plugin-settings="pluginSettings"            
             @open-pro-modal="openProModal"
@@ -197,6 +198,7 @@ const pluginSettings = ref({
 
 // Post types from API
 const availablePostTypes = computed(() => store.postTypes)
+const currentPluginFile = computed(() => props.plugin?.file || '')
 const selectedAllPostTypesKeys = computed(() => {
   return ['page', 'post'].concat(store.allSettings.htpm_enabled_post_types);
 });
@@ -252,6 +254,8 @@ const loadData = async () => {
     if (pluginSettings.value.uri_type === 'page_post_cpt') {
       await loadCustomPostTypeData()
     }
+    // Load available plugins for conflict selection
+    availablePlugins.value = HTPMM?.adminSettings?.modal_settings_fields?.conflict_plugins?.options || []
   } catch (error) {
     console.error('Error loading data:', error)
     ElMessage.error('Failed to load plugin settings')

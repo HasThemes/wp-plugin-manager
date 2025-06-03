@@ -155,20 +155,42 @@ class WP_Plugin_Manager_Settings {
                 'type' => 'switch',
                 'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
                 'default' => false,
-                'pro' => true,
-                'proBadge' => true
+                'pro' => false,
+                'proBadge' => false
             ],
             'conflict_plugins' => [
                 'label' => __('Conflicting Plugins: ', 'wp-plugin-manager'),
                 'type' => 'multi_select',
                 'description' => __('Select plugins that conflict with this plugin. The plugin will be disabled if any of the selected plugins are active.', 'wp-plugin-manager'),
-                'options' => [
-                    'all_items' => __('All Items', 'wp-plugin-manager'),
-                ],
-                'pro' => true,
-                'proBadge' => true
+                'options' => $this->get_available_plugins_for_conflict(),
+                'pro' => false,
+                'proBadge' => false
             ]
         ];
+    }
+
+    /**
+     * Get available plugins for conflict selection
+     */
+    private function get_available_plugins_for_conflict() {
+        if (!function_exists('get_plugins')) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+        
+        $all_plugins = get_plugins();
+        $active_plugins = get_option('active_plugins', []);
+        $plugin_options = [];
+        
+        foreach ($all_plugins as $plugin_path => $plugin_data) {
+            if (in_array($plugin_path, $active_plugins)) {
+                $plugin_options[] = [
+                    'value' => $plugin_path,
+                    'label' => $plugin_data['Name']
+                ];
+            }
+        }
+        
+        return $plugin_options;
     }
     /**
      * Get Login Satus field

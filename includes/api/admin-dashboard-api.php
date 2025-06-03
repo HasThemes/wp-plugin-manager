@@ -301,9 +301,8 @@ function htpm_get_plugins() {
         }
         
         // Get plugin icon
-        $icon_url =  '';
-
-        if ( isset($htpm_options['showThumbnails']) && $htpm_options['showThumbnails'] == true ) {
+        $icon_url = '';
+        if (isset($htpm_options['showThumbnails']) && $htpm_options['showThumbnails'] == true) {
             $plugin_slug = dirname($plugin_path);
             $base_url = 'https://ps.w.org/' . $plugin_slug . '/assets/';
             $icon_base = 'icon-128x128';
@@ -314,18 +313,39 @@ function htpm_get_plugins() {
                 $response = wp_remote_head($file_url);
                 if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
                     $icon_url = $file_url;
-                    break; // Stop at the first found file
+                    break;
                 }
             }
         }
         
-        // Check if plugin has custom settings for deactivation
+        // Get plugin settings
         $plugin_settings = isset($htpm_list_plugins[$plugin_path]) ? $htpm_list_plugins[$plugin_path] : [];
-        $is_disabled = !empty($plugin_settings['enable_deactivation']) && $plugin_settings['enable_deactivation'] === 'yes';
+        $is_htpm_disabled = !empty($plugin_settings['enable_deactivation']) && $plugin_settings['enable_deactivation'] === 'yes';
         
-        // Active status should reflect both WP activation status and our custom settings
-        $actual_active_status = $is_wp_active && !$is_disabled;
+        // NEW: Check if plugin is disabled due to conflicts
+        $is_conflict_disabled = false;
+        $conflicting_with = [];
         
+        // Only check conflicts if the plugin is managed by HTPM and WordPress-active
+        if ($is_wp_active && $is_htpm_disabled) {
+            if (isset($plugin_settings['conflict_status']) && $plugin_settings['conflict_status']) {
+                if (isset($plugin_settings['conflicting_plugins']) && !empty($plugin_settings['conflicting_plugins'])) {
+                    foreach ($plugin_settings['conflicting_plugins'] as $conflicting_plugin) {
+                        if (in_array($conflicting_plugin, $active_plugins)) {
+                            $is_conflict_disabled = true;
+                            // Get conflicting plugin name
+                            if (isset($all_plugins[$conflicting_plugin])) {
+                                $conflicting_with[] = $all_plugins[$conflicting_plugin]['Name'];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Plugin is "functionally active" if it's WP active but not currently disabled by HTPM
+        $actual_active_status = $is_wp_active;
+
         $plugins[] = [
             'id' => $index,
             'name' => $plugin_data['Name'],
@@ -333,11 +353,14 @@ function htpm_get_plugins() {
             'description' => $plugin_data['Description'],
             'author' => $plugin_data['Author'],
             'file' => $plugin_path,
-            'active' => $actual_active_status, // Loaded or not
-            'wpActive' => $is_wp_active, // Activated in WordPress
-            'enable_deactivation' => $is_disabled, // Disabled by our plugin
+            'active' => $actual_active_status,
+            'wpActive' => $is_wp_active,
+            'enable_deactivation' => $is_htpm_disabled,
             'hasUpdate' => $has_update,
-            'icon' => $icon_url // Use found icon URL or empty string if none found
+            'icon' => $icon_url,
+            // NEW: Add conflict information
+            'isConflictDisabled' => $is_conflict_disabled,
+            'conflictingWith' => $conflicting_with
         ];
     }
     $all_settings = [];
@@ -485,6 +508,7 @@ function htpm_update_plugin_settings($request) {
     $sanitized_settings['backend_status'] = isset($settings['backend_status']) ? (bool)$settings['backend_status'] : false;
     $sanitized_settings['conflict_status'] = isset($settings['conflict_status']) ? (bool)$settings['conflict_status'] : false;
     $sanitized_settings['login_status'] = isset($settings['login_status']) ? (bool)$settings['login_status'] : false;
+    
     // Backend specific settings
     //$sanitized_settings['admin_scope'] = sanitize_text_field($settings['admin_scope'] ?? 'all_admin');
     if (isset($settings['admin_scope']) && is_array($settings['admin_scope'])) {
@@ -526,6 +550,14 @@ function htpm_update_plugin_settings($request) {
         $sanitized_settings['backend_user_roles'] = [];
     }
     
+    // Conflict settings
+    $sanitized_settings['conflict_status'] = isset($settings['conflict_status']) ? (bool)$settings['conflict_status'] : false;
+
+    if (isset($settings['conflicting_plugins']) && is_array($settings['conflicting_plugins'])) {
+        $sanitized_settings['conflicting_plugins'] = array_map('sanitize_text_field', $settings['conflicting_plugins']);
+    } else {
+        $sanitized_settings['conflicting_plugins'] = [];
+    }
     // Handle custom post types
     $post_types = get_post_types(['public' => true], 'names');
     foreach ($post_types as $post_type) {
