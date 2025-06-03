@@ -53,29 +53,6 @@
             @add-condition="addCondition"
           />
         </el-tab-pane>
-
-        <!-- Conflict Tab -->
-        <el-tab-pane label="Conflict" name="conflict">
-          <ConflictModalContent
-            :pro-label="proLabel"
-            :is-pro="isPro"
-            :available-plugins="availablePlugins"
-            :modal-settings-fields="modalSettingsFields"
-            :plugin-settings="pluginSettings"            
-            @open-pro-modal="openProModal"
-          />
-        </el-tab-pane>
-
-        <!-- Login Status Tab -->
-        <el-tab-pane label="Login Status" name="login_status">
-          <LoginStatusModalContent
-            :pro-label="proLabel"
-            :is-pro="isPro"
-            @open-pro-modal="openProModal"
-            :plugin-settings="pluginSettings"
-            :modal-settings-fields="modalSettingsFields"
-          />
-        </el-tab-pane>
       </el-tabs>
     </el-form>
     <template #footer>
@@ -107,8 +84,6 @@ import ProModal from './ProModal.vue'
 import ModalSettingsSkeleton from '../skeleton/ModalSettingsSkeleton.vue'
 import FrontendModalContent from './FrontendModalContent.vue'
 import BackendModalContent from './BackendModalContent.vue'
-import ConflictModalContent from './ConflictModalContent.vue'
-import LoginStatusModalContent from './LoginStatusModalContent.vue'
 
 const props = defineProps({
   visible: Boolean,
@@ -119,8 +94,6 @@ const emit = defineEmits(['update:visible', 'save'])
 const store = usePluginStore()
 
 const activeTab = ref('frontend')
-
-const availablePlugins = ref([]) // to be used for conflict selection
 
 const dialogVisible = computed({
   get: () => props.visible,
