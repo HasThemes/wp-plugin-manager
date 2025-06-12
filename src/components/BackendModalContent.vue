@@ -185,9 +185,6 @@ onMounted(() => {
     }
   }
 
-  if (!props.pluginSettings.backend_user_roles) {
-    props.pluginSettings.backend_user_roles = []
-  }
   if (!props.isPro) {
     props.pluginSettings.backend_status = false
   }

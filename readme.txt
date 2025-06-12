@@ -27,6 +27,8 @@ In this modern era, there is a huge demand for faster loading websites. If a web
 ==Pro Features==
 * Apply rule on Mobile/Tablet/Desktop
 * Enble on selected and Disable on selected option.
+* Disable plugins to any specific custom post types
+* Disable plugins in Backend
 
 [Purchase Pro version](https://hasthemes.com/plugins/wp-plugin-manager-pro/)
 
@@ -86,6 +88,10 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+
+= Version: 1.4.1 Date: 13 June 2025 =
+* Added: Filter Option to optimized, Not Yet Optimized, Frontend Optimized and all plugins.
+* Fixed: A few minor issues.
 
 = Version: 1.4.0 Date: 21 May 2025 =
 * Improved: UI/UX for better user experience.

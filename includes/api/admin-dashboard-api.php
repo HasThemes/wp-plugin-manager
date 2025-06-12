@@ -47,7 +47,7 @@ function htpm_register_rest_routes() {
     ]);
     
     // Get sidebar content endpoint
-    register_rest_route('htpm/v1', '/sidebar', [
+    register_rest_route('htpm/v1', '/sidebar-content', [
         'methods' => 'GET',
         'callback' => 'htpm_get_sidebar_content',
         'permission_callback' => function() {
@@ -99,21 +99,6 @@ function htpm_register_rest_routes() {
         }
     ]);
     
-    register_rest_route('htpm/v1', '/sidebar-content', [
-        'methods' => 'GET',
-        'callback' => 'htpm_get_sidebar_content',
-        'permission_callback' => function() {
-            return current_user_can('activate_plugins');
-        }
-    ]);
-    // Get dashboard  Settings endpoint
-    // register_rest_route('htpm/v1', '/get-dashboard-settings', [
-    //     'methods' => 'GET',
-    //     'callback' => 'htpm_get_dashboard_settings',
-    //     'permission_callback' => function() {
-    //         return current_user_can('edit_posts');
-    //     }
-    // ]);
     // Update dashboard  Settings endpoint
     register_rest_route('htpm/v1', '/update-dashboard-settings', [
         'methods' => 'POST',
@@ -150,9 +135,6 @@ function htpm_get_all_plugin_settings($request) {
                     'device_type' => 'all',
                     'frontend_status' => false,
                     'backend_status' => false,
-                    'backend_user_roles' => [],
-                    'conflict_status' => false,
-                    'login_status' => false,
                     'condition_type' => 'disable_on_selected',
                     'backend_condition_type' => 'disable_on_selected',
                     'uri_type' => 'page',
@@ -188,21 +170,6 @@ function htpm_get_selected_post_types() {
     $options = get_option('htpm_dashboard_options', [
         'htpm_dashboard_settings' => [
             'selectedPostTypes' => []
-        ]
-    ]);
-    return new WP_REST_Response($options, 200);
-}
-
-/**
- * Get dashboard  Settings
- */
-function htpm_get_dashboard_settings() {
-    $options = get_option('htpm_dashboard_options', [
-        'htpm_dashboard_settings' => [
-            'selectedPostTypes' => [],
-            'numberOfPosts' => 150,
-            'showThumbnails' => true,
-            'itemsPerPage' => 10
         ]
     ]);
     return new WP_REST_Response($options, 200);
@@ -301,22 +268,10 @@ function htpm_get_plugins() {
         }
         
         // Get plugin icon
-        $icon_url =  '';
-
-        if ( isset($htpm_options['showThumbnails']) && $htpm_options['showThumbnails'] == true ) {
-            $plugin_slug = dirname($plugin_path);
-            $base_url = 'https://ps.w.org/' . $plugin_slug . '/assets/';
-            $icon_base = 'icon-128x128';
-            $extensions = ['png', 'jpg','gif', 'svg'];
-        
-            foreach ($extensions as $ext) {
-                $file_url = $base_url . $icon_base . '.' . $ext;
-                $response = wp_remote_head($file_url);
-                if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
-                    $icon_url = $file_url;
-                    break; // Stop at the first found file
-                }
-            }
+        $icon_url = '';
+        // Use optimized icon loading
+        if ($is_wp_active ) {
+            $icon_url = htpm_get_plugin_icon($plugin_path, $htpm_options['showThumbnails'] ?? false);
         }
         
         // Check if plugin has custom settings for deactivation
@@ -407,7 +362,6 @@ function htpm_get_plugin_settings($request) {
                 'name' => ['admin_page_equals'],
                 'value' => [''],
             ],
-            'backend_user_roles' => []
         ];
     } else {
         // Ensure backend fields exist in existing settings
@@ -427,9 +381,6 @@ function htpm_get_plugin_settings($request) {
                 'name' => ['admin_page_equals'],
                 'value' => [''],
             ];
-        }
-        if (!isset($plugin_settings['backend_user_roles'])) {
-            $plugin_settings['backend_user_roles'] = [];
         }
     }
     
@@ -483,8 +434,6 @@ function htpm_update_plugin_settings($request) {
     // Status fields
     $sanitized_settings['frontend_status'] = isset( $settings['frontend_status']) ? (bool)$settings['frontend_status'] : false;
     $sanitized_settings['backend_status'] = isset($settings['backend_status']) ? (bool)$settings['backend_status'] : false;
-    $sanitized_settings['conflict_status'] = isset($settings['conflict_status']) ? (bool)$settings['conflict_status'] : false;
-    $sanitized_settings['login_status'] = isset($settings['login_status']) ? (bool)$settings['login_status'] : false;
     // Backend specific settings
     //$sanitized_settings['admin_scope'] = sanitize_text_field($settings['admin_scope'] ?? 'all_admin');
     if (isset($settings['admin_scope']) && is_array($settings['admin_scope'])) {
@@ -519,12 +468,6 @@ function htpm_update_plugin_settings($request) {
         $sanitized_settings['backend_pages'] = [];
     }
     
-    // Backend user roles array
-    if (isset($settings['backend_user_roles']) && is_array($settings['backend_user_roles'])) {
-        $sanitized_settings['backend_user_roles'] = array_map('sanitize_text_field', $settings['backend_user_roles']);
-    } else {
-        $sanitized_settings['backend_user_roles'] = [];
-    }
     
     // Handle custom post types
     $post_types = get_post_types(['public' => true], 'names');
@@ -729,4 +672,51 @@ function htpm_get_sidebar_content() {
             ['status' => 500]
         );
     }
+}
+
+
+/**
+ * PERFORMANCE OPTIMIZATION: Get plugin icon with enhanced caching and error handling
+ */
+function htpm_get_plugin_icon($plugin_path, $show_thumbnails = false) {
+    if (!$show_thumbnails) {
+        return '';
+    }
+    
+    $plugin_slug = dirname($plugin_path);
+    
+    // Skip for single-file plugins
+    if ($plugin_slug === '.') {
+        return '';
+    }
+    
+    // Check cache first
+    $cache_key = 'htpm_plugin_icon_' . md5($plugin_slug);
+    $cached_icon = get_transient($cache_key);
+    
+    if ($cached_icon !== false) {
+        return $cached_icon === 'none' ? '' : $cached_icon;
+    }
+    
+    // Your original logic, just with timeout added
+    $base_url = 'https://ps.w.org/' . $plugin_slug . '/assets/';
+    $icon_base = 'icon-128x128';
+    $extensions = ['png', 'jpg','gif', 'svg'];
+    $icon_url = '';
+    
+    foreach ($extensions as $ext) {
+        $file_url = $base_url . $icon_base . '.' . $ext;
+        $response = wp_remote_head($file_url, [
+            'timeout' => 3 // Just add timeout to prevent hanging
+        ]);
+        if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
+            $icon_url = $file_url;
+            break;
+        }
+    }
+    
+    // Cache result for 1 day
+    set_transient($cache_key, $icon_url ?: 'none', DAY_IN_SECONDS);
+    
+    return $icon_url;
 }

@@ -165,7 +165,6 @@ const pluginSettings = ref({
     name: ['admin_page_equals'],
     value: [''],
   },
-  backend_user_roles: []
 })
 
 // Post types from API
@@ -266,9 +265,6 @@ const loadPluginSettings = async () => {
           name: ['admin_page_equals'],
           value: [''],
         },
-        backend_user_roles: [],
-        conflict_status: false,
-        login_status: false,
       }
       
       // Merge with default settings to ensure all properties exist
@@ -300,10 +296,6 @@ const loadPluginSettings = async () => {
           name: ['admin_page_equals'],
           value: [''],
         }
-      }
-      
-      if (!pluginSettings.value.backend_user_roles) {
-        pluginSettings.value.backend_user_roles = []
       }
     }
   } catch (error) {
@@ -462,10 +454,6 @@ const saveSettings = async () => {
         name: ['admin_page_equals'],
         value: [''],
       }
-    }
-    
-    if (!Array.isArray(pluginSettings.value.backend_user_roles)) {
-      pluginSettings.value.backend_user_roles = []
     }
     
     // Prepare data for API - create a full, deep copy
