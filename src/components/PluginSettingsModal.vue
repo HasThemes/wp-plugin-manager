@@ -38,7 +38,11 @@
         </el-tab-pane>
 
         <!-- Backend Tab -->
-        <el-tab-pane label="Backend" name="backend">
+        <el-tab-pane :label="'Backend' + (!isPro ? proLabel : '')" name="backend">
+          <template #label>
+            Backend
+            <span v-if="!isPro" class="pro-badge" style="margin-left: 8px;">{{proLabel}}</span>
+          </template>
           <BackendModalContent
             :plugin-settings="pluginSettings"
             :modal-settings-fields="modalSettingsFields"
@@ -510,6 +514,18 @@ const saveSettings = async () => {
         border: none;
         margin-right: 4px;
         transition: all 0.2s ease;
+
+        .pro-badge {
+          background-color: rgba(214, 54, 56, 0.1);
+          border: 1px solid #d636386b;
+          color: #d63638;
+          padding: 2px 6px;
+          border-radius: 3px;
+          font-size: 10px;
+          font-weight: 600;
+          line-height: 1;
+          text-transform: uppercase;
+        }
 
         &:hover {
           color: #0d6efd;
