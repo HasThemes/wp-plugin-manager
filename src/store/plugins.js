@@ -166,7 +166,6 @@ export const usePluginStore = defineStore('plugins', {
         throw error
       }
     },
-    // selected selected AllPost Types
     // Update plugin settings
     // updatePluginSettings method for the store with fixed settings preservation
     async updatePluginSettings(pluginId, settings) {

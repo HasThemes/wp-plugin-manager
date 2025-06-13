@@ -24,9 +24,7 @@ class HTPM_Option_Page {
 		add_action( 'admin_menu',  [ $this,'admin_menu'] );
 		add_action( 'admin_footer', [$this, 'pro_menu_scripts'], 11 );
 		add_action( 'admin_footer', [$this, 'pro_notice_content'] );
-		//add_action( 'admin_init', [$this, 'settings_init'] );
 		add_action( 'admin_enqueue_scripts', [$this, 'enqueue_scripts'] );
-		//var_dump(get_option('htpm_options'));
     }
 
     /**
@@ -37,18 +35,26 @@ class HTPM_Option_Page {
             return;
         }
 
+        // Get manifest data
+        $manifest_path = dirname(__DIR__). '/assets/dist/manifest.json';
+        $manifest = file_exists($manifest_path) ? json_decode(file_get_contents($manifest_path), true) : [];
+        
+        // Get file paths from manifest or fallback to default
+        $js_file = isset($manifest['src/main.js']['file']) ? $manifest['src/main.js']['file'] : 'js/main.js';
+        $css_file = isset($manifest['style.css']['file']) ? $manifest['style.css']['file'] : 'css/style.css';
+
         // Enqueue Vue app assets and styles
-        add_action('admin_head', function() {
+        add_action('admin_head', function() use ($css_file) {
             printf(
                 '<link rel="stylesheet" href="%s">',
-                esc_url(HTPM_ROOT_URL . '/assets/dist/css/style.css')
+				esc_url( HTPM_ROOT_URL . '/assets/dist/'. $css_file )
             );
         });
 
-        add_action('admin_print_footer_scripts', function() {
+        add_action('admin_print_footer_scripts', function() use ($js_file) {
             printf(
                 '<script type="module" src="%s"></script>',
-                esc_url(HTPM_ROOT_URL . '/assets/dist/js/main.js')
+				esc_url(HTPM_ROOT_URL . '/assets/dist/'. $js_file )
             );
         });
     }
