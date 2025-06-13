@@ -40,8 +40,10 @@
         <!-- Backend Tab -->
         <el-tab-pane :label="'Backend' + (!isPro ? proLabel : '')" name="backend">
           <template #label>
+            <span @click="!isPro && openProModal()">
             Backend
             <span v-if="!isPro" class="pro-badge" style="margin-left: 8px;">{{proLabel}}</span>
+            </span>
           </template>
           <BackendModalContent
             :plugin-settings="pluginSettings"

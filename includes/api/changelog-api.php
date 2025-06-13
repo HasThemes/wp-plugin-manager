@@ -183,7 +183,7 @@ class ChangeLog extends WP_REST_Controller {
         return [
             [
                 'version' => '1.4.1',
-                'date'    => '2025-06-13',
+                'date'    => '2025-06-15',
                 'changes' => [
                     'Added' => [
                         'Filter Option to optimized, Not Yet Optimized, Frontend Optimized and All plugins.',

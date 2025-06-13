@@ -9,13 +9,13 @@ export default defineConfig({
   build: {
     outDir: 'assets/dist',
     assetsDir: '',
-    manifest: true,
+    manifest: false,
     rollupOptions: {
       input: 'src/main.js',
       output: {
-        entryFileNames: '[name].[hash].js',
-        chunkFileNames: '[name].[hash].js',
-        assetFileNames: '[name].[hash].[ext]'
+        entryFileNames: 'js/[name].js',
+        chunkFileNames: 'js/[name]-[hash].js',
+        assetFileNames: '[ext]/[name].[ext]'
       }
     },
     cssCodeSplit: false,

@@ -89,7 +89,7 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
 
-= Version: 1.4.1 Date: 13 June 2025 =
+= Version: 1.4.1 Date: 15 June 2025 =
 * Added: Filter Option to optimized, Not Yet Optimized, Frontend Optimized and all plugins.
 * Fixed: A few minor issues.
 
