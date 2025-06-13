@@ -20,6 +20,8 @@
             :is-pro="isPro"
             :filtered-post-types="filteredPostTypes"
             :selected-custom-post-types="selectedCustomPostTypes"
+            :available-post-types="availablePostTypes"
+            :custom-post-type-items="store.customPostTypeItems"
             :pages="pages"
             :posts="posts"
             :loading-pages="loadingPages"
@@ -29,8 +31,6 @@
             @handle-uri-type-change="handleUriTypeChange"
             @handle-post-types-change="handlePostTypesChange"
             @open-pro-modal="openProModal"
-            @format-post-type-name="formatPostTypeName"
-            @get-custom-post-type-items="getCustomPostTypeItems"
             @remove-condition="removeCondition"
             @clone-condition="cloneCondition"
             @add-condition="addCondition"
@@ -181,7 +181,16 @@ const selectedAllPostTypesKeys = computed(() => {
 const filteredPostTypes = computed(() =>availablePostTypes.value.filter(item => selectedAllPostTypesKeys.value?.includes(item.name))
 );
 const selectedCustomPostTypes = computed(() => {
-  return pluginSettings.value.post_types.filter(type => !['page', 'post'].includes(type))
+  // Make sure we have post_types array and it's not empty
+  if (!pluginSettings.value.post_types || !Array.isArray(pluginSettings.value.post_types)) {
+    return []
+  }
+  // Filter out built-in post types (page, post)
+  const customTypes = pluginSettings.value.post_types.filter(type => 
+    type && !['page', 'post'].includes(type)
+  )
+  
+  return customTypes
 })
 
 // Pages and posts data from store
@@ -226,9 +235,34 @@ const loadData = async () => {
     loadingPages.value = false
     loadingPosts.value = false
     
-    // Load custom post type data
-    if (pluginSettings.value.uri_type === 'page_post_cpt') {
+    // Load custom post type data IMMEDIATELY after loading settings
+    // Check if we have page_post_cpt and custom post types selected
+    if (pluginSettings.value.uri_type === 'page_post_cpt' && pluginSettings.value.post_types) {
       await loadCustomPostTypeData()
+    }
+    
+    // ALSO load custom post type data for any existing custom post types
+    // even if uri_type is not page_post_cpt yet
+    const customTypes = pluginSettings.value.post_types?.filter(type => !['page', 'post'].includes(type)) || []
+    if (customTypes.length > 0) {
+      for (const type of customTypes) {
+        if (!store.customPostTypeItems[type]) {
+          loadingCustomPosts[type] = true
+          
+          // Initialize array for this post type if needed
+          if (!pluginSettings.value[type + 's']) {
+            pluginSettings.value[type + 's'] = []
+          }
+          
+          try {
+            await store.fetchCustomPostTypeItems(type)
+          } catch (error) {
+            console.error(`Error loading ${type} items:`, error)
+          } finally {
+            loadingCustomPosts[type] = false
+          }
+        }
+      }
     }
   } catch (error) {
     console.error('Error loading data:', error)

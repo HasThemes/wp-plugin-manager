@@ -110,7 +110,7 @@
             :loading="loadingCustomPosts[postType]"
           >
             <el-option 
-              :label="`All ${formatPostTypeName(postType)}s`" 
+              :label="`All ${formatPostTypeName(postType)}`" 
               :value="`all_${postType}s,all_${postType}s`"
             />
             <el-option 
@@ -167,7 +167,7 @@
   
   <script setup>
   import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
-  import { onMounted } from 'vue'
+  import { onMounted, computed } from 'vue'
   
   const props = defineProps({
     pluginSettings: {
@@ -193,6 +193,14 @@
     selectedCustomPostTypes: {
       type: Array,
       required: true
+    },
+    availablePostTypes: {
+      type: Array,
+      default: () => []
+    },
+    customPostTypeItems: {
+      type: Object,
+      default: () => ({})
     },
     pages: {
       type: Array,
@@ -221,13 +229,38 @@
     'handleUriTypeChange',
     'handlePostTypesChange',
     'openProModal',
-    'formatPostTypeName',
-    'getCustomPostTypeItems',
     'removeCondition',
     'cloneCondition',
-    'addCondition'
+    'addCondition',
+    'loadCustomPostTypeItems'
   ])
+  
   const labels_texts = HTPMM.adminSettings.labels_texts;
+  
+  // Local methods that work with props data
+  const formatPostTypeName = (postType) => {
+    // First try to find in available post types
+    const postTypeObj = props.availablePostTypes.find(pt => pt.name === postType)
+    if (postTypeObj) {
+      return postTypeObj.label
+    }
+    
+    // Fallback to formatting the string
+    return postType
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, letter => letter.toUpperCase())
+  }
+  
+  const getCustomPostTypeItems = (postType) => {
+    return props.customPostTypeItems[postType] || []
+  }
+  
+  const loadCustomPostTypeItemsIfNeeded = (postType) => {
+    if (!getCustomPostTypeItems(postType) || getCustomPostTypeItems(postType).length === 0) {
+      emit('loadCustomPostTypeItems', postType)
+    }
+  }
+  
   const handleProFeatureSelect = (field, value) => {
     emit('handleProFeatureSelect', field, value)
   }
@@ -244,14 +277,6 @@
     emit('openProModal')
   }
   
-  const formatPostTypeName = (postType) => {
-    return emit('formatPostTypeName', postType)
-  }
-  
-  const getCustomPostTypeItems = (postType) => {
-    return emit('getCustomPostTypeItems', postType)
-  }
-  
   const removeCondition = (index) => {
     emit('removeCondition', index)
   }
@@ -263,14 +288,13 @@
   const addCondition = () => {
     emit('addCondition')
   }
+  
   onMounted(() => {
    if (!props.isPro) {
     props.pluginSettings.device_type = 'all'
     props.pluginSettings.condition_type = 'disable_on_selected'
   }
 })
-
-
   </script>
   
   <style lang="scss" scoped>
