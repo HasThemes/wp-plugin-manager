@@ -2,14 +2,6 @@
 import { defineStore } from 'pinia'
 import api from '../utils/axios'
 
-// Default dashboard settings
-const defaultDashboardSettings = {
-  selectedPostTypes: [],
-  numberOfPosts: 150,
-  showThumbnails: false,
-  itemsPerPage: 10
-}
-
 // Create an axios instance with WordPress REST API base URL and nonce
 
 export const usePluginStore = defineStore('plugins', {
@@ -18,9 +10,6 @@ export const usePluginStore = defineStore('plugins', {
     plugins: [],
     allSettings: window.HTPMM?.adminSettings?.allSettings || {},
     adminURL: window.HTPMM?.adminURL || '',
-    dashboardSettings: {
-      htpm_dashboard_settings: { ...defaultDashboardSettings }
-    },
     loading: false,
     error: null,
     settings: {},
@@ -33,6 +22,9 @@ export const usePluginStore = defineStore('plugins', {
     changelogLoading: false,
     changelogRead: false,
     notificationStatus: false,
+    isPro: window.HTPMM.adminSettings?.is_pro,
+    labels_texts: window.HTPMM?.adminSettings?.labels_texts,
+    dashboardSettingsFields: window.HTPMM?.adminSettings?.dashboard_settings
   }),
 
   getters: {
@@ -139,37 +131,6 @@ export const usePluginStore = defineStore('plugins', {
         return null
       }
     },
-    // Fetch dashboard settings
-    async fetchDashboardSettings() {
-      try {
-        const response = await api.get('/htpm/v1/get-dashboard-settings')
-        console.log('API Response:', response.data)
-        
-        // Get settings from response or use defaults
-        const settings = response.data?.htpm_dashboard_settings || { ...defaultDashboardSettings }
-        
-        // Create a new settings object with proper type handling
-        const newSettings = {
-          selectedPostTypes: Array.isArray(settings.selectedPostTypes) ? [...settings.selectedPostTypes] : [],
-          numberOfPosts: parseInt(settings.numberOfPosts) || 150,
-          showThumbnails: typeof settings.showThumbnails === 'boolean' ? settings.showThumbnails : true,
-          itemsPerPage: parseInt(settings.itemsPerPage) || 10
-        }
-
-        // Update state
-        this.dashboardSettings = {
-          htpm_dashboard_settings: newSettings
-        }
-        return this.dashboardSettings
-      } catch (error) {
-        console.error('Error fetching dashboard settings:', error)
-        // Reset to default settings on error
-        this.dashboardSettings = {
-          htpm_dashboard_settings: { ...defaultDashboardSettings }
-        }
-        return this.dashboardSettings
-      }
-    },
     // Update dashboard settings
     async updateDashboardSettings(settings) {
       try {
@@ -205,70 +166,69 @@ export const usePluginStore = defineStore('plugins', {
         throw error
       }
     },
-    // selected selected AllPost Types
     // Update plugin settings
-// updatePluginSettings method for the store with fixed settings preservation
-async updatePluginSettings(pluginId, settings) {
-  try {
-    // Invalidate cache for this plugin
-    delete this.settings[pluginId];
+    // updatePluginSettings method for the store with fixed settings preservation
+    async updatePluginSettings(pluginId, settings) {
+      try {
+        // Invalidate cache for this plugin
+        delete this.settings[pluginId];
 
-    // Make sure we're sending a complete, valid settings object
-    const completeSettings = { ...settings }
-    
-    // Ensure all required arrays exist and are properly initialized
-    if (!Array.isArray(completeSettings.pages)) {
-      completeSettings.pages = []
-    }
-    
-    if (!Array.isArray(completeSettings.posts)) {
-      completeSettings.posts = []
-    }
-    
-    if (!Array.isArray(completeSettings.post_types)) {
-      completeSettings.post_types = ['page', 'post']
-    }
-    
-    if (!completeSettings.condition_list) {
-      completeSettings.condition_list = {
-        name: ['uri_equals'],
-        value: [''],
+        // Make sure we're sending a complete, valid settings object
+        const completeSettings = { ...settings }
+        
+        // Ensure all required arrays exist and are properly initialized
+        if (!Array.isArray(completeSettings.pages)) {
+          completeSettings.pages = []
+        }
+        
+        if (!Array.isArray(completeSettings.posts)) {
+          completeSettings.posts = []
+        }
+        
+        if (!Array.isArray(completeSettings.post_types)) {
+          completeSettings.post_types = ['page', 'post']
+        }
+        
+        if (!completeSettings.condition_list) {
+          completeSettings.condition_list = {
+            name: ['uri_equals'],
+            value: [''],
+          }
+        } else {
+          if (!Array.isArray(completeSettings.condition_list.name)) {
+            completeSettings.condition_list.name = ['uri_equals']
+          }
+          
+          if (!Array.isArray(completeSettings.condition_list.value)) {
+            completeSettings.condition_list.value = ['']
+          }
+        }
+        
+        // Send the request to the server
+        const response = await api.post(`/htpm/v1/plugins/${pluginId}/settings`, completeSettings)
+        
+        if (response.data.success) {
+          // Update the plugin's enable_deactivation state in the plugins list
+          const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
+          if (pluginIndex !== -1) {
+            this.plugins[pluginIndex].enable_deactivation = completeSettings.enable_deactivation === 'yes'
+          }
+          
+          // Store settings in the store state
+          this.settings[pluginId] = completeSettings
+          
+          // Return the updated settings
+          return completeSettings
+        } else {
+          console.error('Server returned error:', response.data)
+          throw new Error(response.data?.message || 'Failed to update settings')
+        }
+      } catch (error) {
+        this.error = error.message || 'Failed to update plugin settings'
+        console.error('Error updating plugin settings:', error)
+        throw error
       }
-    } else {
-      if (!Array.isArray(completeSettings.condition_list.name)) {
-        completeSettings.condition_list.name = ['uri_equals']
-      }
-      
-      if (!Array.isArray(completeSettings.condition_list.value)) {
-        completeSettings.condition_list.value = ['']
-      }
-    }
-    
-    // Send the request to the server
-    const response = await api.post(`/htpm/v1/plugins/${pluginId}/settings`, completeSettings)
-    
-    if (response.data.success) {
-      // Update the plugin's enable_deactivation state in the plugins list
-      const pluginIndex = this.plugins.findIndex(p => p.id === pluginId)
-      if (pluginIndex !== -1) {
-        this.plugins[pluginIndex].enable_deactivation = completeSettings.enable_deactivation === 'yes'
-      }
-      
-      // Store settings in the store state
-      this.settings[pluginId] = completeSettings
-      
-      // Return the updated settings
-      return completeSettings
-    } else {
-      console.error('Server returned error:', response.data)
-      throw new Error(response.data?.message || 'Failed to update settings')
-    }
-  } catch (error) {
-    this.error = error.message || 'Failed to update plugin settings'
-    console.error('Error updating plugin settings:', error)
-    throw error
-  }
-},
+    },
 
     /**
      * Fetch Changelog Data
@@ -399,6 +359,6 @@ async updatePluginSettings(pluginId, settings) {
         console.error(`Error fetching ${postType} items:`, error)
         return []
       }
-    }
+    },
   }
 })

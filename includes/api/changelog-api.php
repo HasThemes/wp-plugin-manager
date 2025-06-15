@@ -182,6 +182,18 @@ class ChangeLog extends WP_REST_Controller {
     private function get_changelog_data() {
         return [
             [
+                'version' => '1.4.1',
+                'date'    => '2025-06-15',
+                'changes' => [
+                    'Added' => [
+                        'Filter Option to optimized, Not Yet Optimized, Frontend Optimized and All plugins.',
+                    ],
+                    'Fixed' => [
+                        'Fixed: A few minor issues.',
+                    ],
+                ],
+            ],
+            [
                 'version' => '1.4.0',
                 'date'    => '2025-05-21',
                 'changes' => [

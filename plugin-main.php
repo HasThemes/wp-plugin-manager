@@ -3,7 +3,7 @@
 * Plugin Name: WP Plugin Manager
 * Plugin URI: https://hasthemes.com/plugins/
 * Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-* Version: 1.4.0
+* Version: 1.4.1
 * Author: HasThemes
 * Author URI: https://hasthemes.com/
 * Text Domain: wp-plugin-manager
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
-define( 'HTPM_PLUGIN_VERSION', '1.4.0' );
+define( 'HTPM_PLUGIN_VERSION', '1.4.1' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );
@@ -135,10 +135,6 @@ class HTPM_Main {
      */
     function include_files() {
         require_once HTPM_ROOT_DIR . '/includes/helper_functions.php';
-        //require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/class.recommended-plugins.php';
-        // add_action('init', function() {
-        //     require_once HTPM_ROOT_DIR . '/includes/recommended-plugins/recommendations.php';
-        // });
         require_once HTPM_ROOT_DIR . '/includes/plugin-options-page.php';
         if(is_admin()){
             include_once( HTPM_ROOT_DIR . '/includes/class-diagnostic-data.php');
@@ -164,35 +160,18 @@ class HTPM_Main {
         if( $hook_suffix ==  'toplevel_page_htpm-options' ){
             
             wp_enqueue_style( 'htpm-admin', HTPM_ROOT_URL . '/assets/css/admin-style.css', [], HTPM_PLUGIN_VERSION );
-            wp_enqueue_script( 'htpm-admin', HTPM_ROOT_URL . '/assets/js/admin.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
-            
-            // Localize the script with new data
-            $localize_data = [
-                'ajaxurl'          => admin_url( 'admin-ajax.php' ),
-                'adminURL'         => admin_url(),
-                'pluginURL'        => plugin_dir_url( __FILE__ ),
-                'assetsURL'        => plugin_dir_url( __FILE__ ) . 'assets/',
-                'restUrl'          => rest_url(),
-                'nonce'            => wp_create_nonce('wp_rest'),
-                'message'          => [
-                    'packagedesc'  => esc_html__( 'in this package', 'wp-plugin-manager' ),
-                    'allload'      => esc_html__( 'All Items have been Loaded', 'wp-plugin-manager' ),
-                    'notfound'     => esc_html__( 'Nothing Found', 'wp-plugin-manager' ),
-                ],
-                'buttontxt'        => [
-                    'tmplibrary'   => esc_html__( 'Import to Library', 'wp-plugin-manager' ),
-                    'tmppage'      => esc_html__( 'Import to Page', 'wp-plugin-manager' ),
-                    'import'       => esc_html__( 'Import', 'wp-plugin-manager' ),
-                    'buynow'       => esc_html__( 'Buy Now', 'wp-plugin-manager' ),
-                    'buynow_link'  => 'https://hasthemes.com/plugins/wp-plugin-manager-pro/?utm_source=admin&utm_medium=mainmenu&utm_campaign=free#pricing',
-                    'preview'      => esc_html__( 'Preview', 'wp-plugin-manager' ),
-                    'installing'   => esc_html__( 'Installing..', 'wp-plugin-manager' ),
-                ],
-            ];
-            wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
+            // vue settings
+            wp_enqueue_style( 'htpm-vue-settings-style', HTPM_ROOT_URL . '/assets/dist/css/style.css', array(), HTPM_PLUGIN_VERSION, 'all' );
+            wp_enqueue_script( 'htpm-vue-settings', HTPM_ROOT_URL . '/assets/dist/js/main.js', [ 'jquery' ], HTPM_PLUGIN_VERSION, true );
+
+            add_filter('script_loader_tag', function($tag, $handle, $src) {
+                if ($handle === 'htpm-vue-settings') {
+                    return '<script type="module" src="' . esc_url($src) . '"></script>';
+                }
+                return $tag;
+            }, 10, 3);
             
             $admin_settings = WP_Plugin_Manager_Settings::get_instance();
-            if( is_admin() ){
                 $localize_data = [
                     'ajaxurl'          => admin_url( 'admin-ajax.php' ),
                     'adminURL'         => admin_url(),
@@ -242,11 +221,11 @@ class HTPM_Main {
                         'dashboard_settings' => $admin_settings->get_dashboard_settings(),
                         'menu_settings' => $admin_settings->get_menu_settings(),
                         'recommendations_plugins' => $admin_settings->get_recommendations_plugins(),
+                        'backend_modal_settings' => $admin_settings->get_backend_modal_settings(),
                         'allSettings' => get_option('htpm_options') ? get_option('htpm_options') : [],
                     ],
                 ];
-                wp_localize_script( 'htpm-admin', 'HTPMM', $localize_data );
-            }
+                wp_localize_script( 'htpm-vue-settings', 'HTPMM', $localize_data );
     
         }
     }
@@ -323,6 +302,7 @@ class HTPM_Main {
             mkdir( $mu_plugins_path, 0755, true ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_mkdir
             copy( $mu_plugin_file_source_path, $mu_plugin_file_path );
         }else{
+            // Always update MU plugin if main plugin version is greater than 1.0.8 or if file doesn't exist
             if(!file_exists($mu_plugin_file_path) || version_compare($version, '1.0.8', '>') ){
                 copy( $mu_plugin_file_source_path, $mu_plugin_file_path );
             }

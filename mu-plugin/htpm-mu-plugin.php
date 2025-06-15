@@ -1,6 +1,6 @@
 <?php
 /**
-Version: 1.0.8
+*Version: 1.0.9
 */
 
 if(get_option('htpm_status') != 'active'){
@@ -15,15 +15,6 @@ $htpm_request_uri = !empty( $_SERVER['REQUEST_URI'] ) ? wp_parse_url( sanitize_t
 $htpm_is_admin = strpos( $htpm_request_uri, '/wp-admin/' );
 
 /**
- * Deactivate plugins for non admin users
- */
-if( !is_admin() && false === $htpm_is_admin ){
-
-	// Deactivate plugins base on the condition meets
-	add_filter( 'option_active_plugins', 'htpm_filter_plugins' );
-}
-
-/**
  * Check if the current request is an AJAX request.
  * 
  * @return bool
@@ -34,6 +25,14 @@ function htpmpro_doing_ajax(){
     }
 
     return false;
+}
+
+/**
+ * Deactivate plugins for non admin users (Frontend)
+ */
+if( !is_admin() && false === $htpm_is_admin ){
+    // Deactivate plugins base on the condition meets
+    add_filter( 'option_active_plugins', 'htpm_filter_plugins' );
 }
 
 function htpm_filter_plugins( $plugins ){
@@ -74,6 +73,12 @@ function htpm_filter_plugins( $plugins ){
 	// loop through each active plugin
 	foreach($htpm_options as $plugin => $individual_options){
 		if(isset($individual_options['enable_deactivation']) && $individual_options['enable_deactivation'] == 'yes'){
+             // Check frontend status
+        $frontend_enabled = !isset($individual_options['frontend_status']) || $individual_options['frontend_status'] === true;
+        
+        if (!$frontend_enabled) {
+            continue; // Skip this plugin if frontend is disabled
+        }
 			$uri_type = $individual_options['uri_type'];
 
 			if($uri_type == 'page'){

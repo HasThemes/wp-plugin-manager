@@ -23,6 +23,7 @@
     box-shadow: none;
     padding: 0;
     border-width: 0 !important;
+    min-height: auto;
 }
 .el-notification{
 top: 35px!important; 
@@ -40,15 +41,13 @@ top: 32px !important;
 .plugin-optimize-popconfirm {
     padding: 8px 12px 12px !important;
 }
-
-
-
-
-
-
-
-
-
+.plugin-settings-modal > .el-dialog__body {
+    max-height: 551px;
+    overflow-y: auto;
+}
+.plugin-settings-modal {
+  max-width: 95%;
+}
 
 
 /* Header sidebar */

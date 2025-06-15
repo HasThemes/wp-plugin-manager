@@ -16,11 +16,10 @@ $plugin_url = HTPM_ROOT_URL;
         <div class="htpm-opt-get-pro-content">
             <h3 class="htpm-opt-get-pro-title"><?php esc_html_e('What You Get', 'wp-plugin-manager')?></h3>
             <ul>
-                <li><?php esc_html_e('Easily Manage All Your Plugins', 'wp-plugin-manager')?></li>
-                <li><?php esc_html_e('Enable or Disable Plugins for Specific Pages or Posts', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('Enable or disable plugins for individual pages, posts, or custom post types', 'wp-plugin-manager')?></li>
                 <li><?php esc_html_e('Control Plugins Based on URL or Path', 'wp-plugin-manager')?></li>
-                <li><?php esc_html_e('Set Plugin Rules for Mobile, Tablet, or Desktop Devices', 'wp-plugin-manager')?></li>
-                <li><?php esc_html_e('Boost Site Speed with Smart Plugin Loading', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('Control Plugins Based on Mobile, Tablet, or Desktop Devices', 'wp-plugin-manager')?></li>
+                <li><?php esc_html_e('Enable or Disable Plugins for Backend', 'wp-plugin-manager')?></li>
                 <li><?php esc_html_e('And So Much More!', 'wp-plugin-manager')?></li>
             </ul>
 

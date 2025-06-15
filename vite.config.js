@@ -9,7 +9,7 @@ export default defineConfig({
   build: {
     outDir: 'assets/dist',
     assetsDir: '',
-    manifest: true,
+    manifest: false,
     rollupOptions: {
       input: 'src/main.js',
       output: {

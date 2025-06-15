@@ -3,8 +3,8 @@ Contributors: hasthemes, htplugins, devitemsllc, tarekht, zenaulislam, aslamhasi
 Tags: plugin manager, disable plugins, performance optimization, selective loading, wordpress speed
 Requires at least: 5.0
 Tested up to: 6.8
-Requires PHP: 5.4
-Stable tag: 1.4.0
+Requires PHP: 7.4
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,6 +27,8 @@ In this modern era, there is a huge demand for faster loading websites. If a web
 ==Pro Features==
 * Apply rule on Mobile/Tablet/Desktop
 * Enble on selected and Disable on selected option.
+* Disable plugins to any specific custom post types
+* Disable plugins in Backend
 
 [Purchase Pro version](https://hasthemes.com/plugins/wp-plugin-manager-pro/)
 
@@ -86,6 +88,10 @@ Needs assistance to use this plugin?
 Feel free to [Contact us](https://hasthemes.com/contact-us/)
 
 == Changelog ==
+
+= Version: 1.4.1 Date: 15 June 2025 =
+* Added: Filter Option to optimized, Not Yet Optimized, Frontend Optimized and all plugins.
+* Fixed: A few minor issues.
 
 = Version: 1.4.0 Date: 21 May 2025 =
 * Improved: UI/UX for better user experience.

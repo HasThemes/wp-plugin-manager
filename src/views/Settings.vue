@@ -14,8 +14,8 @@
           <div class="form-group">
             <label class="setting-label"> {{ dashboardSettings.post_typs_settings.custom_post_types.label }} <el-tag v-if="dashboardSettings?.post_typs_settings?.custom_post_types?.proBadge" class="pro-badge" type="warning" size="small">{{ proLabel }}</el-tag></label>
             <div class="setting-control">
-              <div class="selected-types">
-                <span v-if="!dashboardSettings?.post_typs_settings?.custom_post_types?.isPro" v-for="type in filteredPostTypes" :key="type" class="type-tag">
+              <div class="selected-types" v-if="!dashboardSettings?.post_typs_settings?.custom_post_types?.isPro">
+                <span v-for="type in filteredPostTypes" :key="type" class="type-tag">
                   {{ type }}
                   <el-icon class="remove-tag" @click="removePostType(type)"><Close /></el-icon>
                 </span>
@@ -32,11 +32,7 @@
 
           <div class="form-group">
             <label class="setting-label">{{ dashboardSettings.post_typs_settings.load_posts.label }} <el-tag v-if="!isPro" class="pro-badge" type="warning" size="small">{{ proLabel }}</el-tag></label>
-            <div class="setting-control number-input-group">
-              <button class="number-btn" @click="decrementPosts">−</button>
-              <input type="number" v-model="settingsPagesSettings.htpm_load_posts" class="number-input" :min="dashboardSettings.post_typs_settings.load_posts.min" :max="dashboardSettings.post_typs_settings.load_posts.max" :disabled="dashboardSettings.post_typs_settings.load_posts.isPro">
-              <button class="number-btn" @click="incrementPosts">+</button>
-            </div>
+              <el-input-number v-model="loadPosts" :min="dashboardSettings.post_typs_settings.load_posts.min" :max="dashboardSettings.post_typs_settings.load_posts.max" size="large" :disabled="dashboardSettings.post_typs_settings.load_posts.isPro"/>
             <p class="setting-description" v-if="dashboardSettings.post_typs_settings.load_posts.desc">{{ getTextFromHtml( dashboardSettings.post_typs_settings.load_posts.desc ) }}</p>
           </div>
 
@@ -110,6 +106,7 @@ const isPro = HTPMM.adminSettings.is_pro
 const dashboardSettings = HTPMM.adminSettings.dashboard_settings
 const proModal = ref(null)
 const proLabel = ref(HTPMM.buttontxt.pro);
+const loadPosts = ref(150);
 // Helper function for string formatting
 const sprintf = (str, ...args) => {
   return str.replace(/%d/g, () => args.shift())
@@ -147,7 +144,10 @@ const loadSavedSettings = async () => {
     settingsPagesSettings.value.postTypes = savedSettings?.htpm_enabled_post_types || ['page', 'post'];
     // settingsPagesSettings.value.postTypes = settingsPagesSettings.value.postTypes.filter(type => type !== 'page' && type !== 'post');
     // Handle other settings with default values
-    settingsPagesSettings.value.htpm_load_posts = parseInt(savedSettings?.htpm_load_posts) || 150;
+    if(!dashboardSettings.post_typs_settings.load_posts.isPro){
+      loadPosts.value = parseInt(savedSettings?.htpm_load_posts) || 150;
+    }
+    settingsPagesSettings.value.htpm_load_posts = loadPosts.value;
     settingsPagesSettings.value.showThumbnails = savedSettings?.showThumbnails ?? false;
     settingsPagesSettings.value.itemsPerPage = parseInt(savedSettings?.itemsPerPage) || 10;
       
@@ -236,7 +236,7 @@ const saveSettings = async () => {
       postTypes: Array.isArray(settingsPagesSettings.value.postTypes) 
         ? settingsPagesSettings.value.postTypes.filter(type => type && typeof type === 'string')
         : ['page', 'post'],
-      htpm_load_posts: parseInt(settingsPagesSettings.value.htpm_load_posts) || 150,
+      htpm_load_posts: loadPosts.value,
       showThumbnails: Boolean(settingsPagesSettings.value.showThumbnails),
       itemsPerPage: parseInt(settingsPagesSettings.value.itemsPerPage) || 10
     }

@@ -4,6 +4,15 @@
     <div class="htpm-plugins-header">
       <h3>Manage Plugins</h3>
       <div class="htpm-plugins-actions">
+        <el-select
+          v-model="filterStatus"
+          placeholder="Filter by status"
+          class="filter-select"
+        >
+        <template v-for="(label, value) in managePluginsFields.plugin_filter_options.options" :key="value">
+          <el-option :label="label" :value="value" :disabled="managePluginsFields.plugin_filter_options.isPro.includes(value)" />
+        </template>
+        </el-select>
         <el-input
           v-model="searchQuery"
           placeholder="Search plugins..."
@@ -13,14 +22,26 @@
     </div>
     
     <!-- Loading indicator shown until plugins are fully loaded -->
-    <!-- <div v-if="loading" class="loading-indicator">
-      <el-skeleton :rows="5" animated />
-    </div> -->
     <PluginListSkeleton v-if="loading" />
     <!-- Only show plugin list when loading is complete -->
     <div v-else class="plugin-list">
+      <!-- Show empty state when no plugins are found -->
+      <div v-if="filteredPlugins.length === 0" class="empty-state">
+        <el-empty
+          :image-size="200"
+          class="custom-empty"
+        >
+          <template #description>
+            <h3>No Plugins Found</h3>
+            <p class="empty-description">
+              {{ searchQuery || filterStatus !== 'all' ? 'Try adjusting your search or filter criteria' : 'No plugins are available at the moment' }}
+            </p>
+          </template>
+        </el-empty>
+      </div>
       <!-- Show only WordPress-activated plugins -->
       <div 
+        v-else
         v-for="plugin in filteredPlugins" 
         :key="plugin.id" 
         class="plugin-item"
@@ -35,9 +56,33 @@
           </div>
           <div class="plugin-details">
             <h3>{{ plugin.name }}</h3>
-            <div class="plugin-status">
-              <span class="status-dot" :class="{ active: (plugin.enable_deactivation == 'yes') }"></span>
-              <span class="status-text">{{ plugin.enable_deactivation == 'yes' ? 'Optimized' : 'Not Optimized Yet' }}</span>
+            <div class="plugin-status-container">
+              <!-- Show frontend status only if optimized -->
+              <div 
+                v-if="(plugin.settings?.frontend_status === true && plugin.settings?.enable_deactivation === 'yes')" 
+                class="plugin-status"
+              >
+                <span class="status-dot active"></span>
+                <span class="status-text">Frontend: Optimized</span>
+              </div>
+              
+              <!-- Show backend status only if optimized -->
+              <div 
+                v-if="(plugin.settings?.backend_status === true && plugin.settings?.enable_deactivation === 'yes' && isPro)" 
+                class="plugin-status"
+              >
+                <span class="status-dot active"></span>
+                <span class="status-text">Backend: Optimized</span>
+              </div>
+              
+              <!-- Show "Not Optimized Yet" only if both are not optimized -->
+              <div 
+                v-if="((!plugin.settings?.frontend_status && !plugin.settings?.backend_status) || plugin.settings?.enable_deactivation === 'no')" 
+                class="plugin-status"
+              >
+                <span class="status-dot"></span>
+                <span class="status-text">Not Optimized Yet</span>
+              </div>
             </div>
           </div>
         </div>
@@ -64,6 +109,7 @@
                 :model-value="plugin.enable_deactivation == 'yes'"
                 @click="handleToggle(plugin)"
                 class="plugin-switch"
+                :loading="isPluginLoading(plugin.id)"
               />
             </template>
           </el-popconfirm>
@@ -102,7 +148,7 @@
 
 <script setup>
 import { ref, computed, watch, reactive } from 'vue'
-import { Search, Setting, QuestionFilled } from '@element-plus/icons-vue'
+import { Search, Setting, QuestionFilled, Loading } from '@element-plus/icons-vue'
 import { ElNotification } from 'element-plus'
 import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
@@ -112,6 +158,7 @@ import { debounce } from 'lodash-es'
 const store = usePluginStore()
 const searchQuery = ref('')
 const debouncedSearchQuery = ref('')
+const filterStatus = ref('all')
 const showSettings = ref(false)
 const selectedPlugin = ref(null)
 const loading = ref(true)
@@ -122,6 +169,9 @@ const pagination = reactive({
   total: 0
 })
 const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
+const loadingPlugins = ref(new Set()) // Track which plugins are currently saving
+const isPro = ref(store?.isPro);
+const managePluginsFields = ref(store?.dashboardSettingsFields.manage_plugins);
 
 // Create debounced search handler
 const updateDebouncedSearch = debounce((value) => {
@@ -169,22 +219,56 @@ watch(() => store.plugins, async (newPlugins) => {
 
     // Filter plugins based on search query
     const filteredPlugins = computed(() => {
-      // First filter only active WordPress plugins
-      const activePlugins = plugins.value.filter(plugin => plugin.wpActive)
+      let filtered = plugins.value.filter(plugin => plugin.wpActive)
       
-      // Then apply search filter if there's a query
-      const searchFilteredPlugins = !debouncedSearchQuery.value 
-        ? activePlugins 
-        : activePlugins.filter(plugin => 
-            plugin.name.toLowerCase().includes(debouncedSearchQuery.value.toLowerCase())
-          )
+      // Apply status filter
+      if (filterStatus.value !== 'all') {
+        filtered = filtered.filter(plugin => {
+          const isEnabled = plugin.settings?.enable_deactivation === 'yes'
+          const frontendOptimized = plugin.settings?.frontend_status === true && isEnabled
+          const backendOptimized = plugin.settings?.backend_status === true && isEnabled
+          
+          switch (filterStatus.value) {
+            case 'optimized': // All Optimized
+              return frontendOptimized || backendOptimized
+            
+            case 'frontend_optimized': // Frontend Optimized only
+              return frontendOptimized
+            
+            case 'backend_optimized': // Backend Optimized only
+              return backendOptimized
+            case 'backend_optimized': // Backend Optimized only
+              return backendOptimized
+            
+            case 'unoptimized': // Not Yet Optimized
+              return !frontendOptimized && !backendOptimized
+            
+            default:
+              return true
+          }
+        })
+      }
       
-      // Update total for pagination
-      pagination.total = searchFilteredPlugins.length
+      // Apply search filter
+      if (debouncedSearchQuery.value) {
+        const searchLower = debouncedSearchQuery.value.toLowerCase()
+        filtered = filtered.filter(plugin => 
+          plugin.name.toLowerCase().includes(searchLower)
+        )
+      }
+      
+      // Update pagination total
+      pagination.total = filtered.length
       
       // Apply pagination
-      const startIndex = (pagination.currentPage - 1) * pagination.pageSize
-      return searchFilteredPlugins.slice(startIndex, startIndex + pagination.pageSize)
+      const start = (pagination.currentPage - 1) * pagination.pageSize
+      const end = start + pagination.pageSize
+      return filtered.slice(start, end)
+    })
+
+    // Add computed property for checking loading state
+    const isPluginLoading = computed(() => {
+      return (pluginId) => loadingPlugins.value?.has(pluginId) || false
     })
 
     // Handle the toggle click
@@ -202,49 +286,81 @@ watch(() => store.plugins, async (newPlugins) => {
     // Handle the optimize now action
     const handleOptimizeNow = async (plugin) => {
       try {
-        // Set both the plugin state and settings to enabled
-        plugin.enable_deactivation = 'yes';
-        const existingSettings = store.settings[plugin.id] || {
-          enable_deactivation: 'yes',
-          device_type: 'all',
-          condition_type: 'disable_on_selected',
-          uri_type: 'page',
-          post_types: ['page', 'post'],
-          posts: [],
-          pages: [],
-          condition_list: {
-            name: ['uri_equals'],
-            value: [''],
-          }
-        };
+        loadingPlugins.value.add(plugin.id)
         
-        existingSettings.enable_deactivation = 'yes';
-        await store.updatePluginSettings(plugin.id, existingSettings);
-        ElNotification({
-          title: "Success",
-          message: 'Plugin optimized successfully',
-          type: 'success',
-          position: 'top-right',
-          duration: 3000
-        });
+        // First, try to fetch existing settings from the store
+        let existingSettings = store.settings[plugin.id];
+        
+        // If no settings in store, try to fetch from API
+        // if (!existingSettings || Object.keys(existingSettings).length === 0) {
+        //   try {
+        //     existingSettings = await store.fetchPluginSettings(plugin.id);
+        //   } catch (error) {
+        //     console.log('No existing settings found, will create default ones');
+        //   }
+        // }
+        
+        // If existing settings exist, preserve them and just enable
+        if (existingSettings && Object.keys(existingSettings).length > 0) {
+          // Preserve all existing settings, just change the enable_deactivation flag
+          existingSettings = {
+            ...existingSettings,
+            enable_deactivation: 'yes'
+          }
+        } else {
+          // Only create default settings if no settings exist at all
+          existingSettings = {
+            enable_deactivation: 'yes',
+            device_type: 'all',
+            condition_type: 'disable_on_selected',
+            uri_type: 'page',
+            post_types: ['page', 'post'],
+            posts: [],
+            pages: [],
+            condition_list: {
+              name: ['uri_equals'],
+              value: [''],
+            }
+          }
+        }
+        
+        // Update plugin settings
+        const response = await store.updatePluginSettings(plugin.id, existingSettings)
+        
+        if (response) {
+          ElNotification({
+            title: 'Success',
+            message: 'Plugin optimized successfully',
+            type: 'success',
+          })
+          
+          // Update local plugin data
+          const pluginIndex = plugins.value.findIndex(p => p.id === plugin.id)
+          if (pluginIndex !== -1) {
+            plugins.value[pluginIndex] = {
+              ...plugins.value[pluginIndex],
+              enable_deactivation: 'yes',
+              settings: existingSettings
+            }
+          }
+        }
       } catch (error) {
-        plugin.enable_deactivation = 'no';
+        console.error('Error enabling plugin:', error)
         ElNotification({
-          title: "Error",
-          message: 'Failed to optimize plugin',
+          title: 'Error',
+          message: error.message || 'Failed to enable plugin',
           type: 'error',
-          position: 'top-right',
-          duration: 3000
-        });
-        console.error('Error optimizing plugin:', error);
+        })
+        // Revert the state on error
+        plugin.enable_deactivation = 'no'
+      } finally {
+        loadingPlugins.value.delete(plugin.id)
       }
     };
-
     // Toggle plugin loading status (now only handles disable)
     const togglePluginLoading = async (plugin) => {
       try {
-        // Only handle disabling here
-        plugin.enable_deactivation = 'no';
+        loadingPlugins.value.add(plugin.id)
         
         // Get existing settings
         let existingSettings = store.settings[plugin.id];
@@ -254,7 +370,10 @@ watch(() => store.plugins, async (newPlugins) => {
           existingSettings = {
             enable_deactivation: 'no',
             device_type: 'all',
+            frontend_status: false,
+            backend_status: false,
             condition_type: 'disable_on_selected',
+            backend_condition_type: 'disable_on_selected',
             uri_type: 'page',
             post_types: ['page', 'post'],
             posts: [],
@@ -273,7 +392,7 @@ watch(() => store.plugins, async (newPlugins) => {
         
         // Update the plugin's local settings
         plugin.settings = existingSettings;
-        
+        plugin.enable_deactivation = 'no';
         ElNotification({
           title: "Success",
           message: 'Plugin optimization disabled successfully',
@@ -281,6 +400,8 @@ watch(() => store.plugins, async (newPlugins) => {
           position: 'top-right',
           duration: 3000
         });
+        // Only handle disabling here
+
       } catch (error) {
         // Revert the UI change if the API call fails
         plugin.enable_deactivation = 'yes';
@@ -292,6 +413,8 @@ watch(() => store.plugins, async (newPlugins) => {
           duration: 3000
         });
         console.error('Error toggling plugin loading:', error);
+      } finally {
+        loadingPlugins.value.delete(plugin.id)
       }
     }
 
@@ -304,6 +427,9 @@ watch(() => store.plugins, async (newPlugins) => {
     // Save plugin settings 
     const savePluginSettings = async (data) => {
       try {
+        // Don't add to loadingPlugins here since the modal handles its own loading state
+        // loadingPlugins.value.add(data.plugin.id) // Remove this line
+        
         const { plugin, settings } = data
         
         // Always enable the plugin when saving settings from modal
@@ -314,6 +440,7 @@ watch(() => store.plugins, async (newPlugins) => {
         const pluginIndex = plugins.value.findIndex(p => p.id === plugin.id)
         if (pluginIndex !== -1) {
           plugins.value[pluginIndex].settings = { ...settings }
+          plugins.value[pluginIndex].enable_deactivation = 'yes'
         }
         
         ElNotification({
@@ -323,7 +450,7 @@ watch(() => store.plugins, async (newPlugins) => {
           position: 'top-right',
           duration: 3000
         });
-        showSettings.value = false; // Close the modal after saving
+        
       } catch (error) {
         ElNotification({
           title: "Error",
@@ -364,8 +491,12 @@ watch(() => store.plugins, async (newPlugins) => {
 
     .htpm-plugins-actions {
       display: flex;
+      gap: 1rem;
       align-items: center;
-      gap: 12px;
+      
+      .filter-select {
+        width: 150px;
+      }
     }
   }
 
@@ -470,6 +601,12 @@ watch(() => store.plugins, async (newPlugins) => {
             color: #409eff;
             border-color: #409eff;
           }
+
+          &.is-loading {
+            .el-icon {
+              animation: spin 1s linear infinite;
+            }
+          }
         }
       }
     }
@@ -512,6 +649,33 @@ watch(() => store.plugins, async (newPlugins) => {
           &:hover:not(.is-active) {
             background-color: #f0f2f5;
           }
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    background: #ffffff;
+    border-radius: 4px;
+    margin: 20px 0;
+    padding: 40px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+    .custom-empty {
+      :deep(.el-empty__description) {
+        margin-top: 0px;
+        
+        h3 {
+          font-size: 16px;
+          font-weight: 500;
+          color: #1f2937;
+          margin: 0 0 8px;
+        }
+
+        .empty-description {
+          font-size: 14px;
+          color: #6b7280;
+          margin: 0;
         }
       }
     }
@@ -669,6 +833,50 @@ watch(() => store.plugins, async (newPlugins) => {
         }
       }
     }
+  }
+}
+</style>
+<style lang="scss">
+.settings-button.is-loading .el-icon {
+  animation: spin 1s linear infinite;
+}
+.plugin-switch .el-icon.is-loading svg path{
+  stroke: #409eff;
+  fill: #409eff;
+}
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+.plugin-status-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.plugin-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #909399;
+
+    &.active {
+      background: #10b981;
+    }
+  }
+
+  .status-text {
+    font-size: 11px;
+    color: #909399;
   }
 }
 </style>

@@ -9,6 +9,7 @@ if (!class_exists('WP_REST_Response')) {
  * Register custom REST API endpoints for plugin management
  */
 function htpm_register_rest_routes() {
+
     // Bulk settings endpoint
     register_rest_route('htpm/v1', '/plugins/settings', [
         'methods' => WP_REST_Server::READABLE,
@@ -46,7 +47,7 @@ function htpm_register_rest_routes() {
     ]);
     
     // Get sidebar content endpoint
-    register_rest_route('htpm/v1', '/sidebar', [
+    register_rest_route('htpm/v1', '/sidebar-content', [
         'methods' => 'GET',
         'callback' => 'htpm_get_sidebar_content',
         'permission_callback' => function() {
@@ -98,35 +99,12 @@ function htpm_register_rest_routes() {
         }
     ]);
     
-    register_rest_route('htpm/v1', '/sidebar-content', [
-        'methods' => 'GET',
-        'callback' => 'htpm_get_sidebar_content',
-        'permission_callback' => function() {
-            return current_user_can('activate_plugins');
-        }
-    ]);
-    // Get dashboard  Settings endpoint
-    // register_rest_route('htpm/v1', '/get-dashboard-settings', [
-    //     'methods' => 'GET',
-    //     'callback' => 'htpm_get_dashboard_settings',
-    //     'permission_callback' => function() {
-    //         return current_user_can('edit_posts');
-    //     }
-    // ]);
     // Update dashboard  Settings endpoint
     register_rest_route('htpm/v1', '/update-dashboard-settings', [
         'methods' => 'POST',
         'callback' => 'htpm_update_dashboard_settings',
         'permission_callback' => function() {
             return current_user_can('manage_options');
-        }
-    ]);
-    // Get all settings endpoint
-    register_rest_route('htpm/v1', '/get-all-settings', [
-        'methods' => 'GET',
-        'callback' => 'htpm_get_all_settings',
-        'permission_callback' => function() {
-            return current_user_can('edit_posts');
         }
     ]);
     
@@ -148,12 +126,17 @@ function htpm_get_all_plugin_settings($request) {
     foreach ($all_plugins as $plugin_path => $plugin_data) {
         $index++;
         if (in_array($plugin_path, $active_plugins)) {
+
+
             $plugin_settings = isset($options['htpm_list_plugins'][$plugin_path]) 
                 ? $options['htpm_list_plugins'][$plugin_path] 
                 : [
                     'enable_deactivation' => 'no',
                     'device_type' => 'all',
+                    'frontend_status' => false,
+                    'backend_status' => false,
                     'condition_type' => 'disable_on_selected',
+                    'backend_condition_type' => 'disable_on_selected',
                     'uri_type' => 'page',
                     'post_types' => ['page', 'post'],
                     'posts' => [],
@@ -163,6 +146,10 @@ function htpm_get_all_plugin_settings($request) {
                         'value' => [''],
                     ]
                 ];
+
+            if( ! isset( $plugin_settings['frontend_status'] ) && (isset( $plugin_settings['enable_deactivation'] ) && $plugin_settings['enable_deactivation'] == 'yes' ) ) {
+                $plugin_settings['frontend_status'] = true;
+            }
             $all_settings[$index] = $plugin_settings;
         }
     }
@@ -175,14 +162,6 @@ function htpm_get_all_plugin_settings($request) {
 
 add_action('rest_api_init', 'htpm_register_rest_routes');
 
-/**
- * Get all settings
- */
-function htpm_get_all_settings() {
-    $options = get_option('htpm_options', []);
-    return new WP_REST_Response($options, 200);
-}
-
 
 /**
  * Get selected post types
@@ -191,21 +170,6 @@ function htpm_get_selected_post_types() {
     $options = get_option('htpm_dashboard_options', [
         'htpm_dashboard_settings' => [
             'selectedPostTypes' => []
-        ]
-    ]);
-    return new WP_REST_Response($options, 200);
-}
-
-/**
- * Get dashboard  Settings
- */
-function htpm_get_dashboard_settings() {
-    $options = get_option('htpm_dashboard_options', [
-        'htpm_dashboard_settings' => [
-            'selectedPostTypes' => [],
-            'numberOfPosts' => 150,
-            'showThumbnails' => true,
-            'itemsPerPage' => 10
         ]
     ]);
     return new WP_REST_Response($options, 200);
@@ -304,22 +268,10 @@ function htpm_get_plugins() {
         }
         
         // Get plugin icon
-        $icon_url =  '';
-
-        if ( isset($htpm_options['showThumbnails']) && $htpm_options['showThumbnails'] == true ) {
-            $plugin_slug = dirname($plugin_path);
-            $base_url = 'https://ps.w.org/' . $plugin_slug . '/assets/';
-            $icon_base = 'icon-128x128';
-            $extensions = ['png', 'jpg','gif', 'svg'];
-        
-            foreach ($extensions as $ext) {
-                $file_url = $base_url . $icon_base . '.' . $ext;
-                $response = wp_remote_head($file_url);
-                if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
-                    $icon_url = $file_url;
-                    break; // Stop at the first found file
-                }
-            }
+        $icon_url = '';
+        // Use optimized icon loading
+        if ($is_wp_active ) {
+            $icon_url = htpm_get_plugin_icon($plugin_path, $htpm_options['showThumbnails'] ?? false);
         }
         
         // Check if plugin has custom settings for deactivation
@@ -387,12 +339,14 @@ function htpm_get_plugin_settings($request) {
     // Check if plugin is active in WordPress
     $is_wp_active = in_array($plugin_path, $active_plugins);
     
-    // Create default settings if none exist - DEFAULT TO DISABLED
+    // Create default settings if none exist - INCLUDING BACKEND FIELDS
     if (empty($plugin_settings)) {
         $plugin_settings = [
-            'enable_deactivation' => 'no', // Default to disabled
+            // Frontend settings
+            'enable_deactivation' => 'no',
             'device_type' => 'all',
             'condition_type' => 'disable_on_selected',
+            'backend_condition_type' => 'disable_on_selected',
             'uri_type' => 'page',
             'post_types' => ['page', 'post'],
             'posts' => [],
@@ -400,13 +354,38 @@ function htpm_get_plugin_settings($request) {
             'condition_list' => [
                 'name' => ['uri_equals'],
                 'value' => [''],
-            ]
+            ],
+            // Backend settings
+            'admin_scope' => [],
+            'backend_pages' => [],
+            'backend_condition_list' => [
+                'name' => ['admin_page_equals'],
+                'value' => [''],
+            ],
         ];
+    } else {
+        // Ensure backend fields exist in existing settings
+        if (!isset($plugin_settings['admin_scope'])) {
+            $plugin_settings['admin_scope'] = [];
+        } else {
+            // Convert string to array for backward compatibility
+            if (is_string($plugin_settings['admin_scope'])) {
+                $plugin_settings['admin_scope'] = [$plugin_settings['admin_scope']];
+            }
+        }
+        if (!isset($plugin_settings['backend_pages'])) {
+            $plugin_settings['backend_pages'] = [];
+        }
+        if (!isset($plugin_settings['backend_condition_list'])) {
+            $plugin_settings['backend_condition_list'] = [
+                'name' => ['admin_page_equals'],
+                'value' => [''],
+            ];
+        }
     }
     
     return new WP_REST_Response($plugin_settings, 200);
 }
-
 /**
  * Update plugin settings
  */
@@ -446,11 +425,22 @@ function htpm_update_plugin_settings($request) {
     // Sanitize and validate the settings
     $sanitized_settings = [];
     
-    // Basic settings
+    // Basic frontend settings
     $sanitized_settings['enable_deactivation'] = sanitize_text_field($settings['enable_deactivation'] ?? 'no');
     $sanitized_settings['device_type'] = sanitize_text_field($settings['device_type'] ?? 'all');
     $sanitized_settings['condition_type'] = sanitize_text_field($settings['condition_type'] ?? 'disable_on_selected');
+    $sanitized_settings['backend_condition_type'] = sanitize_text_field($settings['backend_condition_type'] ?? 'disable_on_selected');
     $sanitized_settings['uri_type'] = sanitize_text_field($settings['uri_type'] ?? 'page');
+    // Status fields
+    $sanitized_settings['frontend_status'] = isset( $settings['frontend_status']) ? (bool)$settings['frontend_status'] : false;
+    $sanitized_settings['backend_status'] = isset($settings['backend_status']) ? (bool)$settings['backend_status'] : false;
+    // Backend specific settings
+    //$sanitized_settings['admin_scope'] = sanitize_text_field($settings['admin_scope'] ?? 'all_admin');
+    if (isset($settings['admin_scope']) && is_array($settings['admin_scope'])) {
+        $sanitized_settings['admin_scope'] = array_map('sanitize_text_field', $settings['admin_scope']);
+    } else {
+        $sanitized_settings['admin_scope'] = [];
+    }
     
     // Arrays need special handling
     if (isset($settings['post_types']) && is_array($settings['post_types'])) {
@@ -471,6 +461,14 @@ function htpm_update_plugin_settings($request) {
         $sanitized_settings['posts'] = [];
     }
     
+    // Backend pages array
+    if (isset($settings['backend_pages']) && is_array($settings['backend_pages'])) {
+        $sanitized_settings['backend_pages'] = array_map('sanitize_text_field', $settings['backend_pages']);
+    } else {
+        $sanitized_settings['backend_pages'] = [];
+    }
+    
+    
     // Handle custom post types
     $post_types = get_post_types(['public' => true], 'names');
     foreach ($post_types as $post_type) {
@@ -482,14 +480,13 @@ function htpm_update_plugin_settings($request) {
         }
     }
     
-    // Handle condition list
+    // Handle frontend condition list
     if (isset($settings['condition_list']) && is_array($settings['condition_list'])) {
         $sanitized_settings['condition_list'] = [
             'name' => [],
             'value' => []
         ];
         
-        // Ensure both arrays exist
         if (isset($settings['condition_list']['name']) && is_array($settings['condition_list']['name'])) {
             $sanitized_settings['condition_list']['name'] = array_map('sanitize_text_field', $settings['condition_list']['name']);
         } else {
@@ -504,6 +501,31 @@ function htpm_update_plugin_settings($request) {
     } else {
         $sanitized_settings['condition_list'] = [
             'name' => ['uri_equals'],
+            'value' => ['']
+        ];
+    }
+    
+    // Handle backend condition list
+    if (isset($settings['backend_condition_list']) && is_array($settings['backend_condition_list'])) {
+        $sanitized_settings['backend_condition_list'] = [
+            'name' => [],
+            'value' => []
+        ];
+        
+        if (isset($settings['backend_condition_list']['name']) && is_array($settings['backend_condition_list']['name'])) {
+            $sanitized_settings['backend_condition_list']['name'] = array_map('sanitize_text_field', $settings['backend_condition_list']['name']);
+        } else {
+            $sanitized_settings['backend_condition_list']['name'] = ['admin_page_equals'];
+        }
+        
+        if (isset($settings['backend_condition_list']['value']) && is_array($settings['backend_condition_list']['value'])) {
+            $sanitized_settings['backend_condition_list']['value'] = array_map('sanitize_text_field', $settings['backend_condition_list']['value']);
+        } else {
+            $sanitized_settings['backend_condition_list']['value'] = [''];
+        }
+    } else {
+        $sanitized_settings['backend_condition_list'] = [
+            'name' => ['admin_page_equals'],
             'value' => ['']
         ];
     }
@@ -650,4 +672,51 @@ function htpm_get_sidebar_content() {
             ['status' => 500]
         );
     }
+}
+
+
+/**
+ * PERFORMANCE OPTIMIZATION: Get plugin icon with enhanced caching and error handling
+ */
+function htpm_get_plugin_icon($plugin_path, $show_thumbnails = false) {
+    if (!$show_thumbnails) {
+        return '';
+    }
+    
+    $plugin_slug = dirname($plugin_path);
+    
+    // Skip for single-file plugins
+    if ($plugin_slug === '.') {
+        return '';
+    }
+    
+    // Check cache first
+    $cache_key = 'htpm_plugin_icon_' . md5($plugin_slug);
+    $cached_icon = get_transient($cache_key);
+    
+    if ($cached_icon !== false) {
+        return $cached_icon === 'none' ? '' : $cached_icon;
+    }
+    
+    // Your original logic, just with timeout added
+    $base_url = 'https://ps.w.org/' . $plugin_slug . '/assets/';
+    $icon_base = 'icon-128x128';
+    $extensions = ['png', 'jpg','gif', 'svg'];
+    $icon_url = '';
+    
+    foreach ($extensions as $ext) {
+        $file_url = $base_url . $icon_base . '.' . $ext;
+        $response = wp_remote_head($file_url, [
+            'timeout' => 3 // Just add timeout to prevent hanging
+        ]);
+        if (!is_wp_error($response) && wp_remote_retrieve_response_code($response) === 200) {
+            $icon_url = $file_url;
+            break;
+        }
+    }
+    
+    // Cache result for 1 day
+    set_transient($cache_key, $icon_url ?: 'none', DAY_IN_SECONDS);
+    
+    return $icon_url;
 }

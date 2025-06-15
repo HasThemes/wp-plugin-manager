@@ -24,35 +24,7 @@ class HTPM_Option_Page {
 		add_action( 'admin_menu',  [ $this,'admin_menu'] );
 		add_action( 'admin_footer', [$this, 'pro_menu_scripts'], 11 );
 		add_action( 'admin_footer', [$this, 'pro_notice_content'] );
-		//add_action( 'admin_init', [$this, 'settings_init'] );
-		add_action( 'admin_enqueue_scripts', [$this, 'enqueue_scripts'] );
-		//var_dump(get_option('htpm_options'));
     }
-
-    /**
-     * Enqueue scripts and styles for the plugin manager
-     */
-    public function enqueue_scripts($hook) {
-        if ('toplevel_page_htpm-options' !== $hook) {
-            return;
-        }
-
-        // Enqueue Vue app assets and styles
-        add_action('admin_head', function() {
-            printf(
-                '<link rel="stylesheet" href="%s">',
-                esc_url(HTPM_ROOT_URL . '/assets/dist/css/style.css')
-            );
-        });
-
-        add_action('admin_print_footer_scripts', function() {
-            printf(
-                '<script type="module" src="%s"></script>',
-                esc_url(HTPM_ROOT_URL . '/assets/dist/js/main.js')
-            );
-        });
-    }
-
 	/**
 	 * Adds admin menu for WP Plugin Manager
 	 * @return void
@@ -144,14 +116,6 @@ class HTPM_Option_Page {
 		do_action('htpm_admin_notices');
 		// Render Vue app container
 		echo '<div id="htpm-app"></div>';
-				//Add styles to hide default WordPress notices
-			// 	echo '<style>
-			// 	.wrap > .notice { display: none !important; }
-			// 	.wrap > #message { display: none !important; }
-			// 	.wrap > h1 { display: none !important; }
-			// 	#wpbody-content > .notice { display: none !important; }
-			// 	#wpbody-content > #message { display: none !important; }
-			// </style>';
 	}
 
 }
