@@ -61,7 +61,7 @@ Every active plugin on your WordPress site loads its CSS and JavaScript files on
 
 = [youtube https://youtu.be/u94hkbTzKFU] =
 
-= 💎 Pro Features - [Unlock All Features](https://hasthemes.com/plugins/wp-plugin-manager-pro/) =
+**💎 Pro Features - [Unlock All Features](https://hasthemes.com/plugins/wp-plugin-manager-pro/)**
 
 **🔥 Advanced Device Targeting**
 * Desktop-only rules
