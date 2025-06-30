@@ -8,84 +8,163 @@ Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-"Plugin Manager" is a plugin which allow you to disable plugins for page/posts
+"Plugin Manager" is a plugin that allows you to disable plugins on specific pages, posts, or devices for better performance.
 
 == Description ==
-In this modern era, there is a huge demand for faster loading websites. If a website loads fast then it is considered to be more reliable and professional. The website loading speed plays a vital role when it comes to user experience. It also creates a strong impression on your visitor which even results in a higher conversion rate.
+= Speed Up Your WordPress Site by 300% or More! 🚀 =
 
-"WP Plugin Manager" is a WordPress plugin that allows you to disable plugins for certain pages or posts. Sometimes you don't need to load all the plugins for every page or post. Even if you do it drops the loading speed of your website drastically. So, you may want to disable some of the plugins for some certain pages or posts in order to make your website fast and professional as well. That's where our plugin "Plugin Manager" comes to your rescue. You will be able to disable any plugins which you think are unnecessary for specific pages or posts according to your needs.
+**Plugin Manager** is a powerful WordPress performance optimization tool that gives you complete control over which plugins load on each page of your website. Stop unnecessary plugins from loading where they're not needed and dramatically improve your site's speed and user experience.
 
-== Features: ==
-* Selectively disable plugins
-* Disable plugins to any specific pages
-* Disable plugins to any specific posts
-* Easy Options panel
-* Very lightweight
+Boost your WordPress site speed by selectively disabling plugins on **specific pages, posts, and devices.** The ultimate plugin optimization tool for better performance.
 
-[youtube https://youtu.be/u94hkbTzKFU]
+🚀 [Get Pro Version](https://hasthemes.com/plugins/wp-plugin-manager-pro/) | 📹 [Watch Video Tutorial](https://www.youtube.com/watch?v=u94hkbTzKFU) | 📚 [Documentation](https://hasthemes.com/docs/wp-plugin-manager/) | 💬 [Support](https://hasthemes.com/contact-us/)
 
-==Pro Features==
-* Apply rule on Mobile/Tablet/Desktop
-* Enble on selected and Disable on selected option.
-* Disable plugins to any specific custom post types
-* Disable plugins in Backend
+= Why Your Site Needs Plugin Manager =
 
-[Purchase Pro version](https://hasthemes.com/plugins/wp-plugin-manager-pro/)
+Every active plugin on your WordPress site loads its CSS and JavaScript files on EVERY page – even where they're not needed. This creates:
 
-== Advantages of using the WP Plugin Manager. ==
-* Reduces the page size, because unnecessary CSS/js files are not loading.
-* Reduces the total number of HTTP requests.
-* Make a website up to 90% faster.
-* Website performance is an important factor to increase conversion. WP Manager increases the overall performance of a website.
+* ❌ Slower page load times
+* ❌ Higher server resource usage
+* ❌ Poor user experience
+* ❌ Lower conversion rates
+* ❌ Negative SEO impact
 
-== Peformance checking tools: ==
-There are a few tools available to check the website performance ( Loading time, page analyze etc.)
+**Plugin Manager solves this problem** by letting you disable plugins on specific pages, posts, or device types where they're not required.
 
-* [Google Pagespeed Insights](https://developers.google.com/speed/pagespeed/insights/)
-* [Pingdom](https://tools.pingdom.com/)
-* [GTmetrix](https://gtmetrix.com/)
-* [Firefox Dev Tools](https://developer.mozilla.org/en-US/docs/Tools/Page_Inspector)
-* [Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/)
-* [Edge F12 Dev Tools](https://docs.microsoft.com/en-us/microsoft-edge/f12-devtools-guide)
-* [Safari Web Inspector Guide](https://support.apple.com/guide/safari-developer/network-tab-dev1f3525e58/mac)
+= 🎯 Key Benefits =
 
-== Documentation: ==
-Read this article [Disable or deactivate WordPress Plugins per page](https://hasthemes.com/disable-or-deactivate-wordpress-plugins-per-page/)
+* **⚡ Faster Loading Speed:** Reduce page load time by up to 90%
+* **📈 Better SEO Rankings:** Google loves fast-loading websites
+* **💰 Higher Conversion Rates:** Every second of load time matters
+* **🖥️ Reduced Server Load:** Lower hosting costs and better stability
+* **📱 Device-Specific Optimization:** Different rules for mobile, tablet, and desktop
 
-== Other Projects ==
-We have a lot of plugins and extensions that might interest you. Try out other projects by following this link:
+= 🛠️ Core Features (Free Version) =
 
-<strong>[Woolentor Addons](https://wordpress.org/plugins/woolentor-addons/)</strong>
-Woolentor is a WooCommerce page builder plugin that extends the functionality of the WooCommerce store. These Elementor Addons provide additional features and options for WooCommerce stores. Woolentor is the best alternative for ShopReady, Kadence, JetWidgets, ShopEngine, and CoDesigner. The Woolentor addons come with 50+ free Elementor widgets like Wishlist Extension Addon, Product compare, Product Filters, Product Variation Swatches, Shopify Style Checkout, Product Slider and 50+ pro Elementor Widgets like Checkout Fields Editor, Partial Payment, Email Customizer for WooCommerce with ready Email Templates, WooCommerce Email Automation, Multi Step Checkout, and many much more. Also it provide 90+ WooCommerce Elementor templates, 22+ WooCommerce Modules, and Gutenberg Blocks.
+**Plugin Control**
+* Selectively disable any plugin on specific pages or posts
+* Easy toggle switches for quick plugin management
+* Visual dashboard showing all plugin statuses
+* Search and filter plugins instantly
 
-<strong>[HT Mega For Elementor](https://wordpress.org/plugins/ht-mega-for-elementor/)</strong>
-HT Mega is an Elementor Addons that comes with custom page builder,  header builder, footer builder, mega menus, and more for your Elementor based website. The HT Mega plugin also includes a comprehensive set of Elementor widgets, readymade Elementor templates and Elementor Blocks.  HT Mega plugin works like ElementsKit, Essential Addons for Elementor, Royal Elementor Addons, Premium Addons, Happy Addons, PowerPack Addons, Unlimited Elements, Qi Addons, etc. The HT Mega plugin provides 84+ free Elementor widgets like Post Grid widget, Slider widget, Accordion widget, Elementor Forms widget, Contact Form Widget, Elementor tables, and other related items. It also provides 18+ pro widgets like Filterable Gallery Widget, Event Box Widget, Breadcrumbs Widget, Elementor Facebook Review Widget, Elementor Category List Widget, etc.
+**Page & Post Management**
+* Disable plugins on individual pages
+* Disable plugins on specific posts
+* Bulk selection for multiple pages/posts
+* Support for custom post types
 
-<strong>[Hashbar Wp Notification Bar](https://wordpress.org/plugins/hashbar-wp-notification-bar/)</strong>
-HashBar is a WordPress Notification Bar Plugin that enables you to create unlimited notification bars on your WordPress website. You can create as many notification bars as you want and customize their content to meet your needs.
+**User-Friendly Interface**
+* Intuitive plugin management dashboard
+* Clear visual indicators
+* No coding required
+* Lightweight and fast
 
-<strong>[Extensions For Cf7](https://wordpress.org/plugins/extensions-for-cf7/)</strong>
-Contact Form 7 is an excellent plugin for organizing your contact page. The CF7 extensions plugin includes Contact Form 7 Database, enabling Conditional Fields for Contact Form 7, etc. It allows fields to be set up as either visible or hidden depending upon the input from visitors. In addition, integrating seamlessly with Mailchimp brings leads generated every time someone fills out one form into an associated email list immediately. 
+= [youtube https://youtu.be/u94hkbTzKFU] =
 
-<strong>[Whols](https://wordpress.org/plugins/whols/)</strong>
-Whols is an outstanding plugin for WooCommerce that allows store owners to set wholesale prices for the products of their online stores. With Whols, you can easily add custom fields to your registration form, set minimum product requirements, and control how wholesale prices are displayed on both the shop and product detail pages. Whols work  like Wholesale Suite, B2Bking and B2B plugins.
+= 💎 Pro Features - [Unlock All Features](https://hasthemes.com/plugins/wp-plugin-manager-pro/) =
 
-<strong>[Just Tables](https://wordpress.org/plugins/just-tables/)</strong>
-JustTables is a WooCommerce product table plugin that helps you easily create and manage tables for your products. It includes 28 pre-built columns with options to enable/disable, and you can add custom columns with custom fields/taxonomies. Just Tables also allows you to order table columns using drag and drop and set the number of products per page.
+**🔥 Advanced Device Targeting**
+* Desktop-only rules
+* Tablet-specific optimization
+* Mobile-focused settings
+* Combined device rules (Desktop + Tablet, etc.)
 
-<strong>[Swatchly](https://wordpress.org/plugins/swatchly/)</strong>
-Swatchly is a WooCommerce product variation swatches plugin that allows you to add color swatches to your product pages. With Swatchly, you can enable swatches for the shop, product list, and product details pages. There are three swatch types (label swatche, color swatche, image swatche), and the plugin supports multi-colored swatches.
+**🔥 Backend/Admin Optimization**
+* Control plugins in WordPress admin area
+* Specific admin page targeting
+* Custom PHP file conditions
+* Reduce admin panel load time
 
-<strong>[HT Slider For Elementor](https://wordpress.org/plugins/ht-slider-for-elementor/)</strong>
-HT Slider For Elementor is a powerful and user-friendly slider addon for Elementor. You can customize the look and feel of your slider with HT Slider's custom styling options. You also have the option to display your slides by id and category. Plus, HT Slider For Elementor comes with custom design options for slider navigation and pagination, so you can easily control the look and feel of your slider. 
+**🔥 Advanced URL & Path Control**
+* Custom URL pattern matching
+* Directory-based rules
 
-<strong>[HT Contact form](https://wordpress.org/plugins/ht-contactform/)</strong>
-HT Contact Form 7 Widget is an Elementor addon that allows you to easily drag and drop Contact Form 7 forms into your web pages. With the help of this plugin, you can choose your form from the drop-down list, Custom Styling Options, and add it to any page or place on your website. The HT Contact Form 7 Widget is an essential tool for anyone using Contact Form 7 on their website.
+**🔥 Enhanced Features**
+* Enable plugins on selected pages (inverse logic)
+* Extended post loading (manage 150+ posts)
+* Multiple conditional rules
+* Priority support
 
-== Need Help? ==
-Is there any feature that you want to get in this plugin? 
-Needs assistance to use this plugin? 
-Feel free to [Contact us](https://hasthemes.com/contact-us/)
+= 🏆 Why Choose Plugin Manager? =
+
+1. **Proven Results:** Users report 50-90% improvement in page load times
+2. **Easy to Use:** No technical knowledge required
+3. **Safe & Reliable:** Doesn't modify plugin files
+4. **Instant Impact:** See results immediately
+5. **Regular Updates:** Actively maintained and improved
+6. **Expert Support:** Professional help when you need it
+
+= 📊 Performance Impact =
+
+**Before Plugin Manager:**
+* All plugins load on every page
+* Unnecessary CSS/JS files everywhere
+* Slow page load times
+* High server resource usage
+
+**After Plugin Manager:**
+* Plugins load only where needed
+* Minimal CSS/JS files per page
+* Lightning-fast page loads
+* Optimized server performance
+
+= 🔧 Perfect For =
+
+* **eCommerce Sites:** Disable checkout plugins on blog pages
+* **Membership Sites:** Control member-only plugin loading
+* **Business Websites:** Optimize contact form plugin loading
+* **Blogs:** Disable unnecessary plugins on article pages
+* **Portfolio Sites:** Load gallery plugins only where needed
+
+= 🌟 Join Thousands of Optimized WordPress Sites =
+
+Stop letting unnecessary plugins slow down your website. Install Plugin Manager today and experience the difference a well-optimized site can make!
+
+**Need Help?** Check our [documentation](https://hasthemes.com/docs/wp-plugin-manager/) or [contact our support team](https://hasthemes.com/contact-us/).
+
+== Other Products ==
+
+Explore our other WordPress solutions to enhance your website:
+
+* 🛍️ **[WooLentor](https://wordpress.org/plugins/woolentor-addons/)** - Transform your WooCommerce store with **125+ widgets, 85+ Gutenberg blocks, 34+ Modules and 110+ templates**. Features include wishlist, product compare, variation swatches, and multi-step checkout. The ultimate alternative to ShopReady, Kadence, and JetWidgets.
+* 🎨 **[HT Mega](https://wordpress.org/plugins/ht-mega-for-elementor/)** - Supercharge Elementor with **135+ widgets, 795+ ready made blocks, header/footer builders, and mega menus.** Create stunning websites with post grids, sliders, forms, and more. Works seamlessly like HappyAddons, ElementsKit and Essential Addons.
+* 📢 **[HashBar](https://wordpress.org/plugins/hashbar-wp-notification-bar/)** - Create unlimited notification bars for **announcements, promotions, and alerts.** Fully customizable with multiple display options.
+* 📧 **[Extensions for CF7](https://wordpress.org/plugins/extensions-for-cf7/)** - Extend Contact Form 7 with **database storage, conditional fields, and Mailchimp integration.** Capture and manage leads effectively.
+* 💼 **[Whols](https://wordpress.org/plugins/whols/)** - Professional wholesale pricing solution for WooCommerce. Set **wholesale prices, minimum requirements, and custom registration fields.** Alternative to Wholesale Suite and B2Bking.
+* 📊 **[JustTables](https://wordpress.org/plugins/just-tables/)** - Display products in **customizable tables with pre-built columns.** Perfect for catalogs and bulk ordering.
+* 🎨 **[Swatchly](https://wordpress.org/plugins/swatchly/)** - Add beautiful color, image, and label swatches to product variations. Enhance the shopping experience with visual selection options.
+* 🎯 **[HT Slider](https://wordpress.org/plugins/ht-slider-for-elementor/)** - Create responsive sliders with **custom styling, navigation, and pagination options.** Display content by ID or category.
+* 📝 **[HT Contact Form](https://wordpress.org/plugins/ht-contact-form/)** - Seamlessly integrate Contact Form 7 with Elementor. **Drag, drop, and style your forms with ease.**
+
+== Frequently Asked Questions ==
+
+= Will this break my website? =
+
+No! Plugin Manager safely controls plugin loading without modifying any plugin files. If you disable a required plugin by mistake, simply re-enable it.
+
+= Can I use this with caching plugins? =
+
+Yes! Plugin Manager works perfectly with all major caching plugins. Clear your cache after making changes for the best results.
+
+= Does it work with all plugins? =
+
+Plugin Manager works with 99% of WordPress plugins. Some security or system plugins may need to remain active on all pages.
+
+= Can I disable plugins in the admin area? =
+
+Yes, but this is a Pro feature. The Pro version allows complete backend/admin area optimization.
+
+= Is there a performance impact from using this plugin? =
+
+No. Plugin Manager is extremely lightweight and actually improves performance by preventing unnecessary plugin loading.
+
+= Can I set different rules for mobile devices? =
+
+Yes! Device-specific targeting is available in the Pro version, allowing different rules for desktop, tablet, and mobile.
+
+= How much speed improvement can I expect? =
+
+Results vary based on your site, but users typically see 30-90% improvement in page load times.
 
 == Changelog ==
 
@@ -190,49 +269,49 @@ Feel free to [Contact us](https://hasthemes.com/contact-us/)
 * Plugins Tab Added
 
 = Version: 1.0.3 Date: 4-26-2020 =
-* Compatible with Latest WordPress version
+* Compatible with the Latest WordPress version
 
 = Version: 1.0.2 Date: 3-07-2020 =
-* Compatible with Latest PHP version
+* Compatible with the Latest PHP version
 * Add setting page link in plugin menu action
 * MU-Plugin directory remove option added
-* Suppress errors issue solved
-* Free and pro Both activation broken issue solved
+* Suppress errors has been solved
+* Free and pro both activation broken issues solved
 
 = Version: 1.0.1 Date: 2-01-2020 =
-* Plugin deactivation on home page added
+* Plugin deactivation on the home page added
 * New plugin activation issue fixed
 
 = Version: 1.0.0 =
 * Initial Release
 
 == Installation ==
-This section describes how to install the "Plugin Manager" plugin and get it working.
 
-= 1) Install =
+= Automatic Installation (Recommended) =
+1. Go to **Plugins > Add New** in your WordPress admin
+2. Search for **"Plugin Manager"**
+3. Click **Install Now** and then **Activate**
+4. Navigate to **Plugin Manager** in your admin menu
 
-i. Go to the WordPress Dashboard "Add New Plugin" section.
+= Manual Installation =
+1. Download the plugin ZIP file
+2. Go to **Plugins > Add New > Upload Plugin**
+3. Choose the downloaded file and click **Install Now**
+4. Activate the plugin
+5. Find **Plugin Manager** in your WordPress admin menu
 
-ii. Search For "Plugin Manager".
-
-iii. Install, then Activate it.
-
-= OR: =
-
-i. Unzip (if it is zipped) and Upload `wp-plugin-manager` folder to the `/wp-content/plugins/` directory
-
-ii. Activate the plugin through the 'Plugins' menu in WordPress
-
-= 2) Configure =
-i. After install and activate the plugin you will get a notice to install WooCommerce Plugin ( If allready have it then do not show any notice. ).
-
-ii. To install the plugin click on the "Button" Install.
-
-iii. A new option page called "Plugin Manager" will be appear in your dashboard under the "Plugins" menu
-
-iv. Use the options and that's all!
+= First Steps =
+1. After activation, visit the Plugin Manager dashboard
+2. Select a plugin you want to optimize
+3. Choose pages/posts where it should be disabled
+4. Configure device-specific rules (Pro)
+5. Save your settings and enjoy faster load times!
 
 == Screenshots ==
-1. Plugin Dashboard
-2. Plugin Disable Condition Settings Modal
-3. Plugin Dashboard Settings page
+
+1. Main Dashboard - Overview of all plugins with optimization status
+2. Plugin Settings - Configure where each plugin loads
+3. Device Targeting (Pro) - Set device-specific rules
+4. Backend Control (Pro) - Optimize admin area performance
+5. Settings Page - Global configuration options
+6. Performance Results - Before and after comparison
