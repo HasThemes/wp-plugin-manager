@@ -45,7 +45,10 @@
         v-for="plugin in filteredPlugins" 
         :key="plugin.id" 
         class="plugin-item"
-        :class="{ 'plugin-disabled': (plugin.enable_deactivation !== 'yes') }"
+        :class="{ 'plugin-disabled': (plugin.enable_deactivation !== 'yes')}"
+        :disabled="plugin.name.includes('WP Plugin Manager')"
+        :style="{ 'cursor': plugin.name.includes('WP Plugin Manager') ? 'not-allowed' : 'pointer', 'opacity': plugin.name.includes('WP Plugin Manager') ? '0.5' : '1'}"
+
       >
         <div class="plugin-info">
           <div class="plugin-icon-image default">
@@ -103,6 +106,7 @@
             width="300"
             padding="8px 12px 12px"
             popper-class="plugin-optimize-popconfirm"
+            :disabled="plugin.name.includes('WP Plugin Manager')"
           >
             <template #reference>
               <el-switch
@@ -120,6 +124,7 @@
             class="settings-button"
             :class="{ 'active-settings': plugin.enable_deactivation == 'yes' }"
             @click="openSettings(plugin)"
+            :disabled="plugin.name.includes('WP Plugin Manager')"
           />
         </div>
       </div>

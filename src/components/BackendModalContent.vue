@@ -46,38 +46,6 @@
       <div class="field-desc">{{ modalSettingsFields?.admin_scope?.description }}</div>
     </div>
 
-    <!-- Backend Page Selection with Grouped Options -->
-    <div class="form-field">
-      <label>{{ modalSettingsFields?.page_selection?.label || 'Select Admin Pages: ' }}</label>
-      <el-select 
-        v-model="pluginSettings.backend_pages" 
-        multiple 
-        filterable 
-        class="w-full" 
-        :loading="loadingBackendPages"
-        placeholder="Select admin pages..."
-      >
-        <!-- Group by WordPress admin sections -->
-        <template v-for="group in backendPageGroups" :key="group.label">
-          <el-option-group :label="group.label">
-            <el-option 
-              v-for="option in group.options" 
-              :key="option.value" 
-              :label="option.label" 
-              :value="option.value"
-              :disabled="modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value)"
-            >
-              <div class="admin-page-option">
-                <span class="page-title" :disabled="modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value)">{{ option.label + (modalSettingsFields?.page_selection?.pro?.includes( 'all_items' || option.value) ? ' (' + proLabel + ')' : '') }}</span>
-                <span class="page-url" v-if="option.url">{{ option.url }}</span>
-              </div>
-            </el-option>
-          </el-option-group>
-        </template>
-      </el-select>
-      <div class="field-desc">{{ modalSettingsFields?.page_selection?.description || 'Choose specific admin pages where you want to apply these settings.' }}</div>
-    </div>
-
     <!-- Custom Page Conditions (Specific Targeting) -->
     <div class="form-field">
       <label>{{ labels_texts?.custom_page_conditions || 'Custom Page Conditions:' }}</label>
