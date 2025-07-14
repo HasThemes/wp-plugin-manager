@@ -4,16 +4,16 @@ Tags: plugin manager, disable plugins, performance optimization, selective loadi
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-"Plugin Manager" is a plugin that allows you to disable plugins on specific pages, posts, or devices for better performance.
+"WP Plugin Manager" is a plugin that allows you to disable plugins on specific pages, posts, or devices for better performance.
 
 == Description ==
 = Speed Up Your WordPress Site by 300% or More! 🚀 =
 
-**Plugin Manager** is a powerful WordPress performance optimization tool that gives you complete control over which plugins load on each page of your website. Stop unnecessary plugins from loading where they're not needed and dramatically improve your site's speed and user experience.
+**WP Plugin Manager** is a powerful WordPress performance optimization tool that gives you complete control over which plugins load on each page of your website. Stop unnecessary plugins from loading where they're not needed and dramatically improve your site's speed and user experience.
 
 Boost your WordPress site speed by selectively disabling plugins on **specific pages, posts, and devices.** The ultimate plugin optimization tool for better performance.
 
@@ -167,6 +167,9 @@ Yes! Device-specific targeting is available in the Pro version, allowing differe
 Results vary based on your site, but users typically see 30-90% improvement in page load times.
 
 == Changelog ==
+= Version: 1.4.2 Date: 14 July 2025 =
+* Improved: Disabled WP Plugin Manager plugin from Manage Plugin List.
+* Fixed: A few minor issues.
 
 = Version: 1.4.1 Date: 15 June 2025 =
 * Added: Filter Option to optimized, Not Yet Optimized, Frontend Optimized and all plugins.

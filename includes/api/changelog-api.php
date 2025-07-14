@@ -182,11 +182,23 @@ class ChangeLog extends WP_REST_Controller {
     private function get_changelog_data() {
         return [
             [
+                'version' => '1.4.2',
+                'date'    => '2025-07-14',
+                'changes' => [
+                    'Improved' => [
+                        'Disabled WP Plugin Manager plugin from Manage Plugin List.',
+                    ],
+                    'Fixed' => [
+                        'A few minor issues.',
+                    ]
+                ],
+            ],
+            [
                 'version' => '1.4.1',
                 'date'    => '2025-06-15',
                 'changes' => [
                     'Added' => [
-                        'Filter Option to optimized, Not Yet Optimized, Frontend Optimized and All plugins.',
+                        'Filter Option to optimized, Not Yet Optimized, Frontend Optimized and all plugins in Manage PLugin List.',
                     ],
                     'Fixed' => [
                         'Fixed: A few minor issues.',
