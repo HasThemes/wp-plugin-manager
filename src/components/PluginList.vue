@@ -26,7 +26,7 @@
     <!-- Only show plugin list when loading is complete -->
     <div v-else class="plugin-list">
       <!-- Show empty state when no plugins are found -->
-      <div v-if="filteredPlugins.length === 0" class="empty-state">
+      <div v-if="filteredPlugins.length === 0 && !error && !loading" class="empty-state">
         <el-empty
           :image-size="200"
           class="custom-empty"
@@ -35,6 +35,19 @@
             <h3>No Plugins Found</h3>
             <p class="empty-description">
               {{ searchQuery || filterStatus !== 'all' ? 'Try adjusting your search or filter criteria' : 'No plugins are available at the moment' }}
+            </p>
+          </template>
+        </el-empty>
+      </div>
+      <div v-if="error" class="error-state">
+        <el-empty
+          :image-size="200"
+          class="custom-empty"
+        >
+          <template #description>
+            <h3>Error Fetching Plugins. Please try again</h3>
+            <p class="empty-description">
+              {{ error }}
             </p>
           </template>
         </el-empty>
@@ -166,7 +179,8 @@ const debouncedSearchQuery = ref('')
 const filterStatus = ref('all')
 const showSettings = ref(false)
 const selectedPlugin = ref(null)
-const loading = ref(true)
+const loading = computed(() => store.loading)
+const error = computed(() => store.error)
 const plugins = ref([])
 const pagination = reactive({
   currentPage: 1,
@@ -295,15 +309,6 @@ watch(() => store.plugins, async (newPlugins) => {
         
         // First, try to fetch existing settings from the store
         let existingSettings = store.settings[plugin.id];
-        
-        // If no settings in store, try to fetch from API
-        // if (!existingSettings || Object.keys(existingSettings).length === 0) {
-        //   try {
-        //     existingSettings = await store.fetchPluginSettings(plugin.id);
-        //   } catch (error) {
-        //     console.log('No existing settings found, will create default ones');
-        //   }
-        // }
         
         // If existing settings exist, preserve them and just enable
         if (existingSettings && Object.keys(existingSettings).length > 0) {

@@ -182,6 +182,19 @@ class ChangeLog extends WP_REST_Controller {
     private function get_changelog_data() {
         return [
             [
+                'version' => '1.4.3',
+                'date'    => '2025-07-29',
+                'changes' => [
+                    'Updated' => [
+                        'Language translation .pot file.',
+                    ],
+                    'Fixed' => [
+                        'Infinite loading issue when an error occurs while fetching the plugin list',
+                        'A few minor issues.',
+                    ]
+                ],
+            ],
+            [
                 'version' => '1.4.2',
                 'date'    => '2025-07-14',
                 'changes' => [

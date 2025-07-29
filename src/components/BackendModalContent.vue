@@ -1,5 +1,11 @@
 <template>
   <div class="backend-modal-content">
+    <!-- need to addd a notice that this is for backend -->
+    <div class="backend-notice" v-if="isPro">
+      <p class="warning-message">
+        <strong>⚠️ Important Notice:</strong> Please carefully consider before disabling plugins in the backend. If you disable a plugin that other plugins depend on, it may cause errors or functionality issues in your WordPress admin area. Make sure to test any changes in a staging environment first.
+      </p>
+    </div>
     <!-- Status Field -->
     <div class="form-field status-field">
         <div class="status-control">
@@ -358,6 +364,25 @@ const addBackendCondition = () => {
     
     &:not(.is-checked) .el-switch__core {
       background-color: #dcdfe6;
+    }
+  }
+}
+.backend-notice {
+  background-color: #fff8e5;
+  border-left: 4px solid #ffb900;
+  padding: 12px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  border-radius: 4px;
+
+  .warning-message {
+    margin: 0;
+    color: #72777c;
+    font-size: 14px;
+    line-height: 1.5;
+
+    strong {
+      color: #23282d;
     }
   }
 }

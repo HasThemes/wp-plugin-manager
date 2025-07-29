@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Plugin Manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-12 12:03+0000\n"
+"POT-Creation-Date: 2025-07-28 11:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Loco https://localise.biz/\n"
-"X-Loco-Version: 2.7.2; wp-6.8.1\n"
+"X-Loco-Version: 2.8.0; wp-6.8.2; php-8.2.26\n"
 "X-Domain: wp-plugin-manager"
 
 #: includes/api/admin-settings.php:313
@@ -32,11 +32,11 @@ msgstr ""
 msgid "Activated"
 msgstr ""
 
-#: plugin-main.php:216
+#: plugin-main.php:195
 msgid "Activating.."
 msgstr ""
 
-#: plugin-main.php:217
+#: plugin-main.php:196
 msgid "Active"
 msgstr ""
 
@@ -96,7 +96,7 @@ msgstr ""
 msgid "All Devices"
 msgstr ""
 
-#: plugin-main.php:179 plugin-main.php:205
+#: plugin-main.php:184
 msgid "All Items have been Loaded"
 msgstr ""
 
@@ -116,7 +116,7 @@ msgstr ""
 msgid "All Posts"
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:24
+#: includes/templates/sidebar-banner.php:23
 msgid "And So Much More!"
 msgstr ""
 
@@ -159,15 +159,11 @@ msgstr ""
 msgid "Backend Page Selection"
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:23
-msgid "Boost Site Speed with Smart Plugin Loading"
-msgstr ""
-
-#: plugin-main.php:186 plugin-main.php:212
+#: plugin-main.php:191
 msgid "Buy Now"
 msgstr ""
 
-#: plugin-main.php:220
+#: plugin-main.php:199
 msgid "BUY PRO"
 msgstr ""
 
@@ -206,6 +202,10 @@ msgid ""
 msgstr ""
 
 #: includes/templates/sidebar-banner.php:21
+msgid "Control Plugins Based on Mobile, Tablet, or Desktop Devices"
+msgstr ""
+
+#: includes/templates/sidebar-banner.php:20
 msgid "Control Plugins Based on URL or Path"
 msgstr ""
 
@@ -283,7 +283,7 @@ msgstr ""
 msgid "Display Settings"
 msgstr ""
 
-#: plugin-main.php:228 includes/api/admin-settings.php:56
+#: plugin-main.php:207 includes/api/admin-settings.php:56
 msgid "Documentation"
 msgstr ""
 
@@ -291,10 +291,6 @@ msgstr ""
 msgid ""
 "E.g. You can use 'contact-us' on URLs like https://example.com/contact-us or "
 "leave it blank for the homepage."
-msgstr ""
-
-#: includes/templates/sidebar-banner.php:19
-msgid "Easily Manage All Your Plugins"
 msgstr ""
 
 #: includes/api/admin-settings.php:512 includes/api/admin-settings.php:608
@@ -313,8 +309,13 @@ msgstr ""
 msgid "Enable on Selected Pages"
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:20
-msgid "Enable or Disable Plugins for Specific Pages or Posts"
+#: includes/templates/sidebar-banner.php:22
+msgid "Enable or Disable Plugins for Backend"
+msgstr ""
+
+#: includes/templates/sidebar-banner.php:19
+msgid ""
+"Enable or disable plugins for individual pages, posts, or custom post types"
 msgstr ""
 
 #: includes/api/admin-settings.php:90 includes/api/admin-settings.php:293
@@ -341,7 +342,7 @@ msgstr ""
 msgid "Frontend Optimized"
 msgstr ""
 
-#: includes/plugin-options-page.php:76 includes/api/admin-settings.php:32
+#: includes/plugin-options-page.php:48 includes/api/admin-settings.php:32
 msgid "General"
 msgstr ""
 
@@ -367,7 +368,7 @@ msgstr ""
 msgid "HasThemes"
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:39
+#: includes/templates/sidebar-banner.php:38
 msgid "Have We Fully Met Your Expectations?"
 msgstr ""
 
@@ -405,7 +406,7 @@ msgstr ""
 msgid "https://hasthemes.com/plugins/"
 msgstr ""
 
-#: plugin-main.php:368
+#: plugin-main.php:346
 msgid "I already did"
 msgstr ""
 
@@ -428,19 +429,19 @@ msgid ""
 "If you wish to select custom posts, please choose the custom post types below"
 msgstr ""
 
-#: plugin-main.php:185 plugin-main.php:211
+#: plugin-main.php:190
 msgid "Import"
 msgstr ""
 
-#: plugin-main.php:183 plugin-main.php:209
+#: plugin-main.php:188
 msgid "Import to Library"
 msgstr ""
 
-#: plugin-main.php:184 plugin-main.php:210
+#: plugin-main.php:189
 msgid "Import to Page"
 msgstr ""
 
-#: plugin-main.php:178 plugin-main.php:204
+#: plugin-main.php:183
 msgid "in this package"
 msgstr ""
 
@@ -459,7 +460,7 @@ msgstr ""
 msgid "Install Now"
 msgstr ""
 
-#: plugin-main.php:189 plugin-main.php:215
+#: plugin-main.php:194
 msgid "Installing.."
 msgstr ""
 
@@ -503,7 +504,7 @@ msgstr ""
 msgid "Marked as read successfully"
 msgstr ""
 
-#: plugin-main.php:367
+#: plugin-main.php:345
 msgid "Maybe Later"
 msgstr ""
 
@@ -515,11 +516,11 @@ msgstr ""
 msgid "Mobile"
 msgstr ""
 
-#: includes/plugin-options-page.php:130
+#: includes/plugin-options-page.php:102
 msgid "More details"
 msgstr ""
 
-#: plugin-main.php:226
+#: plugin-main.php:205
 msgid "Need Help with Plugin Manager?"
 msgstr ""
 
@@ -537,7 +538,7 @@ msgid ""
 "selected post types."
 msgstr ""
 
-#: plugin-main.php:180 plugin-main.php:206
+#: plugin-main.php:185
 msgid "Nothing Found"
 msgstr ""
 
@@ -545,7 +546,7 @@ msgstr ""
 msgid "Number of Posts to Load"
 msgstr ""
 
-#: plugin-main.php:366
+#: plugin-main.php:344
 msgid "Ok, you deserve it!"
 msgstr ""
 
@@ -553,13 +554,13 @@ msgstr ""
 msgid "Others"
 msgstr ""
 
-#: plugin-main.php:227
+#: plugin-main.php:206
 msgid ""
 "Our comprehensive documentation provides detailed information on how to use "
 "Plugin Manager effectively to improve your websites performance."
 msgstr ""
 
-#: plugin-main.php:221 includes/plugin-options-page.php:125
+#: plugin-main.php:200 includes/plugin-options-page.php:97
 msgid ""
 "Our free version is great, but it doesn't have all our advanced features. "
 "The best way to unlock all of the features in our plugin is by purchasing "
@@ -586,15 +587,15 @@ msgstr ""
 msgid "Pixelavo – Facebook Pixel Conversion API"
 msgstr ""
 
-#: includes/plugin-options-page.php:64 includes/plugin-options-page.php:65
+#: includes/plugin-options-page.php:36 includes/plugin-options-page.php:37
 msgid "Plugin Manager"
 msgstr ""
 
-#: plugin-main.php:278
+#: plugin-main.php:256
 msgid "Plugin Not Found"
 msgstr ""
 
-#: plugin-main.php:298
+#: plugin-main.php:276
 msgid "Plugin Successfully Activated"
 msgstr ""
 
@@ -618,7 +619,7 @@ msgstr ""
 msgid "Posts, Pages & Custom Post Types"
 msgstr ""
 
-#: plugin-main.php:188 plugin-main.php:214
+#: plugin-main.php:193
 msgid "Preview"
 msgstr ""
 
@@ -626,19 +627,19 @@ msgstr ""
 msgid "PRO"
 msgstr ""
 
-#: plugin-main.php:218
+#: plugin-main.php:197
 msgid "Pro"
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:42
+#: includes/templates/sidebar-banner.php:41
 msgid "Provide Your Feedback"
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:36
+#: includes/templates/sidebar-banner.php:35
 msgid "Rating icon"
 msgstr ""
 
-#: includes/plugin-options-page.php:93 includes/plugin-options-page.php:94
+#: includes/plugin-options-page.php:65 includes/plugin-options-page.php:66
 #: includes/api/admin-settings.php:456
 msgid "Recommended"
 msgstr ""
@@ -706,11 +707,7 @@ msgid ""
 "collected or tracked. %1$sLearn more%2$s."
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:22
-msgid "Set Plugin Rules for Mobile, Tablet, or Desktop Devices"
-msgstr ""
-
-#: includes/plugin-options-page.php:84 includes/plugin-options-page.php:85
+#: includes/plugin-options-page.php:56 includes/plugin-options-page.php:57
 #: includes/api/admin-settings.php:40 includes/api/admin-settings.php:126
 msgid "Settings"
 msgstr ""
@@ -731,7 +728,7 @@ msgstr ""
 msgid "Status: "
 msgstr ""
 
-#: plugin-main.php:230 includes/api/admin-settings.php:64
+#: plugin-main.php:209 includes/api/admin-settings.php:64
 msgid "Support"
 msgstr ""
 
@@ -765,14 +762,14 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:41
+#: includes/templates/sidebar-banner.php:40
 msgid ""
 "Thank you for choosing our plugin! If it makes your work easier, please "
 "share your happiness with a 5-star rating on WordPress. It’ll take just 2 "
 "minutes & means a lot to us!"
 msgstr ""
 
-#: plugin-main.php:363
+#: plugin-main.php:341
 msgid "Thank you for choosing WP Plugin Manager to manage you plugins!"
 msgstr ""
 
@@ -792,11 +789,11 @@ msgstr ""
 msgid "Updates"
 msgstr ""
 
-#: includes/templates/sidebar-banner.php:29
+#: includes/templates/sidebar-banner.php:28
 msgid "Upgrade To PRO"
 msgstr ""
 
-#: plugin-main.php:261 plugin-main.php:262 includes/api/admin-settings.php:405
+#: plugin-main.php:239 plugin-main.php:240 includes/api/admin-settings.php:405
 msgid "Upgrade to Pro"
 msgstr ""
 
@@ -808,7 +805,7 @@ msgstr ""
 msgid "Users"
 msgstr ""
 
-#: plugin-main.php:229
+#: plugin-main.php:208
 msgid "Video Tutorial"
 msgstr ""
 
@@ -832,7 +829,7 @@ msgstr ""
 msgid "WooLentor"
 msgstr ""
 
-#: plugin-main.php:364
+#: plugin-main.php:342
 msgid ""
 "Would you mind doing us a huge favor by providing your feedback on WordPress?"
 " Your support helps us spread the word and greatly boosts our motivation."

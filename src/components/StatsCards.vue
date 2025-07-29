@@ -8,7 +8,7 @@
               <el-icon><component :is="stat.icon" /></el-icon>
             </div>
             <div class="stat-content">
-              <div class="stat-value">{{ stats[stat.key] }}</div>
+              <div class="stat-value">{{ stats[stat.key] }} {{ error? 'Error' : '' }}</div>
               <div class="stat-label">{{ stat.label }}</div>
             </div>
           </div>
@@ -45,7 +45,8 @@ import { usePluginStore } from '../store/plugins'
 import { List, CircleCheck, Refresh, CircleClose, Setting } from '@element-plus/icons-vue'
 
 const store = usePluginStore()
-const isLoading = ref(true)  // Local loading state
+const isLoading = computed(() => store.loading)  // Local loading state
+const error = computed(() => store.error)
 
 // Compute stats from store getters
 const stats = computed(() => ({

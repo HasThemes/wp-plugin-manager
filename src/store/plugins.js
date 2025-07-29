@@ -71,7 +71,7 @@ export const usePluginStore = defineStore('plugins', {
 
         return this.plugins
       } catch (error) {
-        this.error = error.message || 'Failed to fetch plugins'
+        this.error = 'Failed to fetch plugins'
         console.error('Error fetching plugins:', error)
         throw error
       } finally {
@@ -81,6 +81,8 @@ export const usePluginStore = defineStore('plugins', {
 
     // Fetch all plugin settings
     async fetchAllPluginSettings() {
+      this.loading = true
+      this.error = null
       const apiUrl = `${this.apiBase}/plugins/settings`;
       try {
         const response = await fetch(apiUrl, {
@@ -98,8 +100,11 @@ export const usePluginStore = defineStore('plugins', {
         
         return result.data;
       } catch (error) {
+        this.error = 'Failed to fetch plugins'
         console.error('Error fetching all plugin settings:', error);
         throw error;
+      } finally {
+        this.loading = false
       }
     },
 
@@ -127,6 +132,7 @@ export const usePluginStore = defineStore('plugins', {
         
         return response.data
       } catch (error) {
+        this.error = 'Failed to fetch plugin settings'
         console.error(`Error fetching settings for plugin ${pluginId}:`, error)
         return null
       }
@@ -162,6 +168,7 @@ export const usePluginStore = defineStore('plugins', {
           throw new Error(response.data?.message || 'Failed to update settings')
         }
       } catch (error) {
+        this.error = 'Failed to update dashboard settings'
         console.error('Error updating dashboard settings:', error)
         throw error
       }
@@ -220,6 +227,7 @@ export const usePluginStore = defineStore('plugins', {
           // Return the updated settings
           return completeSettings
         } else {
+          this.error = 'Failed to update settings'
           console.error('Server returned error:', response.data)
           throw new Error(response.data?.message || 'Failed to update settings')
         }

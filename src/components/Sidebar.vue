@@ -60,6 +60,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+const loading = ref(true)
 
 const sidebarContent = ref('')
 // Create an axios instance with WordPress REST API base URL and nonce
@@ -71,11 +72,20 @@ const api = axios.create({
   }
 })
 const fetchSidebarContent = async () => {
+  loading.value = true
   try {
     const response = await api.get('/htpm/v1/sidebar-content')
     sidebarContent.value = response.data.content
   } catch (error) {
+    sidebarContent.value = `<div class="notice notice-error" style="background-color: #fef1f1; border-left: 4px solid #d63638; padding: 12px 15px; margin: 10px 0; box-shadow: 0 1px 1px rgba(0,0,0,.04); border-radius: 4px;">
+      <p style="margin: 0; color: #3c434a; font-size: 13px; line-height: 1.5; display: flex; align-items: center; gap: 8px; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;">
+        <span style="color: #d63638; font-size: 16px;">❌</span>
+        <span>Error fetching sidebar content. Please refresh the page or try again later.</span>
+      </p>
+    </div>`;
     console.error('Error fetching sidebar content:', error)
+  } finally {
+    loading.value = false
   }
 }
 
