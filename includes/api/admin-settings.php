@@ -44,14 +44,6 @@ class WP_Plugin_Manager_Settings {
                 'visible' => true,
                 'isRouter' => true
             ],
-            'license' => [
-                'label' => __('License', 'wp-plugin-manager'),
-                'icon' => 'Key',
-                'link' => '/license',
-                'order' => 3,
-                'visible' => true,
-                'isRouter' => true
-            ],
             'documentation' => [
                 'label' => __('Documentation', 'wp-plugin-manager'),
                 'icon' => 'Document',

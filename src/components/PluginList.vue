@@ -520,11 +520,14 @@ watch(() => store.plugins, async (newPlugins) => {
       justify-content: space-between;
       align-items: center;
       padding: 16px;
-      border-top: 1px solid #ebeef5;
+      border-bottom: 1px solid #ebeef5;
       transition: background-color 0.3s;
 
       &:hover {
         background-color: #f8f9fa;
+      }
+      &:first-child {
+        border-top: 1px solid #ebeef5;
       }
       .plugin-info {
         display: flex;
@@ -620,6 +623,7 @@ watch(() => store.plugins, async (newPlugins) => {
         }
       }
     }
+    
   }
 
   .el-input {

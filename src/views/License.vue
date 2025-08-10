@@ -23,6 +23,7 @@
                   class="mb-4"
                   show-icon
                   @close="clearMessages"
+                  :duration="3000"
               />
               <el-alert
                   v-if="error"
@@ -32,8 +33,9 @@
                   class="mb-4"
                   show-icon
                   @close="clearError"
+                  :duration="3000"
               />
-              <p class="form-description">Enter your license key here, to activate Hashbar Pro and get future updates and premium support.</p>
+              <p class="form-description">Enter your license key here, to activate WP Plugin Manager Pro and get future updates and premium support.</p>
               <el-form 
                   ref="licenseForm"
                   :model="formData"
@@ -78,18 +80,20 @@
                   v-if="successMessage"
                   :title="successMessage"
                   type="success"
-                  :closable="true"
+                  :closable="false"
                   class="mb-4"
                   show-icon
+                  :duration="3000"
                   @close="clearMessages"
               />
               <el-alert
                   v-if="error"
                   :title="error"
                   type="error"
-                  :closable="true"
+                  :closable="false"
                   class="mb-4"
                   show-icon
+                  :duration="3000"
                   @close="clearError"
               />
               <ul class="license-details">
@@ -143,6 +147,14 @@ export default {
       const licenseStore = useLicenseStore();
       const licenseForm = ref(null);
       const successMessage = ref('');
+      
+      // Auto-clear messages after timeout
+      const clearMessagesTimeout = () => {
+          setTimeout(() => {
+              successMessage.value = '';
+              licenseStore.error = null;
+          }, 3000);
+      };
 
       const formData = ref({
           licenseKey: '',
@@ -179,8 +191,7 @@ export default {
               
               if(response?.status) {
                   successMessage.value = response?.message || 'License activated successfully';
-                  // Add a small delay to ensure the success message is visible
-                  await new Promise(resolve => setTimeout(resolve, 100));
+                  clearMessagesTimeout();
               } else {
                   // Set error in store for alert display
                   licenseStore.error = response?.message || 'License activation failed';
@@ -233,6 +244,7 @@ export default {
                       email: window.HTPMM?.licenseEmail
                   };
                   successMessage.value = response?.message || 'License deactivated successfully';
+                  clearMessagesTimeout();
               } else {
                   // Set error in store for alert display
                   licenseStore.error = response?.message || 'License deactivation failed';
@@ -254,6 +266,7 @@ export default {
           formRules,
           licenseForm,
           pageTitle,
+          clearMessagesTimeout,
           isLoading: computed(() => licenseStore.isLoading),
           isActivating: computed(() => licenseStore.isActivating),
           isDeactivating: computed(() => licenseStore.isDeactivating),

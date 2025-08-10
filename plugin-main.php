@@ -62,12 +62,6 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
-        if(is_admin()) {
-            add_action('wp_loaded', function() {
-                include_once HTPM_ROOT_DIR . '/includes/licence/WPPluginManagerPro.php';
-
-            });
-        }
     }
 
     /**

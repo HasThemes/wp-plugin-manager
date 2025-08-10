@@ -282,7 +282,7 @@ const openProModal = () => {
       .el-menu-item {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 0px;
         height: 60px;
         padding: 0 16px;
         font-weight: 500;
