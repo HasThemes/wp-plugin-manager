@@ -11,4 +11,11 @@ const api = axios.create({
     credentials: 'same-origin'
 });
 
+export const ApiPostUrl = axios.create({
+    baseURL: window.HTPMM.adminURL,
+    headers: {
+        'content-type': 'application/json',
+        'X-WP-Nonce': window.HTPMM?.nonce
+    }
+});
 export default api;

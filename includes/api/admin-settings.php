@@ -47,10 +47,10 @@ class WP_Plugin_Manager_Settings {
             'license' => [
                 'label' => __('License', 'wp-plugin-manager'),
                 'icon' => 'Key',
-                'link' => $this->get_help_section()['licenseLink'],
+                'link' => '/license',
                 'order' => 3,
-                'visible' => false,
-                'target' => '_self'
+                'visible' => true,
+                'isRouter' => true
             ],
             'documentation' => [
                 'label' => __('Documentation', 'wp-plugin-manager'),
