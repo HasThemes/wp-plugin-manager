@@ -104,7 +104,15 @@
         </div>
         <div class="plugin-actions">
           <!-- Toggle whether the plugin is loaded or not -->
+          <el-switch
+            v-if="plugin.enable_deactivation === 'yes'"
+            :model-value="true"
+            @click="handleToggle(plugin)"
+            class="plugin-switch"
+            :loading="isPluginLoading(plugin.id)"
+          />
           <el-popconfirm
+            v-else
             :title="'This plugin was optimized with specific settings. Review them before enabling to avoid potential issues'"
             confirm-button-text="Enable Anyway"
             cancel-button-text="Review Settings"
@@ -114,8 +122,7 @@
             :icon="QuestionFilled"
             @confirm="handleOptimizeNow(plugin)"
             @cancel="openSettings(plugin)"
-            :visible="showPopconfirm === plugin.id"
-            @hide="showPopconfirm = null"
+            :hide-after="0"
             width="300"
             padding="8px 12px 12px"
             popper-class="plugin-optimize-popconfirm"
@@ -123,8 +130,8 @@
           >
             <template #reference>
               <el-switch
-                :model-value="plugin.enable_deactivation == 'yes'"
-                @click="handleToggle(plugin)"
+                :model-value="false"
+                @click="popconfirmVisible[plugin.id] = true"
                 class="plugin-switch"
                 :loading="isPluginLoading(plugin.id)"
               />
@@ -187,7 +194,7 @@ const pagination = reactive({
   pageSize: parseInt(store.allSettings?.itemsPerPage || 10),
   total: 0
 })
-const showPopconfirm = ref(null) // Track which plugin's popconfirm is shown
+const popconfirmVisible = reactive({}) // Track popconfirm visibility state for each plugin
 const loadingPlugins = ref(new Set()) // Track which plugins are currently saving
 const isPro = ref(store?.isPro);
 const managePluginsFields = ref(store?.dashboardSettingsFields.manage_plugins);
@@ -292,12 +299,8 @@ watch(() => store.plugins, async (newPlugins) => {
 
     // Handle the toggle click
     const handleToggle = (plugin) => {
-      const newState = plugin.enable_deactivation == 'yes' ? 'no' : 'yes';
-      if (newState === 'yes') {
-        // Show popconfirm for enabling
-        showPopconfirm.value = plugin.id;
-      } else {
-        // Direct disable without confirmation
+      // Only handle disabling here since enabling is handled by popconfirm
+      if (plugin.enable_deactivation === 'yes') {
         togglePluginLoading(plugin);
       }
     };
@@ -476,6 +479,11 @@ watch(() => store.plugins, async (newPlugins) => {
     // Handle page change for pagination
     const handlePageChange = (page) => {
       pagination.currentPage = page
+    }
+
+    // Handle popconfirm hide event (triggered on outside click)
+    const handlePopconfirmHide = (pluginId) => {
+      popconfirmVisible[pluginId] = false
     }
 
 </script>

@@ -4,7 +4,7 @@ Tags: plugin manager, disable plugins, performance optimization, selective loadi
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -167,6 +167,11 @@ Yes! Device-specific targeting is available in the Pro version, allowing differe
 Results vary based on your site, but users typically see 30-90% improvement in page load times.
 
 == Changelog ==
+= Version: 1.4.4 Date: 11 August 2025 =
+* Improved: Manage plugin list Style.
+* Fixed: Plugin Enable/Disable Confirm popup issue in Manage Plugin List.
+* Fixed: A few minor issues.
+
 = Version: 1.4.3 Date: 29 July 2025 =
 * Updated: Language translation .pot file.
 * Fixed: Infinite loading issue when an error occurs while fetching the plugin list.
