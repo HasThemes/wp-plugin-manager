@@ -30,12 +30,12 @@ const routes = [
   //   component: Tools,
   //   meta: { keepAlive: true }
   // },
-  // {
-  //   path: '/license',
-  //   name: 'License',
-  //   component: License,
-  //   meta: { keepAlive: true }
-  // },
+  {
+    path: '/license',
+    name: 'License',
+    component: License,
+    meta: { keepAlive: true }
+  },
   {
     path: '/:pathMatch(.*)*',
     redirect: '/settings'

@@ -3,7 +3,7 @@
     <!-- need to addd a notice that this is for backend -->
     <div class="backend-notice" v-if="isPro">
       <p class="warning-message">
-        <strong>⚠️ Important Notice:</strong> Please carefully consider before disabling plugins in the backend. If you disable a plugin that other plugins depend on, it may cause errors or functionality issues in your WordPress admin area. Make sure to test any changes in a staging environment first.
+        <strong>⚠️ Important Notice:</strong> Please carefully consider before disabling plugins in the backend. If you disable a plugin that other plugins depend on, it may cause errors or functionality issues in your WordPress admin area. Review plugin dependencies thoroughly to avoid unexpected issues.
       </p>
     </div>
     <!-- Status Field -->

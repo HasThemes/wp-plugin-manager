@@ -3,7 +3,7 @@
 * Plugin Name: WP Plugin Manager
 * Plugin URI: https://hasthemes.com/plugins/
 * Description: WP Plugin Manager is a WordPress plugin that allows you to disable plugins for certain pages, posts or URI conditions.
-* Version: 1.4.3
+* Version: 1.4.4
 * Author: HasThemes
 * Author URI: https://hasthemes.com/
 * Text Domain: wp-plugin-manager
@@ -14,7 +14,7 @@ defined( 'ABSPATH' ) or die();
 /**
  * Define path
  */
-define( 'HTPM_PLUGIN_VERSION', '1.4.3' );
+define( 'HTPM_PLUGIN_VERSION', '1.4.4' );
 define( 'HTPM_ROOT_PL', __FILE__ );
 define( 'HTPM_ROOT_URL', plugins_url('', HTPM_ROOT_PL) );
 define( 'HTPM_ROOT_DIR', dirname( HTPM_ROOT_PL ) );
@@ -62,7 +62,6 @@ class HTPM_Main {
         add_action('admin_init', [$this, 'show_admin_diagnostic_data_notice'] );
         add_action('admin_init', [$this, 'show_admin_rating_notice'] );
         add_action('admin_init', [$this, 'show_admin_promo_notice'] );
-
     }
 
     /**
@@ -179,6 +178,8 @@ class HTPM_Main {
                     'assetsURL'        => plugin_dir_url( __FILE__ ) . 'assets/',
                     'restUrl' => rest_url(),  // This will include the wp-json prefix
                     'nonce' => wp_create_nonce('wp_rest'),
+                    'licenseNonce'  => wp_create_nonce( 'el-license' ),
+                    'licenseEmail'  => get_option( 'WPPluginManagerPro_lic_email', get_bloginfo( 'admin_email' ) ),
                     'message'          =>[
                         'packagedesc'=> esc_html__( 'in this package', 'wp-plugin-manager' ),
                         'allload'    => esc_html__( 'All Items have been Loaded', 'wp-plugin-manager' ),
