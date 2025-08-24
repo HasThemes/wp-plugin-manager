@@ -182,6 +182,32 @@ class ChangeLog extends WP_REST_Controller {
     private function get_changelog_data() {
         return [
             [
+                'version' => '1.4.5',
+                'date'    => '2025-08-24',
+                'changes' => [
+                    'Updated' => [
+                        'Language translation .pot file.',
+                    ],
+                    'Fixed' => [
+                        'String translation issue.',
+                        'A few minor issues.',
+                    ],
+                ],
+            ],
+            [
+                'version' => '1.4.4',
+                'date'    => '2025-08-11',
+                'changes' => [
+                    'Improved' => [
+                        'Manage plugin list Style.',
+                    ],
+                    'Fixed' => [
+                        'Plugin Enable/Disable Confirm popup issue in Manage Plugin List.',
+                        'A few minor issues.',
+                    ],
+                ],
+            ],
+            [
                 'version' => '1.4.3',
                 'date'    => '2025-07-29',
                 'changes' => [
@@ -258,27 +284,6 @@ class ChangeLog extends WP_REST_Controller {
                 'changes' => [
                     'Improved' => [
                         'User interface for better user experience.'
-                    ]
-                ]
-            ],
-            [
-                'version' => '1.2.8',
-                'date'    => '2024-12-03',
-                'changes' => [
-                    'Added' => [
-                        'Option to disable/enable plugin in all Page/Post/Custom Post Type.'
-                    ],
-                    'Fixed' => [
-                        '“Select Pages” and “Select Posts” options do not appear after selecting “Page & Post” for the “Page Type” setting.'
-                    ]
-                ]
-            ],
-            [
-                'version' => '1.2.7',
-                'date'    => '2024-11-04',
-                'changes' => [
-                    'Enhanced' => [
-                        'UI/UX for a better user experience.'
                     ]
                 ]
             ]

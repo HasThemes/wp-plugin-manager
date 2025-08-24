@@ -105,6 +105,20 @@ export const getTextFromHtml = (html) => {
     return tempDiv.textContent || tempDiv.innerText || '';
 }
 
+export const sanitizeHtml = (html, allowedTags = ['a', 'b', 'br', 'em', 'i', 'p', 'span', 'strong', 'u']) => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    const elements = tempDiv.querySelectorAll('*');
+    elements.forEach((el) => {
+        if (!allowedTags.includes(el.tagName.toLowerCase())) {
+            el.replaceWith(...el.childNodes); // Remove tag but keep inner content
+        }
+    });
+
+    return tempDiv.innerHTML;
+}
+
 /**
  * Number to absolute integer.
  */

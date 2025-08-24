@@ -2,7 +2,7 @@
 <template>
   <div class="htpm-plugins">
     <div class="htpm-plugins-header">
-      <h3>Manage Plugins</h3>
+      <h3 v-if="labels_texts?.managePluginsList?.managePlugins" v-html="sanitizeHtml(labels_texts?.managePluginsList?.managePlugins)"></h3>
       <div class="htpm-plugins-actions">
         <el-select
           v-model="filterStatus"
@@ -15,7 +15,7 @@
         </el-select>
         <el-input
           v-model="searchQuery"
-          placeholder="Search plugins..."
+          :placeholder="sanitizeHtml(labels_texts?.managePluginsList?.serchPlaceholder)"
           :prefix-icon="Search"
         />
       </div>
@@ -32,9 +32,9 @@
           class="custom-empty"
         >
           <template #description>
-            <h3>No Plugins Found</h3>
+            <h3 v-if="labels_texts?.managePluginsList?.noPluginFound" v-html="sanitizeHtml(labels_texts?.managePluginsList?.noPluginFound)"></h3>
             <p class="empty-description">
-              {{ searchQuery || filterStatus !== 'all' ? 'Try adjusting your search or filter criteria' : 'No plugins are available at the moment' }}
+              {{ searchQuery || filterStatus !== 'all' ? sanitizeHtml( labels_texts?.managePluginsList?.invaildSearch ) : sanitizeHtml( labels_texts?.managePluginsList?.emptyDescription ) }}
             </p>
           </template>
         </el-empty>
@@ -45,7 +45,7 @@
           class="custom-empty"
         >
           <template #description>
-            <h3>Error Fetching Plugins. Please try again</h3>
+            <h3 v-if="labels_texts?.managePluginsList?.errorFetching" v-html="sanitizeHtml(labels_texts?.managePluginsList?.errorFetching)"></h3>
             <p class="empty-description">
               {{ error }}
             </p>
@@ -79,7 +79,7 @@
                 class="plugin-status"
               >
                 <span class="status-dot active"></span>
-                <span class="status-text">Frontend: Optimized</span>
+                <span class="status-text" v-if="labels_texts?.managePluginsList?.frontendOptimized" v-html="sanitizeHtml(labels_texts?.managePluginsList?.frontendOptimized)"></span>
               </div>
               
               <!-- Show backend status only if optimized -->
@@ -88,7 +88,7 @@
                 class="plugin-status"
               >
                 <span class="status-dot active"></span>
-                <span class="status-text">Backend: Optimized</span>
+                <span class="status-text" v-if="labels_texts?.managePluginsList?.backendOptimized" v-html="sanitizeHtml(labels_texts?.managePluginsList?.backendOptimized)"></span>
               </div>
               
               <!-- Show "Not Optimized Yet" only if both are not optimized -->
@@ -97,7 +97,7 @@
                 class="plugin-status"
               >
                 <span class="status-dot"></span>
-                <span class="status-text">Not Optimized Yet</span>
+                <span class="status-text" v-if="labels_texts?.managePluginsList?.notOptimizedYet" v-html="sanitizeHtml(labels_texts?.managePluginsList?.notOptimizedYet)"></span>
               </div>
             </div>
           </div>
@@ -113,9 +113,9 @@
           />
           <el-popconfirm
             v-else
-            :title="'This plugin was optimized with specific settings. Review them before enabling to avoid potential issues'"
-            confirm-button-text="Enable Anyway"
-            cancel-button-text="Review Settings"
+            :title="labels_texts?.managePluginsList?.popconfirmTitle"
+            :confirm-button-text="labels_texts?.managePluginsList?.popconfirmConfirmButton"
+            :cancel-button-text="labels_texts?.managePluginsList?.popconfirmCancelButton"
             confirm-button-type="primary"
             cancel-button-type="default"
             placement="top"
@@ -179,6 +179,7 @@ import PluginSettingsModal from './PluginSettingsModal.vue'
 import { usePluginStore } from '../store/plugins'
 import PluginListSkeleton from '../skeleton/PluginListSkeleton.vue'
 import { debounce } from 'lodash-es'
+import { sanitizeHtml } from '../utils/helpers'
 
 const store = usePluginStore()
 const searchQuery = ref('')
@@ -203,6 +204,8 @@ const managePluginsFields = ref(store?.dashboardSettingsFields.manage_plugins);
 const updateDebouncedSearch = debounce((value) => {
   debouncedSearchQuery.value = value
 }, 300)
+
+const labels_texts = HTPMM.adminSettings.labels_texts
 
 // Watch for search query changes
 watch(searchQuery, (newValue) => {

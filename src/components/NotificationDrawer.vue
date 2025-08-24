@@ -9,7 +9,7 @@
         style="top: 32px !important; height: calc(100vh - 32px) !important;"
     >
         <template #header>
-            <h3 class="drawer-title">What's New in Plugin Manager</h3>
+            <h3 class="drawer-title" v-if="labels_texts?.changelog?.title" v-html="sanitizeHtml(labels_texts?.changelog?.title)"></h3>
         </template>
 
         <el-scrollbar height="calc(100vh - 150px)">
@@ -17,7 +17,7 @@
                 <template v-if="store.changelog && store.changelog.length">
                     <div v-for="(item, index) in store.changelog" :key="index" class="changelog-item">
                         <div class="version-header">
-                            <h4>Version {{ item.version }}</h4>
+                            <h4>{{  sanitizeHtml(labels_texts?.changelog?.version) }} {{ item.version }}</h4>
                             <span class="release-date">{{ item.date }}</span>
                         </div>
                         <div class="changelog-details">
@@ -34,7 +34,7 @@
                         </div>
                     </div>
                 </template>
-                <el-empty v-else description="No changelog available" />
+                <el-empty v-else :description="sanitizeHtml( labels_texts?.changelog?.noChangelog )" />
             </div>
         </el-scrollbar>
         
@@ -44,7 +44,7 @@
 <script setup>
 import { computed, watch } from 'vue'
 import { usePluginStore } from '../store/plugins'
-
+import { sanitizeHtml } from '../utils/helpers'
 const props = defineProps({
     modelValue: {
         type: Boolean,
@@ -55,6 +55,8 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const store = usePluginStore()
+
+const labels_texts = HTPMM.adminSettings.labels_texts
 
 const visible = computed({
     get: () => props.modelValue,

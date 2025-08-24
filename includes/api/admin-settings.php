@@ -82,6 +82,8 @@ class WP_Plugin_Manager_Settings {
                 'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
                 'default' => false,
                 'pro' => true,
+                'enableText' => __('Enabled', 'wp-plugin-manager'),
+                'disableText' => __('Disabled', 'wp-plugin-manager'),
                 'proBadge' => true
             ],
             'action_backend' => [
@@ -279,12 +281,14 @@ class WP_Plugin_Manager_Settings {
 
     public function get_feature_settings() {
         return [
-            'status' => [
+            'status_frontend' => [
                 'label' => __('Status: ', 'wp-plugin-manager'),
                 'type' => 'switch',
                 'description' => __('Enable or disable this configuration. When disabled, settings are saved but not applied.', 'wp-plugin-manager'),
                 'default' => false,
                 'pro' => false,
+                'enableText' => __('Enabled', 'wp-plugin-manager'),
+                'disableText' => __('Disabled', 'wp-plugin-manager'),
                 'proBadge' => false
             ],
             'device_types' => [
@@ -418,9 +422,30 @@ class WP_Plugin_Manager_Settings {
             'number_of_posts_desc' => __('Default: 150 posts. Adjust if you have more posts to manage.', 'wp-plugin-manager'),
             'save_settings_note' => '',
             // Backend specific labels
-            'backend_page_selection' => __('Backend Page Selection', 'wp-plugin-manager'),
             'select_admin_pages' => __('Select Admin Pages:', 'wp-plugin-manager'),
             'backend_conditions' => __('Backend Conditions:', 'wp-plugin-manager'),
+            'backendWarningNotice' => __('<strong>⚠️ Important Notice:</strong> Please carefully consider before disabling plugins in the backend. If you disable a plugin that other plugins depend on, it may cause errors or functionality issues in your WordPress admin area. Review plugin dependencies thoroughly to avoid unexpected issues.', 'wp-plugin-manager'),
+            'managePluginsList' =>[
+                'managePlugins' => __('Manage Plugins', 'wp-plugin-manager'),
+                'serchPlaceholder'=> __('Search plugins...', 'wp-plugin-manager'),
+                'noPluginFound'=> __('No Plugins Found', 'wp-plugin-manager'),
+                'emptyDescription'=> __('No plugins are available at the moment', 'wp-plugin-manager'),
+                'invaildSearch'=> __('Try adjusting your search or filter criteria', 'wp-plugin-manager'),
+                'errorFetching'=> __('Error Fetching Plugins. Please try again', 'wp-plugin-manager'),
+                'frontendOptimized'=> __('Frontend: Optimized', 'wp-plugin-manager'),
+                'backendOptimized'=> __('Backend: Optimized', 'wp-plugin-manager'),
+                'notOptimizedYet'=> __('Not Optimized Yet', 'wp-plugin-manager'),
+                'popconfirmTitle'=> __('This plugin was optimized with specific settings. Review them before enabling to avoid potential issues', 'wp-plugin-manager'),
+                'popconfirmConfirmButton'=> __('Enable Anyway', 'wp-plugin-manager'),
+                'popconfirmCancelButton'=> __('Review Settings', 'wp-plugin-manager'),
+            ],
+            'changelog'=> [
+                'title'=> __('What\'s New in Plugin Manager', 'wp-plugin-manager'),
+                'version'=> __('Version', 'wp-plugin-manager'),
+                'Release Date'=> __('Release Date', 'wp-plugin-manager'),
+                'Changes'=> __('Changes', 'wp-plugin-manager'),
+                'noChangelog'=> __('No Changelog Available', 'wp-plugin-manager'),
+            ],
         ];
     }
 

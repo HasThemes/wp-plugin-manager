@@ -2,8 +2,7 @@
   <div class="backend-modal-content">
     <!-- need to addd a notice that this is for backend -->
     <div class="backend-notice" v-if="isPro">
-      <p class="warning-message">
-        <strong>⚠️ Important Notice:</strong> Please carefully consider before disabling plugins in the backend. If you disable a plugin that other plugins depend on, it may cause errors or functionality issues in your WordPress admin area. Review plugin dependencies thoroughly to avoid unexpected issues.
+      <p class="warning-message" v-html="sanitizeHtml( labels_texts?.backendWarningNotice )">
       </p>
     </div>
     <!-- Status Field -->
@@ -16,23 +15,24 @@
             @click="modalSettingsFields?.status?.proBadge && openProModal()"
           />
           <span class="status-label">
-            {{ pluginSettings.backend_status ? 'Enabled' : 'Disabled' }}
+            {{ pluginSettings.backend_status ? sanitizeHtml( modalSettingsFields?.status?.enableText) : sanitizeHtml( modalSettingsFields?.status?.disableText)}}
           </span>
           <!-- <span v-if="modalSettingsFields?.status?.proBadge" class="pro-badge">{{proLabel}}</span> -->
         </div>
-        <div class="field-desc">{{ modalSettingsFields?.status?.description || 'Enable or disable this configuration. When disabled, settings are saved but not applied.' }}</div>
+        <div class="field-desc" v-if="modalSettingsFields?.status?.description" v-html="sanitizeHtml( modalSettingsFields?.status?.description )"></div>
       </div>
       <!-- Action Type (same as frontend) -->
       <div class="form-field">
-      <label>{{ modalSettingsFields?.action_backend?.label }}</label>
+      <label v-if="modalSettingsFields?.action_backend?.label">{{ sanitizeHtml( modalSettingsFields?.action_backend?.label ) }}</label>
       <el-select v-model="pluginSettings.backend_condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)" :disabled="modalSettingsFields?.action_backend?.proBadge">
         <el-option v-for="(label, value) in modalSettingsFields?.action_backend?.options" :key="value" :label="label + (modalSettingsFields?.action_backend?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action_backend?.pro?.includes(value)" />
       </el-select>
-      <div class="field-desc">{{ modalSettingsFields?.action_backend?.description }}</div>
+      <div class="field-desc" v-if="modalSettingsFields?.action_backend?.description" v-html="sanitizeHtml( modalSettingsFields?.action_backend?.description )"></div>
+
     </div>
     <!-- Admin Area Scope (Broad Categories) -->
     <div class="form-field">
-      <label>{{ modalSettingsFields?.admin_scope?.label }}</label>
+      <label v-if="modalSettingsFields?.admin_scope?.label">{{ sanitizeHtml( modalSettingsFields?.admin_scope?.label ) }}</label>
       <el-select 
           v-model="pluginSettings.admin_scope" 
           multiple 
@@ -49,12 +49,12 @@
           :disabled="modalSettingsFields?.admin_scope?.pro?.includes(value)" 
         />
       </el-select>
-      <div class="field-desc">{{ modalSettingsFields?.admin_scope?.description }}</div>
+      <div class="field-desc" v-if="modalSettingsFields?.admin_scope?.description" v-html="sanitizeHtml( modalSettingsFields?.admin_scope?.description )"></div>
     </div>
 
     <!-- Custom Page Conditions (Specific Targeting) -->
     <div class="form-field">
-      <label>{{ labels_texts?.custom_page_conditions || 'Custom Page Conditions:' }}</label>
+      <label v-if="modalSettingsFields?.custom_conditions?.label">{{ sanitizeHtml( modalSettingsFields?.custom_conditions?.label ) }}</label>
       <div v-for="(condition, index) in pluginSettings.backend_condition_list.name" :key="index" class="uri-condition">
         <el-select v-model="pluginSettings.backend_condition_list.name[index]" class="condition-type">
           <el-option 
@@ -87,9 +87,9 @@
         </div>
       </div>
       <el-button type="primary" plain size="small" @click="addBackendCondition" class="mt-3 add-condition" color="#fff">
-        <el-icon><Plus /></el-icon> {{ labels_texts?.add_condition || 'Add Condition' }}
+        <el-icon><Plus /></el-icon> {{ sanitizeHtml( labels_texts?.add_condition ) }}
       </el-button>
-      <div class="field-desc">{{ modalSettingsFields?.custom_conditions?.description || 'Define specific conditions for targeting exact admin pages or screens. E.g., use "edit.php" for Posts page, "post.php" for Edit Post page.' }}</div>
+      <div class="field-desc" v-if="modalSettingsFields?.custom_conditions?.description" v-html="sanitizeHtml( modalSettingsFields?.custom_conditions?.description )"></div>
     </div>
   </div>
 </template>
@@ -97,6 +97,7 @@
 <script setup>
 import { Delete, Plus, CopyDocument } from '@element-plus/icons-vue'
 import { ref, computed, onMounted } from 'vue'
+import { sanitizeHtml } from '../utils/helpers'
 
 const props = defineProps({
   pluginSettings: {
@@ -126,13 +127,6 @@ const props = defineProps({
 })
 
 const labels_texts = HTPMM.adminSettings.labels_texts
-const loadingBackendPages = ref(false)
-
-// Get backend page groups from the localized settings
-const backendPageGroups = computed(() => {
-  return props.modalSettingsFields?.page_selection?.groups || 
-         HTPMM?.adminSettings?.backend_modal_settings?.page_selection?.groups || []
-})
 
 const emit = defineEmits([
   'handleProFeatureSelect',
@@ -141,7 +135,6 @@ const emit = defineEmits([
   'cloneCondition',
   'addCondition'
 ])
-
 // Initialize backend-specific settings if they don't exist
 onMounted(() => {
   if (!props.pluginSettings.admin_scope) {
