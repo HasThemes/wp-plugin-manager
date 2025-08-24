@@ -8,40 +8,41 @@
             class="status-switch"
           />
           <span class="status-label">
-            {{ pluginSettings.frontend_status ? 'Enabled' : 'Disabled' }}
+            {{ pluginSettings.frontend_status ? sanitizeHtml( modalSettingsFields?.status_frontend?.enableText) : sanitizeHtml( modalSettingsFields?.status_frontend?.disableText)}}
           </span>
         </div>
-        <div class="field-desc">{{ modalSettingsFields?.status?.description || 'Enable or disable this configuration. When disabled, settings are saved but not applied.' }}</div>
+        <div class="field-desc" v-if="modalSettingsFields?.status_frontend?.description" v-html="sanitizeHtml( modalSettingsFields?.status_frontend?.description )"></div>
       </div>
 
       <!-- Configuration settings for the plugin - Always visible now -->
       <div class="form-field">
-        <label>{{ modalSettingsFields?.device_types?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+        <label v-if="modalSettingsFields?.device_types?.label">{{ sanitizeHtml( modalSettingsFields?.device_types?.label ) }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{ sanitizeHtml( proLabel )}}</span></label>
         <el-select v-model="pluginSettings.device_type" class="w-full" @change="(value) => handleProFeatureSelect('device_types', value)">
           <el-option v-for="(label, value) in modalSettingsFields?.device_types?.options" :key="value" :label="label + (modalSettingsFields?.device_types?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.device_types?.pro?.includes(value)" />
         </el-select>
-        <div class="field-desc">{{ modalSettingsFields?.device_types?.description }}</div>
+        <div class="field-desc" v-if="modalSettingsFields?.device_types?.description" v-html="sanitizeHtml(modalSettingsFields?.device_types?.description)"></div>
+
       </div>
   
       <!-- Condition Type Selector -->
       <div class="form-field">
-        <label>{{ modalSettingsFields?.action?.label }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{proLabel}}</span></label>
+        <label v-if="modalSettingsFields?.action?.label">{{ sanitizeHtml( modalSettingsFields?.action?.label ) }} <span v-if="modalSettingsFields?.device_types?.proBadge" class="pro-badge">{{sanitizeHtml( proLabel )}}</span></label>
         <el-select v-model="pluginSettings.condition_type" class="w-full" @change="(value) => handleProFeatureSelect('action', value)">
           <el-option v-for="(label, value) in modalSettingsFields?.action?.options" :key="value" :label="label + (modalSettingsFields?.action?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" :disabled="modalSettingsFields?.action?.pro?.includes(value)" />
         </el-select>
-        <div class="field-desc">{{ modalSettingsFields?.action?.description }}</div>
+        <div class="field-desc" v-if="modalSettingsFields?.action?.description" v-html="sanitizeHtml(modalSettingsFields?.action?.description)"></div>
       </div>
   
       <!-- URI Type Selector -->
       <div class="form-field">
-        <label>{{ modalSettingsFields?.page_types?.label }}</label>
+        <label v-if="modalSettingsFields?.page_types?.label">{{ sanitizeHtml( modalSettingsFields?.page_types?.label ) }}</label>
         <el-select v-model="pluginSettings.uri_type" class="w-full" @change="(value) => { handleUriTypeChange(); handleProFeatureSelect('page_types', value); }">
           <el-option v-for="(label, value) in modalSettingsFields?.page_types?.options" :key="value" :label="label + (modalSettingsFields?.page_types?.pro?.includes(value) ? ' (' + proLabel + ')' : '')" :value="value" />
         </el-select>
         <div class="field-desc">{{ modalSettingsFields?.page_types?.description }}</div>
         <el-tooltip
           v-if="pluginSettings.uri_type === 'page_post_cpt' && modalSettingsFields?.page_types?.toopTip?.page_post_cpt?.note"
-          :content="modalSettingsFields?.page_types?.toopTip?.page_post_cpt?.note"
+          :content="sanitizeHtml( modalSettingsFields?.page_types?.toopTip?.page_post_cpt?.note )"
           placement="top"
         >
           <el-icon class="info-icon"><InfoFilled /></el-icon>
@@ -50,7 +51,7 @@
   
       <!-- Post Types Selection -->
       <div class="form-field" v-if="pluginSettings.uri_type === 'page_post_cpt'">
-        <label v-if="labels_texts?.select_post_types">{{ labels_texts?.select_post_types }}</label>
+        <label v-if="modalSettingsFields?.select_post_types?.label">{{ sanitizeHtml( modalSettingsFields?.select_post_types?.label ) }}</label>
         <el-checkbox-group v-model="pluginSettings.post_types" @change="handlePostTypesChange" style="display: flex;gap: 10px;">
           <el-checkbox v-for="postType in filteredPostTypes" :key="postType.name" :label="postType.name" :disabled="!isPro" @click="!isPro && openProModal()" style="margin-bottom: 0;">
             {{ postType.label }}
@@ -64,7 +65,7 @@
         v-if="['page', 'page_post'].includes(pluginSettings.uri_type) || 
               (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('page'))"
       >
-        <label>{{ labels_texts?.select_pages }}</label>
+        <label v-if="labels_texts?.select_pages">{{ sanitizeHtml( labels_texts?.select_pages ) }}</label>
         <el-select v-model="pluginSettings.pages" multiple filterable class="w-full" :loading="loadingPages" :disabled="pluginSettings.uri_type === 'page_post_cpt' && !isPro" @click="pluginSettings.uri_type === 'page_post_cpt' && !isPro && openProModal()">
           <el-option label="All Pages" value="all_pages,all_pages" />
           <el-option 
@@ -82,7 +83,7 @@
         v-if="['post', 'page_post'].includes(pluginSettings.uri_type) ||
              (pluginSettings.uri_type === 'page_post_cpt' && pluginSettings.post_types.includes('post'))"
       >
-        <label>{{ labels_texts?.select_posts }}</label>
+        <label v-if="labels_texts?.select_posts">{{ sanitizeHtml( labels_texts?.select_posts ) }}</label>
         <el-select v-model="pluginSettings.posts" multiple filterable class="w-full" :loading="loadingPosts" :disabled="pluginSettings.uri_type === 'page_post_cpt' && !isPro" @click="pluginSettings.uri_type === 'page_post_cpt' && !isPro && openProModal()">
           <el-option label="All Posts" value="all_posts,all_posts" />
           <el-option 
@@ -126,7 +127,7 @@
       <!-- Custom URI Conditions -->
       <template v-if="pluginSettings.uri_type === 'custom'">
         <div class="form-field">
-          <label>{{ labels_texts?.uri_conditions }}</label>
+          <label v-if="labels_texts?.uri_conditions">{{ sanitizeHtml( labels_texts?.uri_conditions ) }}</label>
           <div v-for="(condition, index) in pluginSettings.condition_list.name" :key="index" class="uri-condition">
             <el-select v-model="pluginSettings.condition_list.name[index]" class="condition-type" :disabled="!isPro" @click=" !isPro && openProModal()">
               <el-option label="URI Equals" value="uri_equals" />
@@ -157,9 +158,9 @@
             </div>
           </div>
           <el-button type="primary" plain size="small" @click="addCondition" class="mt-3 add-condition" color="#fff" :disabled="!isPro">
-            <el-icon><Plus /></el-icon> {{labels_texts?.add_condition }}
+            <el-icon><Plus /></el-icon> {{sanitizeHtml( labels_texts?.add_condition ) }}
           </el-button>
-          <div class="field-desc">{{ labels_texts?.field_desc_uri }}</div>
+          <div class="field-desc" v-if="labels_texts?.field_desc_uri" v-html="sanitizeHtml( labels_texts?.field_desc_uri)"></div>
         </div>
       </template>
     </div>
@@ -168,6 +169,7 @@
   <script setup>
   import { Delete, Plus, CopyDocument, InfoFilled } from '@element-plus/icons-vue'
   import { onMounted, computed } from 'vue'
+  import { sanitizeHtml } from '../utils/helpers'
   
   const props = defineProps({
     pluginSettings: {
